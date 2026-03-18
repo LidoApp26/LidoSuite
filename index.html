@@ -1270,7 +1270,8 @@ function buildArchivioRows() {
         const d = beachData[id];
         if (!d) return;
         const paid = (d.rate||[]).reduce((a,b)=>a+b.importo,0);
-        const pct = d.prezzo > 0 ? Math.min(100, Math.round((paid/parseFloat(d.prezzo))*100)) : 0;
+        const totaleDovuto = parseFloat(d.prezzo||0) + parseFloat(d.lettiniCosto||0);
+        const pct = totaleDovuto > 0 ? Math.min(100, Math.round((paid/totaleDovuto)*100)) : 0;
         archivioAllRows.push({ id, ...d, paid, pct });
     });
 }
@@ -1512,7 +1513,7 @@ function renderSpiaggia() {
 
         if(d){
             booked++;
-            const p=parseFloat(d.prezzo||0);
+            const p=parseFloat(d.prezzo||0)+parseFloat(d.lettiniCosto||0);
             if(d.isSeasonal) mS+=p; else mD+=p;
             totalReal+=(d.rate||[]).reduce((a,b)=>a+b.importo,0);
             barTotal+=parseFloat(d.barTotal||0);
@@ -1551,7 +1552,9 @@ window.handleOmbrellone = (id) => {
 window.openSpotModal = (id) => {
     _currentSpotId = id;
     const d = beachData[id];
-    const total = parseFloat(d.prezzo || 0);
+    const prezzoBase = parseFloat(d.prezzo || 0);
+    const costoLettini = parseFloat(d.lettiniCosto || 0);
+    const total = prezzoBase + costoLettini;   // totale reale dovuto
     const paid = (d.rate || []).reduce((s, r) => s + r.importo, 0);
     const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;
     const rem = total - paid;
@@ -1565,7 +1568,9 @@ window.openSpotModal = (id) => {
     document.getElementById('sm-bar').textContent = parseFloat(d.barTotal || 0).toFixed(2) + '€';
     document.getElementById('sm-paid-label').textContent = 'Versato: ' + paid.toFixed(2) + '€';
     document.getElementById('sm-pct-label').textContent = pct + '%';
-    document.getElementById('sm-total-label').textContent = 'Totale: ' + total.toFixed(2) + '€';
+    // Mostra totale con dettaglio lettini se presenti
+    const lettinoLabel = costoLettini > 0 ? ' (' + prezzoBase.toFixed(2) + '€ + 🛌' + costoLettini.toFixed(2) + '€)' : '';
+    document.getElementById('sm-total-label').textContent = 'Totale: ' + total.toFixed(2) + '€' + lettinoLabel;
     document.getElementById('sm-rem-label').textContent = rem > 0 ? 'Da saldare: ' + rem.toFixed(2) + '€' : '✓ Saldato';
     document.getElementById('sm-progress').style.width = pct + '%';
 
@@ -1668,10 +1673,12 @@ window.smAddLettini = () => {
         return;
     }
     const d = beachData[id];
-    d.prezzo = (parseFloat(d.prezzo) + (qty * prezzoLettino)).toFixed(2);
+    const costoAggiunto = qty * prezzoLettino;
+    // Accumula il costo lettini in un campo dedicato, senza alterare il prezzo base
+    d.lettiniCosto = parseFloat((parseFloat(d.lettiniCosto || 0) + costoAggiunto).toFixed(2));
     d.lettiniExtra = (parseInt(d.lettiniExtra || 0) + qty);
     set(dbRef, beachData);
-    showToast('Addebitati ' + qty + ' lettino' + (qty > 1 ? 'i' : '') + ' su #' + id, 'success');
+    showToast('Addebitati ' + qty + ' lettino' + (qty > 1 ? 'i' : '') + ' (' + costoAggiunto.toFixed(2) + '\u20ac) su #' + id, 'success');
     openSpotModal(id);
 };
 
@@ -1728,10 +1735,11 @@ window.openPaymentModal = (id) => {
     const d=beachData[id];
     if(!d.rate) d.rate=[];
     document.getElementById('pm-title').innerText=`#${id} · ${d.nome} · Pagamenti`;
-    const total=parseFloat(d.prezzo);
+    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
     const paid=(d.rate||[]).reduce((s,r)=>s+r.importo,0);
     const pct=total>0?Math.min(100,Math.round((paid/total)*100)):0;
-    document.getElementById('pm-total').innerText=total.toFixed(2)+'€';
+    const lettinoNote=parseFloat(d.lettiniCosto||0)>0?' (inc. 🛌'+parseFloat(d.lettiniCosto).toFixed(2)+'€)':'';
+    document.getElementById('pm-total').innerText=total.toFixed(2)+'€'+lettinoNote;
     document.getElementById('pm-paid').innerText=paid.toFixed(2)+'€';
     document.getElementById('pm-rem').innerText=(total-paid).toFixed(2)+'€';
     document.getElementById('pm-progress').style.width=pct+'%';
@@ -1750,7 +1758,7 @@ window.saveRata = () => {
     if(isNaN(amt)||amt<=0) return showToast('Importo non valido','warn');
     const d=beachData[currentEditingId];
     d.rate.push({ importo:amt, data:new Date().toLocaleDateString('it-IT') });
-    const total=parseFloat(d.prezzo);
+    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
     const paid=d.rate.reduce((s,r)=>s+r.importo,0);
     d.pagamento=paid>=total?'saldo':paid>0?'acconto':'nessuno';
     set(dbRef,beachData);
