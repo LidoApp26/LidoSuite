@@ -666,7 +666,7 @@
             <div class="login-icon">🏖️</div>
             <h1>Accedi</h1>
             <p>Inserisci le tue credenziali per continuare</p>
-            <input type="text" id="userInput" class="field" placeholder="Nome utente" style="margin-bottom: 12px;" onkeydown="if(event.key==='Enter') checkLogin()">
+            <input type="text" id="userInput" class="field" placeholder="Email (es. admin@lido.it)" type="email" style="margin-bottom: 12px;" onkeydown="if(event.key==='Enter') checkLogin()">
             <input type="password" id="passInput" class="field" placeholder="••••••••" onkeydown="if(event.key==='Enter') checkLogin()" style="margin-bottom: 0;">
             <div id="login-error" style="font-size: 12px; color: var(--expired); margin-top: 10px; min-height: 18px;"></div>
             <button onclick="checkLogin()" style="margin-top: 8px; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--sea), var(--sea-mid)); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 16px rgba(26,107,138,0.35);">Accedi alla Suite</button>
@@ -680,7 +680,7 @@
         <div class="prodotti-container" style="max-width: 580px;">
             <h2>👤 Gestione Utenti</h2>
             <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Solo l'amministratore può creare o eliminare utenti.</p>
-            <input type="text" id="new-username" class="field" placeholder="Nome utente" style="margin-bottom: 12px;">
+            <input type="text" id="new-username" class="field" placeholder="Email (es. mario@lido.it)" type="email" style="margin-bottom: 12px;">
             <input type="password" id="new-password" class="field" placeholder="Password" style="margin-bottom: 12px;">
             <select id="new-role" class="field" style="margin-bottom: 20px; cursor:pointer;">
                 <option value="staff">Staff</option>
@@ -869,6 +869,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
@@ -880,6 +881,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
 
         const dbRef = ref(db, 'spiaggia_dati');
         const prodRef = ref(db, 'prodotti_bar_dinamici');
@@ -891,37 +893,39 @@
         let currentEditingId = null;
         let currentUser = null; // { username, role: 'admin'|'staff' }
 
-        // Admin hardcoded credentials
         // Staff-accessible screens
         const STAFF_SCREENS = ['screen-home','screen-spiaggia','screen-extra','screen-bar'];
 
         const usersRef = ref(db, 'utenti_suite');
 
-        // SHA-256 hash helper
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // First-run setup: write admin to Firebase if no users exist.
-        // The default password is hashed immediately and NEVER stored in plain text.
-        // Change it from the Gestione Utenti panel after first login.
-        const DEFAULT_ADMIN_PASS = 'Lido2026'; // used only once to generate hash, then discarded
-        async function setupInitialAdmin() {
-            if (Object.keys(usersData).length === 0) {
-                const hash = await hashPassword(DEFAULT_ADMIN_PASS);
-                const uid = 'u_admin_' + Date.now();
-                usersData[uid] = { username: 'admin', password: hash, role: 'admin' };
-                await set(usersRef, usersData);
-            }
-        }
-
+        // Listen to users data (roles stored separately from Firebase Auth)
         onValue(usersRef, (snapshot) => {
             usersData = snapshot.val() || {};
             renderUtenti();
-            setupInitialAdmin();
+        });
+
+        // ── FIREBASE AUTH STATE ──
+        onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // User is signed in — load their role from DB
+                const roleSnap = await new Promise(resolve => {
+                    const roleRef = ref(db, 'utenti_suite/' + firebaseUser.uid + '/role');
+                    onValue(roleRef, resolve, { onlyOnce: true });
+                });
+                const role = roleSnap.val() || 'staff';
+                currentUser = { username: firebaseUser.email, role };
+                applyRoleUI();
+                // Only navigate to home if we're on login screen
+                const loginScreen = document.getElementById('screen-login');
+                if (!loginScreen.classList.contains('hidden')) {
+                    navTo('screen-home');
+                }
+            } else {
+                // Not signed in — go to login
+                currentUser = null;
+                document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+                document.getElementById('screen-login').classList.remove('hidden');
+            }
         });
 
         let prezzoLettino = 7.00;
@@ -942,32 +946,36 @@
         };
 
         window.checkLogin = async () => {
-            const username = document.getElementById('userInput').value.trim();
+            const email = document.getElementById('userInput').value.trim();
             const password = document.getElementById('passInput').value;
             const errEl = document.getElementById('login-error');
+            const btn = document.querySelector('#screen-login button');
             errEl.innerText = '';
             document.getElementById('userInput').style.borderColor = '';
             document.getElementById('passInput').style.borderColor = '';
 
-            if (!username || !password) {
+            if (!email || !password) {
                 errEl.innerText = 'Compila tutti i campi.';
                 return;
             }
 
-            const hashed = await hashPassword(password);
+            btn.innerText = 'Accesso in corso…';
+            btn.disabled = true;
 
-            // Check all users from Firebase (admin included)
-            const match = Object.values(usersData).find(u => u.username === username && u.password === hashed);
-            if (match) {
-                currentUser = { username: match.username, role: match.role || 'staff' };
-                applyRoleUI();
-                navTo('screen-home');
-                return;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged handles the rest
+            } catch (err) {
+                let msg = 'Credenziali non valide. Riprova.';
+                if (err.code === 'auth/too-many-requests') msg = 'Troppi tentativi. Riprova più tardi.';
+                if (err.code === 'auth/invalid-email') msg = 'Formato email non valido.';
+                errEl.innerText = msg;
+                document.getElementById('userInput').style.borderColor = 'var(--expired)';
+                document.getElementById('passInput').style.borderColor = 'var(--expired)';
+            } finally {
+                btn.innerText = 'Accedi alla Suite';
+                btn.disabled = false;
             }
-
-            errEl.innerText = 'Credenziali non valide. Riprova.';
-            document.getElementById('userInput').style.borderColor = 'var(--expired)';
-            document.getElementById('passInput').style.borderColor = 'var(--expired)';
         };
 
         function applyRoleUI() {
@@ -986,7 +994,8 @@
             // Update header with logged user + logout
             const header = document.getElementById('home-header');
             if (header) {
-                document.getElementById('logged-user-label').innerText = currentUser.username + (isAdmin ? ' · Admin' : ' · Staff');
+                const displayEmail = currentUser.username.includes('@') ? currentUser.username.split('@')[0] : currentUser.username;
+                document.getElementById('logged-user-label').innerText = displayEmail + (isAdmin ? ' · Admin' : ' · Staff');
             }
         }
 
@@ -1000,33 +1009,46 @@
             document.getElementById(id).classList.remove('hidden');
         };
 
-        window.logout = () => {
-            currentUser = null;
+        window.logout = async () => {
+            await signOut(auth);
             document.getElementById('userInput').value = '';
             document.getElementById('passInput').value = '';
             document.getElementById('login-error').innerText = '';
-            navTo('screen-login');
+            // onAuthStateChanged will redirect to login
         };
 
         // User management (admin only)
         window.addUser = async () => {
-            const username = document.getElementById('new-username').value.trim();
+            const email = document.getElementById('new-username').value.trim();
             const password = document.getElementById('new-password').value.trim();
             const role = document.getElementById('new-role').value;
-            if (!username || !password) return alert('Compila nome utente e password.');
-            const exists = Object.values(usersData).find(u => u.username === username);
-            if (exists) return alert('Utente già esistente.');
-            const hashed = await hashPassword(password);
-            const uid = 'u_' + Date.now();
-            usersData[uid] = { username, password: hashed, role };
-            set(usersRef, usersData);
-            document.getElementById('new-username').value = '';
-            document.getElementById('new-password').value = '';
-            document.getElementById('new-role').value = 'staff';
+            if (!email || !password) return alert('Compila email e password.');
+            if (password.length < 6) return alert('La password deve essere di almeno 6 caratteri.');
+            const btn = document.querySelector('#screen-admin-utenti .btn-sea');
+            btn.innerText = 'Creazione…'; btn.disabled = true;
+            try {
+                // Create user in Firebase Auth
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = cred.user.uid;
+                // Store role in Realtime DB (NO password stored here)
+                await set(ref(db, 'utenti_suite/' + uid), { email, role });
+                document.getElementById('new-username').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('new-role').value = 'staff';
+                alert('✓ Utente creato!');
+            } catch (err) {
+                let msg = 'Errore nella creazione.';
+                if (err.code === 'auth/email-already-in-use') msg = 'Email già in uso.';
+                if (err.code === 'auth/invalid-email') msg = 'Formato email non valido.';
+                if (err.code === 'auth/weak-password') msg = 'Password troppo debole (min. 6 caratteri).';
+                alert(msg);
+            } finally {
+                btn.innerText = '➕ Aggiungi Utente'; btn.disabled = false;
+            }
         };
 
         window.deleteUser = (uid) => {
-            if (confirm('Eliminare questo utente?')) {
+            if (confirm('Eliminare questo utente? (Verrà rimosso solo dal database, non da Firebase Auth)')) {
                 delete usersData[uid];
                 set(usersRef, usersData);
             }
@@ -1046,13 +1068,14 @@
                 const roleColor = isAdminRole ? '#c0392b' : 'var(--sea)';
                 const roleLabel = isAdminRole ? 'Admin' : 'Staff';
                 const toggleLabel = isAdminRole ? '→ Staff' : '→ Admin';
+                const displayName = u.email || u.username || uid;
                 return `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5; gap:8px;">
-                    <span style="font-size:14px; display:flex; align-items:center; gap:8px; flex:1;">
+                    <span style="font-size:13px; display:flex; align-items:center; gap:8px; flex:1; overflow:hidden;">
                         <span style="font-size:18px;">👤</span>
-                        <b>${u.username}</b>
-                        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:${roleColor}20; color:${roleColor}; padding:2px 8px; border-radius:20px;">${roleLabel}</span>
+                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><b>${displayName}</b></span>
+                        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:${roleColor}20; color:${roleColor}; padding:2px 8px; border-radius:20px; flex-shrink:0;">${roleLabel}</span>
                     </span>
-                    <div style="display:flex; gap:6px;">
+                    <div style="display:flex; gap:6px; flex-shrink:0;">
                         <button onclick="toggleUserRole('${uid}')" style="background:none; color:var(--sea); border:1px solid var(--sea); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif; white-space:nowrap;">${toggleLabel}</button>
                         <button onclick="deleteUser('${uid}')" style="background:none; color:var(--expired); border:1px solid var(--expired); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif;">Elimina</button>
                     </div>
@@ -1064,7 +1087,7 @@
             const u = usersData[uid];
             const currentRole = u.role || 'staff';
             u.role = currentRole === 'admin' ? 'staff' : 'admin';
-            set(usersRef, usersData);
+            set(ref(db, 'utenti_suite/' + uid + '/role'), u.role);
         };
 
         onValue(dbRef, (snapshot) => { beachData = snapshot.val() || {}; renderSpiaggia(); });
