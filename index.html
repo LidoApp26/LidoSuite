@@ -4,824 +4,633 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lido Suite 2026 🏖️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
-            --sand: #f5ede0;
-            --sand-dark: #e8d9c4;
-            --sand-deep: #c8b49a;
-            --sea: #1a6b8a;
-            --sea-mid: #2589ac;
-            --sea-light: #4aa8c8;
-            --sea-pale: #e8f4f8;
-            --foam: #f0f8fb;
-            --free: #2a9d5c;
-            --booked: #e07b30;
-            --seasonal: #1a6b8a;
-            --wood: #8b5e3c;
-            --wood-light: #c49a72;
-            --acconto: #e8a020;
-            --saldo: #2a9d5c;
-            --expired: #c0392b;
-            --dark: #1a2533;
-            --text: #2c3a47;
-            --text-muted: #7a8a96;
-            --white: #ffffff;
-            --bar: #e07b30;
-            --extra: #7b4ea6;
-            --surface: rgba(255,255,255,0.85);
-            --glass: rgba(255,255,255,0.6);
-            --shadow-sm: 0 2px 8px rgba(26,38,51,0.08);
-            --shadow-md: 0 8px 24px rgba(26,38,51,0.12);
-            --shadow-lg: 0 20px 48px rgba(26,38,51,0.16);
-            --radius: 16px;
-            --radius-sm: 10px;
+            --eb-blue: #0d5c8c;
+            --eb-blue-mid: #1a7db8;
+            --eb-blue-light: #3aa5d8;
+            --eb-blue-pale: #e8f4fb;
+            --eb-accent: #00b4d8;
+            --eb-white: #ffffff;
+            --eb-bg: #f0f7fc;
+            --eb-text: #1a2d3d;
+            --eb-muted: #6b8499;
+            --eb-border: #d6e8f5;
+            --free: #22c55e;
+            --booked: #f97316;
+            --seasonal: #0d5c8c;
+            --acconto: #f59e0b;
+            --saldo: #22c55e;
+            --expired: #ef4444;
+            --bar: #f97316;
+            --extra: #8b5cf6;
+            --wood: #92400e;
+            --wood-light: #d97706;
+            --radius: 14px;
+            --radius-sm: 9px;
+            --shadow-sm: 0 1px 4px rgba(13,92,140,0.08), 0 2px 8px rgba(13,92,140,0.06);
+            --shadow-md: 0 4px 16px rgba(13,92,140,0.12), 0 1px 4px rgba(13,92,140,0.08);
+            --shadow-lg: 0 8px 32px rgba(13,92,140,0.16), 0 2px 8px rgba(13,92,140,0.10);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--sand);
+            font-family: 'Poppins', sans-serif;
+            background: var(--eb-bg);
             min-height: 100vh;
-            color: var(--text);
+            color: var(--eb-text);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 24px 20px;
-            position: relative;
+            padding: 0 0 60px;
             overflow-x: hidden;
         }
 
-        /* Subtle wave background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 320px;
-            background: linear-gradient(160deg, #1a6b8a 0%, #2589ac 40%, #4aa8c8 70%, #c8e8f0 100%);
-            z-index: -2;
-        }
-        body::after {
-            content: '';
-            position: fixed;
-            top: 220px; left: -5%; right: -5%;
-            height: 120px;
-            background: var(--sand);
-            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-            z-index: -1;
-        }
-
-        .screen { width: 100%; display: flex; flex-direction: column; align-items: center; animation: fadeUp 0.4s ease; }
-        .hidden { display: none !important; }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ── APP HEADER ── */
-        .app-header {
+        /* ── TOPBAR ── */
+        .topbar {
             width: 100%;
-            max-width: 1150px;
+            background: linear-gradient(135deg, var(--eb-blue) 0%, var(--eb-blue-mid) 60%, var(--eb-blue-light) 100%);
+            padding: 0 32px;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 0 28px 0;
+            box-shadow: 0 2px 16px rgba(13,92,140,0.25);
+            position: sticky;
+            top: 0;
+            z-index: 200;
         }
-        .app-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 26px;
-            font-weight: 700;
-            color: var(--white);
-            letter-spacing: -0.5px;
-        }
-        .app-logo span { opacity: 0.7; font-weight: 400; font-size: 14px; margin-left: 8px; }
-        .version-tag { font-size: 10px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 20px; }
+        .topbar-logo { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -0.3px; display: flex; align-items: center; gap: 10px; }
+        .logo-icon { width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .logo-sub { font-size: 11px; font-weight: 400; opacity: 0.65; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .topbar-user { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 500; }
+        .topbar-badge { font-size: 10px; background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); padding: 3px 10px; border-radius: 20px; }
+        .topbar-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.28); border-radius: 8px; padding: 6px 16px; font-size: 12px; font-family: 'Poppins', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .topbar-btn:hover { background: rgba(255,255,255,0.28); }
+
+        /* ── PAGE WRAP ── */
+        .page-wrap { width: 100%; max-width: 1200px; padding: 28px 24px 0; }
+        .screen { width: 100%; display: flex; flex-direction: column; align-items: center; animation: fadeUp 0.3s ease; }
+        .hidden { display: none !important; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
         /* ── LOGIN ── */
-        .login-box {
-            background: var(--surface);
-            backdrop-filter: blur(20px);
-            padding: 48px 40px;
-            border-radius: 24px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
-            margin-top: 8vh;
-            width: 100%;
-            max-width: 380px;
-            border: 1px solid rgba(255,255,255,0.8);
-        }
-        .login-icon { font-size: 48px; margin-bottom: 16px; }
-        .login-box h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 6px;
-        }
-        .login-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
-        .login-box input {
-            width: 100%;
-            padding: 16px 20px;
-            border: 2px solid var(--sand-dark);
-            border-radius: var(--radius-sm);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
-            text-align: center;
-            background: var(--foam);
-            color: var(--text);
-            transition: border-color 0.2s;
-            letter-spacing: 3px;
-        }
-        .login-box input:focus { outline: none; border-color: var(--sea-mid); background: white; }
-        .login-box input::placeholder { letter-spacing: 0; }
-        .login-box button {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--sea), var(--sea-mid));
-            color: white;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 16px;
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 4px 16px rgba(26,107,138,0.35);
-        }
-        .login-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,107,138,0.45); }
+        .login-wrap { min-height: 100vh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(160deg, var(--eb-blue) 0%, var(--eb-blue-mid) 45%, var(--eb-blue-light) 100%); padding: 40px 20px; }
+        .login-brand { display: flex; flex-direction: column; align-items: center; margin-bottom: 32px; }
+        .login-brand-icon { width: 70px; height: 70px; background: rgba(255,255,255,0.18); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 34px; margin-bottom: 14px; border: 1.5px solid rgba(255,255,255,0.3); }
+        .login-brand h1 { font-size: 28px; font-weight: 700; color: white; letter-spacing: -0.5px; }
+        .login-brand p { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+        .login-box { background: #fff; border-radius: 18px; padding: 40px 36px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+        .login-box h2 { font-size: 20px; font-weight: 700; color: var(--eb-text); margin-bottom: 4px; }
+        .login-subtitle { font-size: 13px; color: var(--eb-muted); margin-bottom: 26px; }
+        .form-label { font-size: 11px; font-weight: 600; color: var(--eb-muted); text-transform: uppercase; letter-spacing: 0.8px; display: block; margin-bottom: 5px; }
+        .login-box input { width: 100%; padding: 12px 16px; border: 1.5px solid var(--eb-border); border-radius: var(--radius-sm); font-family: 'Poppins', sans-serif; font-size: 14px; background: var(--eb-bg); color: var(--eb-text); transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 14px; }
+        .login-box input:focus { outline: none; border-color: var(--eb-blue-mid); box-shadow: 0 0 0 3px rgba(26,125,184,0.12); background: white; }
+        .login-box input::placeholder { color: #b0c4d4; font-size: 13px; }
+        .btn-login { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--eb-blue), var(--eb-blue-mid)); color: white; border: none; border-radius: var(--radius-sm); font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 16px rgba(13,92,140,0.35); }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(13,92,140,0.45); }
+        .login-version { font-size: 11px; color: var(--eb-muted); text-align: center; margin-top: 22px; }
 
-        /* ── HOME ── */
-        .home-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px;
-            color: var(--white);
-            margin-bottom: 32px;
-            text-align: center;
-        }
-        .home-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            width: 100%;
-            max-width: 980px;
-        }
-        .home-card {
-            background: var(--surface);
-            backdrop-filter: blur(16px);
-            border-radius: var(--radius);
-            padding: 32px 16px 28px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255,255,255,0.8);
-            position: relative;
-            overflow: hidden;
-        }
-        .home-card::before {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 4px;
-            border-radius: 0 0 var(--radius) var(--radius);
-        }
-        .home-card.spiaggia::before { background: linear-gradient(90deg, var(--sea), var(--sea-light)); }
-        .home-card.bar::before { background: linear-gradient(90deg, var(--bar), #f0a460); }
-        .home-card.extra::before { background: linear-gradient(90deg, var(--extra), #a57bc8); }
-        .home-card.archive::before { background: linear-gradient(90deg, var(--dark), #4a6070); }
-        .home-card.settings::before { background: linear-gradient(90deg, var(--wood), var(--wood-light)); }
-        .home-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-lg); }
-        .home-icon { font-size: 38px; margin-bottom: 14px; }
-        .home-card h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--dark); font-weight: 600; margin-bottom: 4px; }
-        .home-card small { font-size: 11px; color: var(--text-muted); }
+        /* ── SECTION HEADER ── */
+        .section-header { width: 100%; margin-bottom: 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .section-header-left h2 { font-size: 22px; font-weight: 700; color: var(--eb-text); letter-spacing: -0.3px; }
+        .section-header-left p { font-size: 13px; color: var(--eb-muted); margin-top: 2px; }
 
         /* ── NAV ── */
-        .nav-bar {
-            width: 100%;
-            max-width: 1150px;
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 20px;
-        }
-        .btn-back {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            color: var(--white);
-            padding: 10px 20px;
-            border: 1px solid rgba(255,255,255,0.4);
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: background 0.2s, transform 0.15s;
-        }
-        .btn-back:hover { background: rgba(255,255,255,0.25); transform: translateX(-3px); }
+        .nav-bar { width: 100%; display: flex; justify-content: flex-start; margin-bottom: 20px; }
+        .btn-back { display: flex; align-items: center; gap: 7px; background: #fff; color: var(--eb-blue); padding: 9px 18px; border: 1.5px solid var(--eb-border); border-radius: 30px; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; transition: background 0.18s, border-color 0.18s, transform 0.15s; box-shadow: var(--shadow-sm); }
+        .btn-back:hover { background: var(--eb-blue-pale); border-color: var(--eb-blue-light); transform: translateX(-2px); }
 
-        /* ── DASHBOARD ── */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 12px;
-            width: 100%;
-            max-width: 1150px;
-            margin-bottom: 20px;
-        }
-        .stat-card {
-            background: var(--surface);
-            backdrop-filter: blur(12px);
-            border-radius: var(--radius-sm);
-            padding: 18px 16px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: var(--shadow-sm);
-        }
-        .stat-card .value {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--sea);
-            display: block;
-        }
-        .stat-card label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; }
+        /* ── HOME GRID ── */
+        .home-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; width: 100%; }
+        .home-card { background: #fff; border-radius: var(--radius); padding: 28px 14px 22px; text-align: center; cursor: pointer; transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s; box-shadow: var(--shadow-sm); border: 1.5px solid var(--eb-border); position: relative; overflow: hidden; }
+        .home-card-accent { position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+        .home-card.spiaggia .home-card-accent { background: linear-gradient(90deg, var(--eb-blue), var(--eb-accent)); }
+        .home-card.bar .home-card-accent { background: linear-gradient(90deg, var(--bar), #fb923c); }
+        .home-card.extra .home-card-accent { background: linear-gradient(90deg, var(--extra), #a78bfa); }
+        .home-card.archive .home-card-accent { background: linear-gradient(90deg, #1a2d3d, #4a6070); }
+        .home-card.settings .home-card-accent { background: linear-gradient(90deg, var(--wood), var(--wood-light)); }
+        .home-card.flussi .home-card-accent { background: linear-gradient(90deg, var(--free), #4ade80); }
+        .home-card.admin .home-card-accent { background: linear-gradient(90deg, var(--expired), #f87171); }
+        .home-card.subaffitto .home-card-accent { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+        .home-card.magazzino .home-card-accent { background: linear-gradient(90deg, #d97706, #fbbf24); }
+        .home-card:hover { transform: translateY(-6px) scale(1.02); box-shadow: var(--shadow-lg); border-color: var(--eb-blue-light); }
+        .home-icon { font-size: 34px; margin-bottom: 10px; display: block; }
+        .home-card h3 { font-size: 14px; font-weight: 700; color: var(--eb-text); margin-bottom: 3px; }
+        .home-card small { font-size: 11px; color: var(--eb-muted); }
 
-        /* ── BEACH LAYOUT ── */
-        .beach-wrapper {
-            width: 100%;
-            max-width: 1150px;
-            background: linear-gradient(180deg, #c8e8f0 0%, #e8d9c4 60%, #f5ede0 100%);
-            border-radius: 20px;
-            padding: 40px 24px;
-            box-shadow: var(--shadow-md);
-            border: 2px solid rgba(255,255,255,0.6);
-            position: relative;
-            overflow: hidden;
-        }
-        .beach-wrapper::before {
-            content: '🌊';
-            position: absolute;
-            top: 8px; left: 16px;
-            font-size: 22px;
-            opacity: 0.4;
-        }
-        .beach-wrapper::after { content: none; }
-        .beach-divider {
-            position: absolute;
-            left: 50%; top: 20px; bottom: 20px;
-            transform: translateX(-50%);
-            width: 28px;
-            background: repeating-linear-gradient(
-                to bottom,
-                var(--wood) 0px, var(--wood) 14px,
-                var(--wood-light) 14px, var(--wood-light) 16px
-            );
-            border-radius: 4px;
-            opacity: 0.6;
-            z-index: 1;
-        }
+        /* ── TODAY BANNER (arrivi/partenze) ── */
+        .today-banner { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px; }
+        .today-card { background: #fff; border-radius: var(--radius); padding: 18px 20px; border: 1.5px solid var(--eb-border); box-shadow: var(--shadow-sm); }
+        .today-card h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .today-card h4.arrivals { color: var(--free); }
+        .today-card h4.departures { color: var(--bar); }
+        .today-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid var(--eb-bg); font-size: 13px; }
+        .today-item:last-child { border-bottom: none; }
+        .today-item .spot-num { font-weight: 700; color: var(--eb-blue); min-width: 36px; }
+        .today-item .client-name { flex: 1; }
+        .today-item .pay-pill { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+        .today-empty { font-size: 12px; color: var(--eb-muted); font-style: italic; padding: 6px 0; }
+
+        /* ── STATS DASHBOARD ── */
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; width: 100%; margin-bottom: 22px; }
+        .stat-card { background: #fff; border-radius: var(--radius-sm); padding: 18px 16px; text-align: center; border: 1.5px solid var(--eb-border); box-shadow: var(--shadow-sm); }
+        .stat-card .value { font-size: 24px; font-weight: 700; color: var(--eb-blue); display: block; letter-spacing: -0.5px; }
+        .stat-card label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--eb-muted); font-weight: 600; margin-top: 3px; display: block; }
+
+        /* ── BEACH ── */
+        .beach-wrapper { width: 100%; background: linear-gradient(180deg, #c8e8f8 0%, #e8f4fb 40%, var(--eb-bg) 100%); border-radius: var(--radius); padding: 28px 20px; box-shadow: var(--shadow-md); border: 1.5px solid var(--eb-border); position: relative; overflow: hidden; }
+        .beach-wrapper::before { content: '🌊'; position: absolute; top: 10px; left: 18px; font-size: 20px; opacity: 0.3; }
+        .beach-divider { position: absolute; left: 50%; top: 16px; bottom: 16px; transform: translateX(-50%); width: 2px; background: var(--eb-border); border-radius: 2px; opacity: 0.7; z-index: 1; }
         .beach-sectors { display: flex; justify-content: center; gap: 48px; }
-        .sector-label {
-            text-align: center;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--sea);
-            text-transform: uppercase;
-            margin-bottom: 16px;
-            opacity: 0.7;
-        }
-        .sector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; z-index: 1; }
+        .sector-label { text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--eb-blue); text-transform: uppercase; margin-bottom: 12px; opacity: 0.8; }
+        .sector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; z-index: 1; }
 
-        .spot {
-            background: rgba(255,255,255,0.9);
-            border-radius: 10px;
-            padding: 10px 4px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 11px;
-            min-width: 62px;
-            position: relative;
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            border: 2px solid transparent;
-        }
-        .spot:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.14); }
-        .spot b { display: block; font-size: 13px; color: var(--dark); }
-        .spot .owner { font-size: 9px; color: var(--text-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 58px; margin: 0 auto; margin-top: 2px; }
-        
+        /* ── BEACH LEGEND ── */
+        .beach-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 16px; background: rgba(255,255,255,0.7); border-radius: var(--radius-sm); border: 1px solid var(--eb-border); }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--eb-muted); }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+        .spot { background: #fff; border-radius: 8px; padding: 8px 3px; text-align: center; cursor: pointer; font-size: 10px; min-width: 58px; position: relative; transition: transform 0.15s, box-shadow 0.15s; box-shadow: var(--shadow-sm); border: 1.5px solid var(--eb-border); }
+        .spot:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .spot b { display: block; font-size: 12px; color: var(--eb-text); font-weight: 700; }
+        .spot .owner { font-size: 9px; color: var(--eb-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 54px; margin: 0 auto; margin-top: 2px; }
         .spot.booked { border-color: var(--booked); background: #fff8f2; }
-        .spot.seasonal { border-color: var(--sea); background: #f0f8fb; }
-        .spot.free { border-color: #d0e8d0; }
-
-        .pay-indicator {
-            position: absolute;
-            top: 4px; right: 4px;
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            display: none;
-            border: 1.5px solid white;
-        }
+        .spot.seasonal { border-color: var(--eb-blue); background: var(--eb-blue-pale); }
+        .spot.free { border-color: var(--eb-border); }
+        .spot.sublet { border-color: #0891b2; background: #ecfeff; }
+        .pay-indicator { position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; display: none; border: 1.5px solid white; box-shadow: 0 0 0 1px rgba(0,0,0,0.08); }
         .spot.status-acconto .pay-indicator { display: block; background: var(--acconto); }
         .spot.status-saldo .pay-indicator { display: block; background: var(--saldo); }
+        .bar-badge { position: absolute; top: -7px; left: -3px; background: var(--bar); color: white; font-size: 7px; padding: 2px 4px; border-radius: 4px; font-weight: 700; z-index: 10; box-shadow: 0 2px 4px rgba(249,115,22,0.4); }
+        /* weather badge */
+        .weather-badge { position: absolute; bottom: -6px; right: -4px; font-size: 9px; background: white; border-radius: 4px; padding: 1px 3px; box-shadow: var(--shadow-sm); border: 1px solid var(--eb-border); }
 
-        .bar-badge {
-            position: absolute;
-            top: -8px; left: -4px;
-            background: var(--bar);
-            color: white;
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 4px;
-            font-weight: 700;
-            z-index: 10;
-            box-shadow: 0 2px 6px rgba(224,123,48,0.4);
-        }
-
-        /* ── POS / BAR ── */
-        .pos-container {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            align-items: flex-start;
-        }
+        /* ── POS ── */
+        .pos-container { display: flex; gap: 20px; width: 100%; align-items: flex-start; }
         .pos-grid-wrap { flex: 1; }
-        .pos-section-title {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 10px;
-            padding-left: 2px;
-        }
-        .pos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 10px;
-        }
-        .pos-btn {
-            background: white;
-            border-radius: var(--radius-sm);
-            padding: 14px 8px;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            border-bottom: 4px solid #ddd;
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 600;
-            font-size: 12px;
-            color: var(--text);
-            transition: transform 0.15s, box-shadow 0.15s;
-            box-shadow: var(--shadow-sm);
-            line-height: 1.4;
-        }
+        .pos-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--eb-muted); font-weight: 700; margin-bottom: 10px; }
+        .pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+        .pos-btn { background: #fff; border-radius: var(--radius-sm); padding: 14px 8px; text-align: center; cursor: pointer; border: 1.5px solid var(--eb-border); border-bottom-width: 4px; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 12px; color: var(--eb-text); transition: transform 0.15s, box-shadow 0.15s; box-shadow: var(--shadow-sm); line-height: 1.4; }
         .pos-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
         .pos-btn:active { transform: scale(0.96); }
-
-        .cart-panel {
-            width: 300px;
-            background: white;
-            padding: 24px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            position: sticky;
-            top: 20px;
-            border: 1px solid var(--sand-dark);
-        }
-        .cart-panel h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 18px;
-            color: var(--dark);
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--sand);
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f5f5f5;
-        }
-        .cart-item span { color: var(--text); }
-        .remove-btn { color: var(--expired); cursor: pointer; font-size: 16px; padding: 0 4px; transition: transform 0.15s; }
+        .cart-panel { width: 300px; background: #fff; padding: 22px; border-radius: var(--radius); box-shadow: var(--shadow-lg); position: sticky; top: 84px; border: 1.5px solid var(--eb-border); }
+        .cart-panel h3 { font-size: 16px; font-weight: 700; color: var(--eb-text); margin-bottom: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--eb-bg); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--eb-bg); }
+        .remove-btn { color: var(--expired); cursor: pointer; font-size: 14px; padding: 0 4px; transition: transform 0.15s; }
         .remove-btn:hover { transform: scale(1.2); }
-        .cart-total-row { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--bar); margin: 16px 0; }
-        .cart-total-row span { font-size: 14px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+        .cart-total-row { font-size: 26px; font-weight: 700; color: var(--bar); margin: 14px 0; }
+        .cart-total-row span { font-size: 13px; color: var(--eb-muted); font-weight: 400; }
 
-        .search-results {
-            position: absolute;
-            background: white;
-            border: 1px solid var(--sand-dark);
-            border-top: none;
-            width: 100%;
-            z-index: 100;
-            max-height: 160px;
-            overflow-y: auto;
-            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
-            box-shadow: var(--shadow-md);
-        }
-        .search-item { padding: 12px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f5f5f5; transition: background 0.1s; }
-        .search-item:hover { background: var(--sea-pale); }
+        /* QR ORDERS PANEL (bar) */
+        .qr-orders-panel { background: var(--eb-bg); border-radius: var(--radius-sm); border: 1.5px solid var(--eb-border); padding: 12px; margin-bottom: 14px; max-height: 180px; overflow-y: auto; }
+        .qr-order-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; background: white; border-radius: 6px; margin-bottom: 6px; font-size: 12px; box-shadow: var(--shadow-sm); border-left: 3px solid var(--eb-blue); }
+        .qr-order-item .qr-badge { background: var(--eb-blue-pale); color: var(--eb-blue); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+        .qr-order-done { border-left-color: var(--free) !important; opacity: 0.55; }
 
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s;
-            margin-top: 10px;
-        }
+        .search-results { position: absolute; background: #fff; border: 1.5px solid var(--eb-border); border-top: none; width: 100%; z-index: 100; max-height: 160px; overflow-y: auto; border-radius: 0 0 var(--radius-sm) var(--radius-sm); box-shadow: var(--shadow-md); }
+        .search-item { padding: 10px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid var(--eb-bg); transition: background 0.1s; }
+        .search-item:hover { background: var(--eb-blue-pale); }
+
+        /* ── BUTTONS ── */
+        .btn-primary { width: 100%; padding: 13px; border: none; border-radius: var(--radius-sm); font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; margin-top: 10px; }
         .btn-primary:hover { transform: translateY(-2px); }
-        .btn-charge { background: linear-gradient(135deg, var(--bar), #f0a460); color: white; box-shadow: 0 4px 14px rgba(224,123,48,0.35); }
-        .btn-pay { background: linear-gradient(135deg, var(--free), #4ac880); color: white; box-shadow: 0 4px 14px rgba(42,157,92,0.35); }
-        .btn-sea { background: linear-gradient(135deg, var(--sea), var(--sea-mid)); color: white; box-shadow: 0 4px 14px rgba(26,107,138,0.35); }
-        .btn-extra { background: linear-gradient(135deg, var(--extra), #a57bc8); color: white; box-shadow: 0 4px 14px rgba(123,78,166,0.35); }
+        .btn-charge { background: linear-gradient(135deg, var(--bar), #fb923c); color: white; box-shadow: 0 4px 14px rgba(249,115,22,0.28); }
+        .btn-pay { background: linear-gradient(135deg, var(--free), #4ade80); color: white; box-shadow: 0 4px 14px rgba(34,197,94,0.28); }
+        .btn-sea { background: linear-gradient(135deg, var(--eb-blue), var(--eb-blue-mid)); color: white; box-shadow: 0 4px 14px rgba(13,92,140,0.28); }
+        .btn-extra { background: linear-gradient(135deg, var(--extra), #a78bfa); color: white; box-shadow: 0 4px 14px rgba(139,92,246,0.28); }
+        .btn-sm { display: inline-flex; align-items: center; gap: 5px; padding: 7px 14px; border: none; border-radius: 20px; font-family: 'Poppins', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.15s; }
+        .btn-sm:hover { opacity: 0.85; transform: translateY(-1px); }
 
-        input[type="text"], input[type="number"], input[type="password"] {
-            font-family: 'DM Sans', sans-serif;
-        }
-        .field {
-            width: 100%;
-            padding: 12px 14px;
-            border: 2px solid var(--sand-dark);
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            background: var(--foam);
-            color: var(--text);
-            transition: border-color 0.2s;
-        }
-        .field:focus { outline: none; border-color: var(--sea-mid); background: white; }
+        /* ── FIELDS ── */
+        .field { width: 100%; padding: 11px 14px; border: 1.5px solid var(--eb-border); border-radius: var(--radius-sm); font-size: 13px; font-family: 'Poppins', sans-serif; background: var(--eb-bg); color: var(--eb-text); transition: border-color 0.2s, box-shadow 0.2s; }
+        .field:focus { outline: none; border-color: var(--eb-blue-mid); box-shadow: 0 0 0 3px rgba(26,125,184,0.10); background: white; }
+        select.field { cursor: pointer; }
 
         /* ── EXTRA ── */
-        .extra-container {
-            background: white;
-            padding: 40px 36px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 480px;
-            text-align: center;
-            border: 1px solid var(--sand-dark);
-        }
-        .extra-container h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark); margin-bottom: 8px; }
-        .extra-container p { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
-        .price-display {
-            font-family: 'Playfair Display', serif;
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--extra);
-            margin: 24px 0;
-            line-height: 1;
-        }
-        .price-display small { font-size: 18px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; }
-        .qty-wrap { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 24px; }
-        .qty-btn { background: var(--sand); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; font-weight: bold; color: var(--dark); transition: background 0.2s; }
-        .qty-btn:hover { background: var(--sand-dark); }
-        .qty-input { width: 70px; padding: 10px; font-size: 20px; text-align: center; border: 2px solid var(--sand-dark); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-weight: 700; }
-        .divider { height: 1px; background: var(--sand-dark); margin: 28px 0; }
+        .extra-container { background: #fff; padding: 32px; border-radius: var(--radius); box-shadow: var(--shadow-md); width: 100%; max-width: 480px; text-align: center; border: 1.5px solid var(--eb-border); }
+        .extra-container h2 { font-size: 21px; font-weight: 700; color: var(--eb-text); margin-bottom: 4px; }
+        .extra-container p { color: var(--eb-muted); font-size: 13px; margin-bottom: 20px; }
+        .price-display { font-size: 50px; font-weight: 700; color: var(--extra); margin: 18px 0; line-height: 1; letter-spacing: -1px; }
+        .price-display small { font-size: 16px; color: var(--eb-muted); font-weight: 400; }
+        .qty-wrap { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 18px; }
+        .qty-btn { background: var(--eb-bg); border: 1.5px solid var(--eb-border); border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; font-weight: 700; color: var(--eb-text); transition: background 0.2s; }
+        .qty-btn:hover { background: var(--eb-blue-pale); border-color: var(--eb-blue-light); }
+        .qty-input { width: 70px; padding: 10px; font-size: 20px; text-align: center; border: 1.5px solid var(--eb-border); border-radius: var(--radius-sm); font-family: 'Poppins', sans-serif; font-weight: 700; }
+        .divider { height: 1px; background: var(--eb-border); margin: 22px 0; }
+
+        /* ── MAGAZZINO ── */
+        .warehouse-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; width: 100%; margin-bottom: 22px; }
+        .warehouse-item { background: #fff; border-radius: var(--radius-sm); padding: 18px 16px; border: 1.5px solid var(--eb-border); box-shadow: var(--shadow-sm); text-align: center; }
+        .warehouse-item .wh-icon { font-size: 28px; margin-bottom: 8px; }
+        .warehouse-item .wh-name { font-size: 13px; font-weight: 700; color: var(--eb-text); margin-bottom: 4px; }
+        .warehouse-item .wh-avail { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .warehouse-item .wh-total { font-size: 11px; color: var(--eb-muted); }
+        .wh-bar { height: 6px; background: var(--eb-border); border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .wh-bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--free), #4ade80); transition: width 0.4s; }
+        .wh-bar-fill.warn { background: linear-gradient(90deg, var(--acconto), #fcd34d); }
+        .wh-bar-fill.danger { background: linear-gradient(90deg, var(--expired), #f87171); }
+
+        /* ── SUBAFFITTO ── */
+        .sublet-container { width: 100%; }
+        .sublet-card { background: #fff; border-radius: var(--radius); padding: 24px; border: 1.5px solid var(--eb-border); box-shadow: var(--shadow-sm); margin-bottom: 14px; }
+        .sublet-card .sublet-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+        .sublet-card .sublet-name { font-size: 15px; font-weight: 700; color: var(--eb-text); }
+        .sublet-card .sublet-spot { font-size: 12px; color: var(--eb-muted); margin-top: 2px; }
+        .sublet-dates { display: flex; flex-wrap: wrap; gap: 8px; }
+        .sublet-date-pill { font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: all 0.15s; border: 1.5px solid var(--eb-border); background: var(--eb-bg); color: var(--eb-muted); }
+        .sublet-date-pill.available { border-color: #0891b2; background: #ecfeff; color: #0891b2; }
+        .sublet-date-pill:hover { transform: translateY(-1px); }
 
         /* ── ARCHIVIO ── */
-        .db-container {
-            width: 100%;
-            max-width: 1200px;
-            background: white;
-            border-radius: var(--radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--sand-dark);
-        }
+        .db-container { width: 100%; background: #fff; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); border: 1.5px solid var(--eb-border); }
+        .db-toolbar { padding: 16px 20px; border-bottom: 1px solid var(--eb-border); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .db-search { flex: 1; min-width: 180px; }
         table { width: 100%; border-collapse: collapse; }
-        th {
-            background: var(--dark);
-            color: rgba(255,255,255,0.85);
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-        td { padding: 13px 16px; font-size: 13px; border-bottom: 1px solid var(--sand); }
-        tr:hover td { background: var(--foam); }
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        th { background: var(--eb-blue); color: rgba(255,255,255,0.9); padding: 12px 16px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; font-weight: 600; white-space: nowrap; }
+        td { padding: 11px 16px; font-size: 13px; border-bottom: 1px solid var(--eb-bg); }
+        tr:hover td { background: var(--eb-blue-pale); }
+        .badge { padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .badge-acconto { background: #fef3cd; color: #a07000; }
-        .badge-saldo { background: #d4f0e0; color: #1a6b3a; }
-        .badge-none { background: #f0f0f0; color: #888; }
+        .badge-saldo { background: #dcfce7; color: #15803d; }
+        .badge-none { background: var(--eb-bg); color: var(--eb-muted); }
+
+        /* Payment progress bar */
+        .pay-progress { width: 100%; height: 5px; background: var(--eb-border); border-radius: 10px; overflow: hidden; margin-top: 4px; }
+        .pay-progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--eb-blue-light), var(--free)); transition: width 0.4s; }
 
         /* ── MODALS ── */
-        #beer-menu, #payment-modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 36px;
-            border-radius: 24px;
-            box-shadow: var(--shadow-lg), 0 0 80px rgba(0,0,0,0.3);
-            z-index: 1000;
-            text-align: center;
-            max-width: 92%;
-            width: 420px;
-            border: 1px solid var(--sand-dark);
-        }
-        #beer-menu h3, #payment-modal h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 20px;
-            color: var(--dark);
-            margin-bottom: 20px;
-        }
-        #beer-menu button {
-            display: block;
-            width: 100%;
-            padding: 14px;
-            margin: 8px 0;
-            border-radius: var(--radius-sm);
-            border: 2px solid var(--sand-dark);
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            background: white;
-            color: var(--dark);
-            transition: all 0.15s;
-        }
-        #beer-menu button:hover { background: var(--sea-pale); border-color: var(--sea); color: var(--sea); }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 20px; box-shadow: var(--shadow-lg), 0 0 80px rgba(0,0,0,0.2); z-index: 1000; max-width: 92%; border: 1.5px solid var(--eb-border); }
+        .modal.modal-sm { width: 420px; padding: 32px; text-align: center; }
+        .modal.modal-lg { width: 560px; padding: 32px; }
+        .modal h3 { font-size: 18px; font-weight: 700; color: var(--eb-text); margin-bottom: 18px; }
+        #beer-menu button { display: block; width: 100%; padding: 12px; margin: 8px 0; border-radius: var(--radius-sm); border: 1.5px solid var(--eb-border); font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; background: #fff; color: var(--eb-text); transition: all 0.15s; }
+        #beer-menu button:hover { background: var(--eb-blue-pale); border-color: var(--eb-blue-light); color: var(--eb-blue); }
+        .overlay-bg { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13,44,70,0.45); backdrop-filter: blur(4px); z-index: 999; }
+        .pm-summary { background: var(--eb-bg); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px; text-align: left; border: 1px solid var(--eb-border); }
+        .pm-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+        .pm-row.total { border-top: 1px solid var(--eb-border); margin-top: 6px; padding-top: 10px; font-weight: 700; }
+        #pm-history { max-height: 100px; overflow-y: auto; font-size: 12px; text-align: left; margin-bottom: 14px; border: 1px solid var(--eb-border); border-radius: var(--radius-sm); padding: 10px 12px; background: var(--eb-bg); }
 
-        .overlay-bg {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(26,37,51,0.55);
-            backdrop-filter: blur(4px);
-            z-index: 999;
-        }
+        /* QR Modal */
+        #qr-modal { text-align: center; }
+        #qr-modal .qr-wrap { display: flex; justify-content: center; margin: 16px 0; }
+        #qr-modal .qr-hint { font-size: 12px; color: var(--eb-muted); margin-top: 8px; }
 
-        /* Payment modal internals */
-        .pm-summary {
-            background: var(--foam);
-            border-radius: var(--radius-sm);
-            padding: 16px;
-            margin-bottom: 16px;
-            text-align: left;
-            border: 1px solid var(--sand-dark);
-        }
-        .pm-row { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
-        .pm-row b { font-weight: 600; }
-        .pm-row.total { border-top: 1px solid var(--sand-dark); margin-top: 6px; padding-top: 10px; font-weight: 700; }
+        /* Cancellation modal */
+        .cancel-option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--eb-border); border-radius: var(--radius-sm); cursor: pointer; margin-bottom: 10px; transition: border-color 0.2s, background 0.2s; }
+        .cancel-option:hover { border-color: var(--eb-blue-mid); background: var(--eb-blue-pale); }
+        .cancel-option.selected { border-color: var(--eb-blue-mid); background: var(--eb-blue-pale); }
+        .cancel-option-icon { font-size: 24px; }
+        .cancel-option-text h4 { font-size: 14px; font-weight: 700; color: var(--eb-text); }
+        .cancel-option-text p { font-size: 12px; color: var(--eb-muted); }
 
-        #pm-history {
-            max-height: 110px;
-            overflow-y: auto;
-            font-size: 12px;
-            text-align: left;
-            margin-bottom: 16px;
-            border: 1px solid var(--sand-dark);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
-            background: var(--foam);
-        }
-
-        /* Gestione prodotti */
-        .prodotti-container {
-            background: white;
-            padding: 36px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-lg);
-            width: 100%;
-            max-width: 500px;
-            border: 1px solid var(--sand-dark);
-        }
-        .prodotti-container h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--dark); margin-bottom: 24px; }
+        /* ── PRODOTTI ── */
+        .prodotti-container { background: #fff; padding: 28px; border-radius: var(--radius); box-shadow: var(--shadow-md); width: 100%; max-width: 520px; border: 1.5px solid var(--eb-border); }
+        .prodotti-container h2 { font-size: 19px; font-weight: 700; color: var(--eb-text); margin-bottom: 20px; }
         .color-field-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .color-field-row input[type="color"] { width: 44px; height: 44px; border: 2px solid var(--sand-dark); border-radius: 8px; cursor: pointer; padding: 2px; background: none; }
-        .color-field-row span { font-size: 14px; color: var(--text-muted); }
+        .color-field-row input[type="color"] { width: 44px; height: 44px; border: 1.5px solid var(--eb-border); border-radius: 8px; cursor: pointer; padding: 2px; }
+        .color-field-row span { font-size: 13px; color: var(--eb-muted); }
+
+        /* ── SECTION CARD ── */
+        .section-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-md); padding: 28px; width: 100%; max-width: 580px; border: 1.5px solid var(--eb-border); }
+        .section-card h2 { font-size: 19px; font-weight: 700; color: var(--eb-text); margin-bottom: 8px; }
+        .section-card .desc { font-size: 13px; color: var(--eb-muted); margin-bottom: 20px; }
+
+        /* ── TOAST ── */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--eb-text); color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 9999; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { background: linear-gradient(135deg, #15803d, #22c55e); }
+        .toast.info { background: linear-gradient(135deg, var(--eb-blue), var(--eb-blue-mid)); }
+        .toast.warn { background: linear-gradient(135deg, #a07000, #f59e0b); }
 
         @media (max-width: 768px) {
             .pos-container { flex-direction: column; }
             .cart-panel { width: 100%; position: static; }
-            .beach-sectors { flex-direction: column; gap: 24px; }
+            .beach-sectors { flex-direction: column; gap: 20px; }
             .beach-divider { display: none; }
-            .sector { grid-template-columns: repeat(5, 1fr); gap: 6px; }
-            .spot { min-width: 52px; padding: 8px 2px; }
+            .sector { grid-template-columns: repeat(5, 1fr); gap: 5px; }
+            .spot { min-width: 48px; padding: 6px 2px; }
+            .topbar { padding: 0 16px; }
+            .page-wrap { padding: 18px 14px 0; }
+            .today-banner { grid-template-columns: 1fr; }
         }
-
-        @media print { .nav-bar, .dashboard, .beach-wrapper, .pos-container, .home-grid, .extra-container { display: none !important; } }
+        @media print { .nav-bar, .beach-wrapper, .pos-container, .home-grid, .extra-container { display: none !important; } }
     </style>
 </head>
 <body>
 
-    <div class="overlay-bg" id="overlay" onclick="closeModals()"></div>
+<div class="overlay-bg" id="overlay" onclick="closeModals()"></div>
+<div class="toast" id="toast"></div>
 
-    <!-- BEER MODAL -->
-    <div id="beer-menu">
-        <h3>🍺 Formato Birra</h3>
-        <button onclick="addToCart('Birra Piccola', 3.50); closeBeerMenu()">Piccola — 3.50€</button>
-        <button onclick="addToCart('Birra Media', 5.00); closeBeerMenu()">Media — 5.00€</button>
-        <button onclick="closeBeerMenu()" style="background: var(--sand); border-color: var(--sand-dark); color: var(--text-muted);">Annulla</button>
+<!-- BEER MODAL -->
+<div id="beer-menu" class="modal modal-sm">
+    <h3>🍺 Formato Birra</h3>
+    <button onclick="addToCart('Birra Piccola', 3.50); closeBeerMenu()">Piccola — 3.50€</button>
+    <button onclick="addToCart('Birra Media', 5.00); closeBeerMenu()">Media — 5.00€</button>
+    <button onclick="closeBeerMenu()" style="background:var(--eb-bg); color:var(--eb-muted);">Annulla</button>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="payment-modal" class="modal modal-sm">
+    <h3 id="pm-title">Gestione Rate</h3>
+    <div class="pm-summary">
+        <div class="pm-row"><span>Totale dovuto</span><b id="pm-total">0€</b></div>
+        <div class="pm-row"><span>Versato</span><b id="pm-paid" style="color:var(--free)">0€</b></div>
+        <div class="pm-row total"><span>Rimanente</span><b id="pm-rem" style="color:var(--expired)">0€</b></div>
     </div>
-
-    <!-- PAYMENT MODAL -->
-    <div id="payment-modal">
-        <h3 id="pm-title">Gestione Rate</h3>
-        <div class="pm-summary">
-            <div class="pm-row"><span>Totale dovuto</span><b id="pm-total">0€</b></div>
-            <div class="pm-row"><span>Versato</span><b id="pm-paid" style="color:var(--free)">0€</b></div>
-            <div class="pm-row total"><span>Rimanente</span><b id="pm-rem" style="color:var(--expired)">0€</b></div>
-        </div>
-        <div id="pm-history"></div>
-        <input type="number" id="pm-new-amount" class="field" placeholder="Importo rata (€)" style="margin-bottom: 12px;">
-        <button onclick="saveRata()" class="btn-primary btn-pay">✓ Registra Versamento</button>
-        <button onclick="closeModals()" class="btn-primary" style="background: var(--sand); color: var(--text-muted); box-shadow: none; margin-top: 8px;">Chiudi</button>
+    <div class="pay-progress"><div class="pay-progress-fill" id="pm-progress" style="width:0%"></div></div>
+    <br>
+    <div id="pm-history"></div>
+    <input type="number" id="pm-new-amount" class="field" placeholder="Importo rata (€)" style="margin-bottom:12px;">
+    <button onclick="saveRata()" class="btn-primary btn-pay">✓ Registra Versamento</button>
+    <!-- Garanzia Bel Tempo -->
+    <div style="margin-top:14px; padding:12px; background:var(--eb-bg); border-radius:var(--radius-sm); border:1px solid var(--eb-border); text-align:left;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; cursor:pointer;">
+            <input type="checkbox" id="pm-weather" style="width:auto; margin-bottom:0; accent-color:var(--eb-blue);">
+            ☀️ Garanzia Bel Tempo attiva
+        </label>
+        <div style="font-size:11px; color:var(--eb-muted); margin-top:4px;">Il cliente è protetto in caso di maltempo</div>
     </div>
+    <!-- Politica cancellazione -->
+    <div style="margin-top:10px; padding:12px; background:var(--eb-bg); border-radius:var(--radius-sm); border:1px solid var(--eb-border); text-align:left;">
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--eb-muted); margin-bottom:8px;">Politica Cancellazione</div>
+        <select id="pm-cancellation" class="field" style="padding:8px 12px; font-size:12px;">
+            <option value="nessuna">Nessuna (non rimborsabile)</option>
+            <option value="rimborso">Rimborso completo</option>
+            <option value="voucher">Voucher per altra data</option>
+            <option value="parziale">Rimborso parziale (50%)</option>
+        </select>
+    </div>
+    <!-- Note cliente -->
+    <div style="margin-top:10px;">
+        <textarea id="pm-note" class="field" rows="2" placeholder="Note sul cliente o sulla prenotazione…" style="resize:none; padding:10px;"></textarea>
+    </div>
+    <button onclick="saveModalExtras()" class="btn-primary btn-sea" style="margin-top:8px;">💾 Salva Opzioni</button>
+    <button onclick="openCancelModal()" class="btn-primary" style="background:var(--eb-bg); color:var(--expired); border:1.5px solid var(--expired); box-shadow:none; margin-top:6px;">❌ Cancella Prenotazione</button>
+    <button onclick="closeModals()" style="width:100%; padding:11px; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; background:var(--eb-bg); color:var(--eb-muted);">Chiudi</button>
+</div>
 
-    <!-- ── LOGIN ── -->
-    <div id="screen-login" class="screen">
-        <div class="app-header" style="max-width: 380px; justify-content: center; padding-bottom: 0;">
-            <div class="app-logo" style="margin-bottom: 8px;">Lido Suite <span>2026</span></div>
+<!-- QR MODAL -->
+<div id="qr-modal" class="modal modal-sm">
+    <h3>📱 QR Code Ombrellone</h3>
+    <p id="qr-modal-label" style="font-size:13px; color:var(--eb-muted); margin-bottom:4px;"></p>
+    <div class="qr-wrap"><div id="qr-code-container"></div></div>
+    <p class="qr-hint">Il cliente scansiona il QR per ordinare dal proprio smartphone</p>
+    <button onclick="closeModals()" style="width:100%; padding:11px; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:16px; background:var(--eb-bg); color:var(--eb-muted);">Chiudi</button>
+</div>
+
+<!-- CANCEL MODAL -->
+<div id="cancel-modal" class="modal modal-sm">
+    <h3>❌ Cancella Prenotazione</h3>
+    <p style="font-size:13px; color:var(--eb-muted); margin-bottom:16px;">Scegli cosa fare con il pagamento già ricevuto:</p>
+    <div class="cancel-option" onclick="selectCancelOption(this,'rimborso')">
+        <span class="cancel-option-icon">💸</span>
+        <div class="cancel-option-text"><h4>Rimborso</h4><p>Restituisci l'importo al cliente</p></div>
+    </div>
+    <div class="cancel-option" onclick="selectCancelOption(this,'voucher')">
+        <span class="cancel-option-icon">🎫</span>
+        <div class="cancel-option-text"><h4>Emetti Voucher</h4><p>Credito per un'altra data</p></div>
+    </div>
+    <div class="cancel-option" onclick="selectCancelOption(this,'trattieni')">
+        <span class="cancel-option-icon">🔒</span>
+        <div class="cancel-option-text"><h4>Trattieni l'importo</h4><p>Non rimborsabile (no-show)</p></div>
+    </div>
+    <button id="btn-confirm-cancel" onclick="confirmCancel()" class="btn-primary btn-charge" style="margin-top:6px;" disabled>Conferma Cancellazione</button>
+    <button onclick="closeModals()" style="width:100%; padding:11px; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; background:var(--eb-bg); color:var(--eb-muted);">Annulla</button>
+</div>
+
+<!-- ── LOGIN ── -->
+<div id="screen-login" class="screen">
+    <div class="login-wrap">
+        <div class="login-brand">
+            <div class="login-brand-icon">🏖️</div>
+            <h1>Lido Suite</h1>
+            <p>Gestionale per stabilimenti balneari · 2026</p>
         </div>
         <div class="login-box">
-            <div class="login-icon">🏖️</div>
-            <h1>Accedi</h1>
-            <p>Inserisci le tue credenziali per continuare</p>
-            <input type="text" id="userInput" class="field" placeholder="Email (es. admin@lido.it)" type="email" style="margin-bottom: 12px;" onkeydown="if(event.key==='Enter') checkLogin()">
-            <input type="password" id="passInput" class="field" placeholder="••••••••" onkeydown="if(event.key==='Enter') checkLogin()" style="margin-bottom: 0;">
-            <div id="login-error" style="font-size: 12px; color: var(--expired); margin-top: 10px; min-height: 18px;"></div>
-            <button onclick="checkLogin()" style="margin-top: 8px; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--sea), var(--sea-mid)); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 16px rgba(26,107,138,0.35);">Accedi alla Suite</button>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 20px;">v4.8 · Stagione 2026</div>
+            <h2>Accedi</h2>
+            <p class="login-subtitle">Inserisci le tue credenziali per continuare</p>
+            <label class="form-label">Email</label>
+            <input type="email" id="userInput" class="field" placeholder="admin@lido.it" onkeydown="if(event.key==='Enter') checkLogin()">
+            <label class="form-label">Password</label>
+            <input type="password" id="passInput" class="field" placeholder="••••••••" onkeydown="if(event.key==='Enter') checkLogin()">
+            <div id="login-error" style="font-size:12px; color:var(--expired); margin-top:6px; min-height:18px;"></div>
+            <button onclick="checkLogin()" class="btn-login" style="margin-top:8px;">Accedi alla Suite</button>
+            <div class="login-version">v5.0 · Stagione 2026</div>
         </div>
     </div>
+</div>
 
-    <!-- ── ADMIN UTENTI ── -->
-    <div id="screen-admin-utenti" class="screen hidden">
-        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')"><- Home</button></div>
-        <div class="prodotti-container" style="max-width: 580px;">
-            <h2>👤 Gestione Utenti</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Solo l'amministratore può creare o eliminare utenti.</p>
-            <input type="text" id="new-username" class="field" placeholder="Email (es. mario@lido.it)" type="email" style="margin-bottom: 12px;">
-            <input type="password" id="new-password" class="field" placeholder="Password" style="margin-bottom: 12px;">
-            <select id="new-role" class="field" style="margin-bottom: 20px; cursor:pointer;">
-                <option value="staff">Staff</option>
-                <option value="admin">Amministratore</option>
-            </select>
-            <button onclick="addUser()" class="btn-primary btn-sea">➕ Aggiungi Utente</button>
-            <div class="divider"></div>
-            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 14px;">Utenti registrati</div>
-            <div id="lista-utenti" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--sand-dark); border-radius: var(--radius-sm); padding: 10px;"></div>
+<!-- TOPBAR -->
+<div class="topbar hidden" id="main-topbar">
+    <div class="topbar-logo">
+        <div class="logo-icon">🏖️</div>
+        Lido Suite <span class="logo-sub">2026</span>
+    </div>
+    <div class="topbar-right">
+        <span class="topbar-user" id="logged-user-label"></span>
+        <span class="topbar-badge">v5.0</span>
+        <button class="topbar-btn" onclick="logout()">Esci</button>
+    </div>
+</div>
+
+<!-- ── ADMIN UTENTI ── -->
+<div id="screen-admin-utenti" class="screen hidden">
+    <div class="page-wrap">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div style="display:flex; justify-content:center;">
+            <div class="section-card">
+                <h2>👤 Gestione Utenti</h2>
+                <p class="desc">Solo l'amministratore può creare o eliminare utenti.</p>
+                <input type="text" id="new-username" class="field" placeholder="Email (es. mario@lido.it)" style="margin-bottom:12px;">
+                <input type="password" id="new-password" class="field" placeholder="Password (min. 6 caratteri)" style="margin-bottom:12px;">
+                <select id="new-role" class="field" style="margin-bottom:18px;">
+                    <option value="staff">Staff</option>
+                    <option value="admin">Amministratore</option>
+                </select>
+                <button onclick="addUser()" class="btn-primary btn-sea">➕ Aggiungi Utente</button>
+                <div class="divider"></div>
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--eb-muted); margin-bottom:12px;">Utenti registrati</div>
+                <div id="lista-utenti" style="max-height:280px; overflow-y:auto; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); padding:10px;"></div>
+            </div>
         </div>
     </div>
+</div>
 
-        <!-- ── HOME ── -->
-    <div id="screen-home" class="screen hidden">
-        <div class="app-header" id="home-header">
-            <div class="app-logo">Lido Suite <span>2026</span></div>
-            <div style="display:flex; align-items:center; gap:12px;">
-                <span id="logged-user-label" style="font-size:12px; color:rgba(255,255,255,0.75); font-weight:500;"></span>
-                <div class="version-tag">v4.8</div>
-                <button onclick="logout()" style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); border-radius:20px; padding:6px 14px; font-size:12px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Esci</button>
+<!-- ── HOME ── -->
+<div id="screen-home" class="screen hidden">
+    <div class="page-wrap">
+        <div class="section-header">
+            <div class="section-header-left">
+                <h2 id="home-greeting">👋 Buongiorno!</h2>
+                <p id="home-date"></p>
+            </div>
+        </div>
+        <!-- Arrivi & Partenze oggi -->
+        <div class="today-banner" id="today-banner">
+            <div class="today-card">
+                <h4 class="arrivals">🟢 Arrivi Oggi</h4>
+                <div id="today-arrivals"><p class="today-empty">Nessun arrivo previsto</p></div>
+            </div>
+            <div class="today-card">
+                <h4 class="departures">🟠 Partenze Oggi</h4>
+                <div id="today-departures"><p class="today-empty">Nessuna partenza prevista</p></div>
             </div>
         </div>
         <div class="home-grid">
             <div class="home-card spiaggia" onclick="navTo('screen-spiaggia')">
-                <div class="home-icon">🏖️</div>
-                <h3>Spiaggia</h3>
-                <small>Mappa & prenotazioni</small>
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🏖️</span><h3>Spiaggia</h3><small>Mappa &amp; prenotazioni</small>
             </div>
             <div class="home-card extra" onclick="navTo('screen-extra')">
-                <div class="home-icon">🛌</div>
-                <h3>Lettini Extra</h3>
-                <small>Noleggio giornaliero</small>
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🛌</span><h3>Lettini Extra</h3><small>Noleggio giornaliero</small>
             </div>
             <div class="home-card bar" onclick="navTo('screen-bar')">
-                <div class="home-icon">🍹</div>
-                <h3>Bar POS</h3>
-                <small>Cassa & ordini</small>
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🍹</span><h3>Bar POS</h3><small>Cassa &amp; ordini</small>
+            </div>
+            <div class="home-card subaffitto" onclick="navTo('screen-subaffitto')">
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🔄</span><h3>Subaffitto</h3><small>Stagionali · giorni liberi</small>
+            </div>
+            <div class="home-card magazzino staff-hidden" onclick="navTo('screen-magazzino')">
+                <div class="home-card-accent"></div>
+                <span class="home-icon">📦</span><h3>Magazzino</h3><small>Disponibilità accessori</small>
             </div>
             <div class="home-card archive staff-hidden" onclick="navTo('screen-archivio')">
-                <div class="home-icon">📊</div>
-                <h3>Archivio</h3>
-                <small>Storico clienti</small>
+                <div class="home-card-accent"></div>
+                <span class="home-icon">📊</span><h3>Archivio</h3><small>Storico clienti</small>
             </div>
             <div class="home-card settings staff-hidden" onclick="navTo('screen-prodotti')">
-                <div class="home-icon">📦</div>
-                <h3>Prodotti</h3>
-                <small>Gestione menu bar</small>
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🍽️</span><h3>Prodotti</h3><small>Menu bar</small>
             </div>
-            <div class="home-card staff-hidden" style="border-bottom: 4px solid transparent;" onclick="navTo('screen-flussi')">
-                <div style="position:absolute;bottom:0;left:0;right:0;height:4px;border-radius:0 0 var(--radius) var(--radius);background:linear-gradient(90deg,var(--free),#4ac880);"></div>
-                <div class="home-icon">💰</div>
-                <h3>Flussi di Cassa</h3>
-                <small>Incassi & statistiche</small>
+            <div class="home-card flussi staff-hidden" onclick="navTo('screen-flussi')">
+                <div class="home-card-accent"></div>
+                <span class="home-icon">💰</span><h3>Flussi di Cassa</h3><small>Incassi &amp; statistiche</small>
             </div>
-            <div class="home-card admin-only" id="card-admin-utenti" style="border-bottom: 4px solid transparent;" onclick="navTo('screen-admin-utenti')">
-                <div style="position:absolute;bottom:0;left:0;right:0;height:4px;border-radius:0 0 var(--radius) var(--radius);background:linear-gradient(90deg,#c0392b,#e74c3c);"></div>
-                <div class="home-icon">🔐</div>
-                <h3>Gestione Utenti</h3>
-                <small>Solo amministratore</small>
+            <div class="home-card admin admin-only" onclick="navTo('screen-admin-utenti')">
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🔐</span><h3>Utenti</h3><small>Solo amministratore</small>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ── FLUSSI DI CASSA ── -->
-    <div id="screen-flussi" class="screen hidden">
+<!-- ── FLUSSI ── -->
+<div id="screen-flussi" class="screen hidden">
+    <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="section-header"><div class="section-header-left"><h2>💰 Flussi di Cassa</h2><p>Riepilogo stagione in corso</p></div></div>
         <div class="dashboard">
             <div class="stat-card"><span class="value" id="db-money-daily">0€</span><label>Giornalieri</label></div>
             <div class="stat-card"><span class="value" id="db-money-seasonal">0€</span><label>Stagionali</label></div>
             <div class="stat-card"><span class="value" id="db-total-money">0€</span><label>Incassato</label></div>
             <div class="stat-card"><span class="value" id="db-count-booked">0</span><label>Occupati</label></div>
+            <div class="stat-card"><span class="value" id="db-count-free">0</span><label>Liberi</label></div>
+            <div class="stat-card"><span class="value" id="db-bar-total">0€</span><label>Bar totale</label></div>
         </div>
     </div>
+</div>
 
-    <!-- ── SPIAGGIA ── -->
-    <div id="screen-spiaggia" class="screen hidden">
+<!-- ── SPIAGGIA ── -->
+<div id="screen-spiaggia" class="screen hidden">
+    <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="section-header">
+            <div class="section-header-left"><h2>🏖️ Mappa Spiaggia</h2><p>Gestisci le postazioni in tempo reale</p></div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-sm" style="background:var(--eb-blue-pale); color:var(--eb-blue);" onclick="navTo('screen-archivio')">📊 Archivio</button>
+            </div>
+        </div>
+        <!-- Legend -->
+        <div class="beach-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--eb-border);"></div>Libero</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--booked);"></div>Giornaliero</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--eb-blue);"></div>Stagionale</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#0891b2;"></div>Subaffitto</div>
+            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
+            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>
+        </div>
         <div class="beach-wrapper">
             <div class="beach-divider"></div>
             <div class="beach-sectors">
-                <div>
-                    <div class="sector-label">Settore A · 1–100</div>
-                    <div class="sector" id="sector-west"></div>
-                </div>
-                <div>
-                    <div class="sector-label">Settore B · 101–200</div>
-                    <div class="sector" id="sector-east"></div>
-                </div>
+                <div><div class="sector-label">Settore A · 1–100</div><div class="sector" id="sector-west"></div></div>
+                <div><div class="sector-label">Settore B · 101–200</div><div class="sector" id="sector-east"></div></div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ── EXTRA ── -->
-    <div id="screen-extra" class="screen hidden">
+<!-- ── EXTRA ── -->
+<div id="screen-extra" class="screen hidden">
+    <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
-        <div class="extra-container">
-            <h2>Lettini Extra</h2>
-            <p>Noleggio giornaliero per clienti esterni</p>
-            <div class="price-display" id="extra-price-display">7.00€ <small>/ cad.</small></div>
-            <div id="admin-price-editor" style="display:none; margin-bottom: 8px;">
-                <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom: 6px;">
-                    <input type="number" id="extra-price-input" step="0.50" min="0.50" class="qty-input" style="width:90px;" placeholder="€">
-                    <button onclick="savePrezzoLettino()" style="background:linear-gradient(135deg,var(--sea),var(--sea-mid)); color:white; border:none; border-radius:var(--radius-sm); padding:10px 18px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer;">Salva</button>
+        <div style="display:flex; justify-content:center;">
+            <div class="extra-container">
+                <h2>🛌 Lettini Extra</h2>
+                <p>Noleggio giornaliero per clienti esterni</p>
+                <div class="price-display" id="extra-price-display">7.00€ <small>/ cad.</small></div>
+                <div id="admin-price-editor" style="display:none; margin-bottom:10px;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:6px;">
+                        <input type="number" id="extra-price-input" step="0.50" min="0.50" class="qty-input" style="width:90px;" placeholder="€">
+                        <button onclick="savePrezzoLettino()" style="background:linear-gradient(135deg,var(--eb-blue),var(--eb-blue-mid)); color:white; border:none; border-radius:var(--radius-sm); padding:10px 18px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer;">Salva</button>
+                    </div>
+                    <div style="font-size:11px; color:var(--eb-muted);">Modifica prezzo (solo admin)</div>
                 </div>
-                <div style="font-size:11px; color:var(--text-muted);">Modifica prezzo per lettino (solo admin)</div>
+                <div class="qty-wrap">
+                    <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                    <input type="number" id="extra-qty" value="1" min="1" class="qty-input">
+                    <button class="qty-btn" onclick="changeQty(1)">+</button>
+                </div>
+                <!-- Disponibilità magazzino inline -->
+                <div id="extra-warehouse-hint" style="font-size:12px; color:var(--eb-muted); margin-bottom:10px;"></div>
+                <div class="divider"></div>
+                <div style="position:relative;">
+                    <input type="text" id="extraSearch" class="field" placeholder="Cerca ombrellone o nome…" onkeyup="filterClientsExtra()">
+                    <div id="extra-results" class="search-results hidden"></div>
+                </div>
+                <input type="hidden" id="extra-selected-id">
+                <button onclick="chargeExtraToBeach()" class="btn-primary btn-sea" style="margin-top:14px;">🏖️ Addebita su Ombrellone</button>
+                <button onclick="directPayExtra()" class="btn-primary btn-pay">💰 Cliente Esterno (Pagato)</button>
             </div>
-            <div class="qty-wrap">
-                <button class="qty-btn" onclick="changeQty(-1)">−</button>
-                <input type="number" id="extra-qty" value="1" min="1" class="qty-input">
-                <button class="qty-btn" onclick="changeQty(1)">+</button>
-            </div>
-            <div class="divider"></div>
-            <div style="position: relative;">
-                <input type="text" id="extraSearch" class="field" placeholder="Cerca ombrellone o nome…" onkeyup="filterClientsExtra()">
-                <div id="extra-results" class="search-results hidden"></div>
-            </div>
-            <input type="hidden" id="extra-selected-id">
-            <button onclick="chargeExtraToBeach()" class="btn-primary btn-sea" style="margin-top: 16px;">🏖️ Addebita su Ombrellone</button>
-            <button onclick="directPayExtra()" class="btn-primary btn-pay">💰 Cliente Esterno (Pagato)</button>
         </div>
     </div>
+</div>
 
-    <!-- ── BAR ── -->
-    <div id="screen-bar" class="screen hidden">
+<!-- ── BAR ── -->
+<div id="screen-bar" class="screen hidden">
+    <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="section-header">
+            <div class="section-header-left"><h2>🍹 Bar POS</h2><p>Gestisci ordini e addebiti</p></div>
+            <button class="btn-sm" style="background:var(--eb-blue-pale); color:var(--eb-blue);" onclick="showQrOrdersModal()">📱 Ordini QR <span id="qr-orders-badge" style="display:none; background:var(--expired); color:white; border-radius:20px; padding:1px 6px; font-size:10px; margin-left:4px;"></span></button>
+        </div>
+        <!-- Pending QR orders -->
+        <div id="qr-orders-wrap" style="display:none; margin-bottom:18px;">
+            <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--eb-muted); margin-bottom:8px;">📱 Ordini in arrivo dalla spiaggia</div>
+            <div class="qr-orders-panel" id="qr-orders-list"></div>
+        </div>
         <div class="pos-container">
             <div class="pos-grid-wrap">
                 <div class="pos-section-title">Prodotti</div>
                 <div class="pos-grid">
-                    <button class="pos-btn" style="border-bottom-color:#795548" onclick="addToCart('Caffè', 1.20)">☕ Caffè<br><small>1.20€</small></button>
-                    <button class="pos-btn" style="border-bottom-color:#2196F3" onclick="addToCart('Acqua', 1.00)">💧 Acqua<br><small>1.00€</small></button>
-                    <button class="pos-btn" style="border-bottom-color:#e07b30" onclick="openBeerMenu()">🍺 Birra Spina<br><small>scegli formato</small></button>
-                    <button class="pos-btn" style="border-bottom-color:#E91E63" onclick="addToCart('Spritz', 6.00)">🍹 Spritz<br><small>6.00€</small></button>
-                    <div id="dynamic-pos-items" style="display: contents"></div>
+                    <button class="pos-btn" style="border-bottom-color:#795548" onclick="addToCart('☕ Caffè', 1.20)">☕ Caffè<br><small>1.20€</small></button>
+                    <button class="pos-btn" style="border-bottom-color:#2196F3" onclick="addToCart('💧 Acqua', 1.00)">💧 Acqua<br><small>1.00€</small></button>
+                    <button class="pos-btn" style="border-bottom-color:#f97316" onclick="openBeerMenu()">🍺 Birra Spina<br><small>scegli formato</small></button>
+                    <button class="pos-btn" style="border-bottom-color:#E91E63" onclick="addToCart('🍹 Spritz', 6.00)">🍹 Spritz<br><small>6.00€</small></button>
+                    <div id="dynamic-pos-items" style="display:contents"></div>
                 </div>
             </div>
             <div class="cart-panel">
                 <h3>🛒 Carrello</h3>
                 <div id="cart-list"></div>
                 <div class="cart-total-row"><span>Totale: </span><span id="cart-total">0.00</span>€</div>
-                <div style="position: relative;">
+                <div style="position:relative;">
                     <input type="text" id="clientSearch" class="field" placeholder="Cerca cliente…" onkeyup="filterClients()">
                     <div id="search-results" class="search-results hidden"></div>
                 </div>
@@ -831,497 +640,752 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- ── PRODOTTI ── -->
-    <div id="screen-prodotti" class="screen hidden">
+<!-- ── SUBAFFITTO ── -->
+<div id="screen-subaffitto" class="screen hidden">
+    <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
-        <div class="prodotti-container">
-            <h2>📦 Gestione Prodotti</h2>
-            <input type="text" id="prod-nome" class="field" placeholder="Nome prodotto (es. 🍦 Gelato)" style="margin-bottom: 12px;">
-            <input type="number" id="prod-prezzo" class="field" placeholder="Prezzo (es. 2.50)" step="0.10" style="margin-bottom: 12px;">
-            <div class="color-field-row">
-                <input type="color" id="prod-colore" value="#9b59b6">
-                <span>Colore del tasto POS</span>
-            </div>
-            <button onclick="addProdotto()" class="btn-primary btn-sea">➕ Aggiungi al POS</button>
-            <div class="divider"></div>
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Prodotti aggiuntivi</div>
-            <div id="lista-prodotti-admin" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--sand-dark); border-radius: var(--radius-sm); padding: 10px;"></div>
+        <div class="section-header">
+            <div class="section-header-left"><h2>🔄 Subaffitto Stagionali</h2><p>Rendi disponibili i giorni non utilizzati per aumentare l'occupazione</p></div>
+        </div>
+        <div class="sublet-container" id="sublet-list">
+            <div style="font-size:13px; color:var(--eb-muted); text-align:center; padding:40px;">Nessun ombrellone stagionale con subaffitto attivo</div>
         </div>
     </div>
+</div>
 
-    <!-- ── ARCHIVIO ── -->
-    <div id="screen-archivio" class="screen hidden">
+<!-- ── MAGAZZINO ── -->
+<div id="screen-magazzino" class="screen hidden">
+    <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="section-header">
+            <div class="section-header-left"><h2>📦 Magazzino Accessori</h2><p>Disponibilità aggiornata in base alle prenotazioni</p></div>
+        </div>
+        <div class="warehouse-grid" id="warehouse-grid">
+            <!-- rendered by JS -->
+        </div>
+        <div class="section-card admin-only" style="max-width:100%;">
+            <h2 style="font-size:16px; margin-bottom:16px;">⚙️ Modifica Giacenze</h2>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;" id="warehouse-edit-grid"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ── PRODOTTI ── -->
+<div id="screen-prodotti" class="screen hidden">
+    <div class="page-wrap">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div style="display:flex; justify-content:center;">
+            <div class="prodotti-container">
+                <h2>🍽️ Gestione Prodotti</h2>
+                <input type="text" id="prod-nome" class="field" placeholder="Nome prodotto (es. 🍦 Gelato)" style="margin-bottom:12px;">
+                <input type="number" id="prod-prezzo" class="field" placeholder="Prezzo (es. 2.50)" step="0.10" style="margin-bottom:12px;">
+                <div class="color-field-row">
+                    <input type="color" id="prod-colore" value="#9b59b6">
+                    <span>Colore del tasto POS</span>
+                </div>
+                <button onclick="addProdotto()" class="btn-primary btn-sea">➕ Aggiungi al POS</button>
+                <div class="divider"></div>
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--eb-muted); margin-bottom:12px;">Prodotti aggiuntivi</div>
+                <div id="lista-prodotti-admin" style="max-height:240px; overflow-y:auto; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); padding:10px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── ARCHIVIO ── -->
+<div id="screen-archivio" class="screen hidden">
+    <div class="page-wrap">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="section-header">
+            <div class="section-header-left"><h2>📊 Archivio Clienti</h2><p>Storico completo prenotazioni e pagamenti</p></div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn-sm" style="background:#dcfce7; color:#15803d;" onclick="exportCSV()">📥 Esporta CSV</button>
+                <button class="btn-sm" style="background:var(--eb-blue-pale); color:var(--eb-blue);" onclick="window.print()">🖨️ Stampa</button>
+            </div>
+        </div>
         <div class="db-container">
+            <div class="db-toolbar">
+                <input type="text" id="archivio-search" class="field db-search" placeholder="🔍 Cerca per nome, telefono…" oninput="filterArchivio()">
+                <select id="archivio-filter-tipo" class="field" style="width:140px;" onchange="filterArchivio()">
+                    <option value="">Tutti</option>
+                    <option value="G">Solo Giornalieri</option>
+                    <option value="S">Solo Stagionali</option>
+                </select>
+                <select id="archivio-filter-stato" class="field" style="width:150px;" onchange="filterArchivio()">
+                    <option value="">Tutti gli stati</option>
+                    <option value="saldo">Saldo</option>
+                    <option value="acconto">Acconto</option>
+                    <option value="nessuno">Da pagare</option>
+                </select>
+            </div>
             <table>
                 <thead>
-                    <tr>
-                        <th>#</th><th>Cliente</th><th>Telefono</th><th>E-mail</th>
-                        <th>Tipo</th><th>Spiaggia</th><th>Bar</th><th>Stato</th>
-                    </tr>
+                    <tr><th>#</th><th>Cliente</th><th>Telefono</th><th>Tipo</th><th>Spiaggia €</th><th>Bar €</th><th>Pagamento</th><th>Note</th><th>Azioni</th></tr>
                 </thead>
                 <tbody id="db-body"></tbody>
             </table>
         </div>
     </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
-            authDomain: "lido-d7fdf.firebaseapp.com",
-            databaseURL: "https://lido-d7fdf-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "lido-d7fdf",
-            appId: "1:830446694284:web:284451a591ec296d2ef0a9"
-        };
+const firebaseConfig = {
+    apiKey: "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
+    authDomain: "lido-d7fdf.firebaseapp.com",
+    databaseURL: "https://lido-d7fdf-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "lido-d7fdf",
+    appId: "1:830446694284:web:284451a591ec296d2ef0a9"
+};
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-        const dbRef = ref(db, 'spiaggia_dati');
-        const prodRef = ref(db, 'prodotti_bar_dinamici');
-        const prezzoLettiniRef = ref(db, 'prezzo_lettino');
+const dbRef = ref(db, 'spiaggia_dati');
+const prodRef = ref(db, 'prodotti_bar_dinamici');
+const prezzoLettiniRef = ref(db, 'prezzo_lettino');
+const warehouseRef = ref(db, 'magazzino');
+const qrOrdersRef = ref(db, 'qr_orders');
 
-        let beachData = {};
-        let dynamicProducts = {};
-        let usersData = {};
-        let currentEditingId = null;
-        let currentUser = null; // { username, role: 'admin'|'staff' }
+let beachData = {};
+let dynamicProducts = {};
+let usersData = {};
+let warehouseData = { lettini: { totale: 50, nome: 'Lettini', icon: '🛌' }, sdraio: { totale: 80, nome: 'Sdraio', icon: '🪑' }, ombrelloni_extra: { totale: 20, nome: 'Ombrelloni Extra', icon: '☂️' }, tavoli: { totale: 12, nome: 'Tavoli', icon: '🪵' } };
+let qrOrders = {};
+let currentEditingId = null;
+let currentUser = null;
+let selectedCancelOption = null;
+let prezzoLettino = 7.00;
+let archivioAllRows = [];
 
-        // Staff-accessible screens
-        const STAFF_SCREENS = ['screen-home','screen-spiaggia','screen-extra','screen-bar'];
+const STAFF_SCREENS = ['screen-home','screen-spiaggia','screen-extra','screen-bar','screen-subaffitto'];
+const usersRef = ref(db, 'utenti_suite');
 
-        const usersRef = ref(db, 'utenti_suite');
+// ── TOAST ──
+window.showToast = (msg, type='success') => {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type}`;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+};
 
-        // Listen to users data (roles stored separately from Firebase Auth)
-        onValue(usersRef, (snapshot) => {
-            usersData = snapshot.val() || {};
-            renderUtenti();
-        });
+// ── GREETING & DATE ──
+function updateHomeDate() {
+    const now = new Date();
+    const days = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+    const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+    const h = now.getHours();
+    const greeting = h < 12 ? '🌅 Buongiorno' : h < 18 ? '☀️ Buon pomeriggio' : '🌙 Buonasera';
+    const el = document.getElementById('home-greeting');
+    const el2 = document.getElementById('home-date');
+    if(el) el.textContent = greeting + (currentUser ? ', ' + currentUser.username.split('@')[0] + '!' : '!');
+    if(el2) el2.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
+}
 
-        // ── FIREBASE AUTH STATE ──
-        onAuthStateChanged(auth, async (firebaseUser) => {
-            if (firebaseUser) {
-                // User is signed in — load role from DB
-                // Strategy: try by UID first, then fallback to email match across all nodes
-                const allUsersSnap = await new Promise(resolve => {
-                    onValue(usersRef, resolve, { onlyOnce: true });
-                });
-                const allUsers = allUsersSnap.val() || {};
+// ── TODAY ARRIVALS/DEPARTURES ──
+function renderToday() {
+    const todayStr = new Date().toLocaleDateString('it-IT');
+    let arrivalsHtml = '', departuresHtml = '';
+    Object.keys(beachData).forEach(id => {
+        const d = beachData[id];
+        if (!d) return;
+        const payClass = d.pagamento === 'saldo' ? 'badge-saldo' : d.pagamento === 'acconto' ? 'badge-acconto' : 'badge-none';
+        const payLabel = d.pagamento === 'saldo' ? 'Saldo' : d.pagamento === 'acconto' ? 'Acconto' : 'Da pagare';
+        if (d.dataArrivo === todayStr) {
+            arrivalsHtml += `<div class="today-item"><span class="spot-num">#${id}</span><span class="client-name">${d.nome}</span><span class="pay-pill badge ${payClass}">${payLabel}</span></div>`;
+        }
+        if (d.dataPartenza === todayStr) {
+            departuresHtml += `<div class="today-item"><span class="spot-num">#${id}</span><span class="client-name">${d.nome}</span><span class="pay-pill badge ${payClass}">${payLabel}</span></div>`;
+        }
+    });
+    const arrEl = document.getElementById('today-arrivals');
+    const depEl = document.getElementById('today-departures');
+    if(arrEl) arrEl.innerHTML = arrivalsHtml || '<p class="today-empty">Nessun arrivo previsto</p>';
+    if(depEl) depEl.innerHTML = departuresHtml || '<p class="today-empty">Nessuna partenza prevista</p>';
+}
 
-                let role = 'staff';
+// ── WAREHOUSE ──
+function renderWarehouse() {
+    const grid = document.getElementById('warehouse-grid');
+    const editGrid = document.getElementById('warehouse-edit-grid');
+    if (!grid) return;
 
-                // 1. Try direct UID lookup
-                if (allUsers[firebaseUser.uid]) {
-                    role = allUsers[firebaseUser.uid].role || 'staff';
-                } else {
-                    // 2. Fallback: search by email across all nodes
-                    const match = Object.values(allUsers).find(u =>
-                        u.email === firebaseUser.email || u.username === firebaseUser.email
-                    );
-                    if (match) role = match.role || 'staff';
+    // Count used items from beach data
+    let usedLettini = 0;
+    Object.values(beachData).forEach(d => {
+        if (d && d.lettiniExtra) usedLettini += parseInt(d.lettiniExtra || 0);
+    });
+    // simulate usage
+    const usage = { lettini: usedLettini, sdraio: 0, ombrelloni_extra: 0, tavoli: 0 };
 
-                    // 3. If nothing found, auto-create the node with UID as key
-                    if (!match) {
-                        await set(ref(db, 'utenti_suite/' + firebaseUser.uid), {
-                            email: firebaseUser.email,
-                            role: 'staff'
-                        });
-                    }
-                }
+    let gridHtml = '', editHtml = '';
+    Object.keys(warehouseData).forEach(key => {
+        const item = warehouseData[key];
+        const tot = item.totale || 0;
+        const used = usage[key] || 0;
+        const avail = Math.max(0, tot - used);
+        const pct = tot > 0 ? (avail / tot) * 100 : 100;
+        const fillClass = pct < 20 ? 'danger' : pct < 50 ? 'warn' : '';
+        gridHtml += `<div class="warehouse-item">
+            <div class="wh-icon">${item.icon}</div>
+            <div class="wh-name">${item.nome}</div>
+            <div class="wh-avail" style="color:${pct<20?'var(--expired)':pct<50?'var(--acconto)':'var(--free)'}">${avail}</div>
+            <div class="wh-total">disponibili su ${tot}</div>
+            <div class="wh-bar"><div class="wh-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
+        </div>`;
+        editHtml += `<div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:18px;">${item.icon}</span>
+            <div style="flex:1">
+                <div style="font-size:12px; font-weight:600; margin-bottom:4px;">${item.nome} — totale</div>
+                <input type="number" class="field" style="padding:8px; font-size:13px;" value="${tot}" min="0" onchange="updateWarehouseTotal('${key}', this.value)">
+            </div>
+        </div>`;
+    });
+    grid.innerHTML = gridHtml;
+    if(editGrid) editGrid.innerHTML = editHtml;
 
-                currentUser = { username: firebaseUser.email, role };
-                applyRoleUI();
+    // Update extra hint
+    const avLettini = Math.max(0, (warehouseData.lettini?.totale||50) - usedLettini);
+    const hint = document.getElementById('extra-warehouse-hint');
+    if(hint) hint.innerHTML = `<span style="color:${avLettini<5?'var(--expired)':'var(--eb-muted)'}">📦 Lettini disponibili in magazzino: <b>${avLettini}</b></span>`;
+}
 
-                // Start data listeners only once, after auth is confirmed
-                if (!window._dataListenersStarted) {
-                    window._dataListenersStarted = true;
-                    onValue(dbRef, (snapshot) => { beachData = snapshot.val() || {}; renderSpiaggia(); });
-                    onValue(prodRef, (snapshot) => { dynamicProducts = snapshot.val() || {}; renderDynamicProducts(); });
-                    onValue(prezzoLettiniRef, (snapshot) => {
-                        const val = snapshot.val();
-                        if (val && val > 0) prezzoLettino = parseFloat(val);
-                        const disp = document.getElementById('extra-price-display');
-                        const inp = document.getElementById('extra-price-input');
-                        if (disp) disp.innerHTML = prezzoLettino.toFixed(2) + '€ <small>/ cad.</small>';
-                        if (inp) inp.value = prezzoLettino.toFixed(2);
-                    });
-                }
+window.updateWarehouseTotal = (key, val) => {
+    if (!warehouseData[key]) return;
+    warehouseData[key].totale = parseInt(val) || 0;
+    set(warehouseRef, warehouseData);
+    renderWarehouse();
+};
 
-                // Only navigate to home if we're on login screen
-                const loginScreen = document.getElementById('screen-login');
-                if (!loginScreen.classList.contains('hidden')) {
-                    navTo('screen-home');
-                }
-            } else {
-                // Not signed in — go to login
-                currentUser = null;
-                document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-                document.getElementById('screen-login').classList.remove('hidden');
-            }
-        });
+// ── SUBAFFITTO ──
+function renderSubaffitto() {
+    const container = document.getElementById('sublet-list');
+    if(!container) return;
+    const stagionali = Object.keys(beachData).filter(id => beachData[id]?.isSeasonal);
+    if(!stagionali.length) {
+        container.innerHTML = '<div style="font-size:13px; color:var(--eb-muted); text-align:center; padding:40px;">Nessun ombrellone stagionale registrato</div>';
+        return;
+    }
+    let html = '';
+    stagionali.forEach(id => {
+        const d = beachData[id];
+        const dates = d.subletDates || [];
+        const datesHtml = dates.length
+            ? dates.map(dt => `<span class="sublet-date-pill available" onclick="removeSubletDate('${id}','${dt}')" title="Clicca per rimuovere">${dt}</span>`).join('')
+            : '<span style="font-size:12px; color:var(--eb-muted); font-style:italic;">Nessuna data inserita</span>';
+        html += `<div class="sublet-card">
+            <div class="sublet-header">
+                <div><div class="sublet-name">🏖️ #${id} — ${d.nome}</div><div class="sublet-spot">Stagionale · ${d.prezzo}€</div></div>
+                <button class="btn-sm btn-sea" onclick="addSubletDate('${id}')">+ Aggiungi data libera</button>
+            </div>
+            <div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
 
-        let prezzoLettino = 7.00; // listener started after auth — see onAuthStateChanged
+window.addSubletDate = (id) => {
+    const dt = prompt('Inserisci la data disponibile (gg/mm/aaaa):');
+    if (!dt) return;
+    const d = beachData[id];
+    if (!d.subletDates) d.subletDates = [];
+    if (d.subletDates.includes(dt)) return showToast('Data già presente', 'warn');
+    d.subletDates.push(dt);
+    set(dbRef, beachData);
+    showToast('📅 Data aggiunta al subaffitto', 'success');
+};
+window.removeSubletDate = (id, dt) => {
+    if (!confirm(`Rimuovere il ${dt} dal subaffitto?`)) return;
+    const d = beachData[id];
+    d.subletDates = (d.subletDates || []).filter(x => x !== dt);
+    set(dbRef, beachData);
+    showToast('Data rimossa', 'info');
+};
 
-        window.savePrezzoLettino = () => {
-            const val = parseFloat(document.getElementById('extra-price-input').value);
-            if (isNaN(val) || val <= 0) return alert('Inserisci un prezzo valido');
-            set(prezzoLettiniRef, val);
-            alert('✓ Prezzo aggiornato!');
-        };
+// ── QR ORDERS ──
+function renderQrOrders() {
+    const list = document.getElementById('qr-orders-list');
+    const badge = document.getElementById('qr-orders-badge');
+    const wrap = document.getElementById('qr-orders-wrap');
+    if(!list) return;
+    const pending = Object.keys(qrOrders).filter(k => qrOrders[k] && !qrOrders[k].done);
+    if(badge) { badge.textContent = pending.length; badge.style.display = pending.length ? 'inline' : 'none'; }
+    if(wrap) wrap.style.display = Object.keys(qrOrders).length ? 'block' : 'none';
+    if(!Object.keys(qrOrders).length) { list.innerHTML = '<div style="font-size:12px; color:var(--eb-muted); text-align:center; padding:12px;">Nessun ordine QR</div>'; return; }
+    list.innerHTML = Object.keys(qrOrders).sort().reverse().map(k => {
+        const o = qrOrders[k];
+        const cls = o.done ? 'qr-order-item qr-order-done' : 'qr-order-item';
+        const action = o.done ? '' : `<button onclick="markQrDone('${k}')" style="background:var(--free); color:white; border:none; border-radius:6px; padding:3px 8px; font-size:10px; font-family:'Poppins',sans-serif; font-weight:600; cursor:pointer;">✓</button>`;
+        return `<div class="${cls}"><span class="qr-badge">#${o.spot||'?'}</span><span style="flex:1; margin:0 8px;">${o.items||''}</span><span style="font-weight:700;">${(o.total||0).toFixed(2)}€</span>${action}</div>`;
+    }).join('');
+}
+window.markQrDone = (k) => { if(qrOrders[k]) { qrOrders[k].done = true; set(qrOrdersRef, qrOrders); showToast('✓ Ordine completato', 'success'); } };
+window.showQrOrdersModal = () => { document.getElementById('qr-orders-wrap').style.display = 'block'; };
 
-        window.checkLogin = async () => {
-            const email = document.getElementById('userInput').value.trim();
-            const password = document.getElementById('passInput').value;
-            const errEl = document.getElementById('login-error');
-            const btn = document.querySelector('#screen-login button');
-            errEl.innerText = '';
-            document.getElementById('userInput').style.borderColor = '';
-            document.getElementById('passInput').style.borderColor = '';
+// ── QR CODE MODAL ──
+window.openQrModal = (id) => {
+    const d = beachData[id];
+    document.getElementById('qr-modal-label').textContent = `Ombrellone #${id}${d ? ' · ' + d.nome : ''}`;
+    const container = document.getElementById('qr-code-container');
+    container.innerHTML = '';
+    const url = `${location.origin}${location.pathname}?order=1&spot=${id}`;
+    new QRCode(container, { text: url, width: 160, height: 160, colorDark: '#0d5c8c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+    document.getElementById('qr-modal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+};
 
-            if (!email || !password) {
-                errEl.innerText = 'Compila tutti i campi.';
-                return;
-            }
+// ── ARCHIVIO FILTER & EXPORT ──
+function buildArchivioRows() {
+    archivioAllRows = [];
+    Object.keys(beachData).forEach(id => {
+        const d = beachData[id];
+        if (!d) return;
+        const paid = (d.rate||[]).reduce((a,b)=>a+b.importo,0);
+        const pct = d.prezzo > 0 ? Math.min(100, Math.round((paid/parseFloat(d.prezzo))*100)) : 0;
+        archivioAllRows.push({ id, ...d, paid, pct });
+    });
+}
+window.filterArchivio = () => {
+    const q = (document.getElementById('archivio-search')?.value||'').toUpperCase();
+    const tipo = document.getElementById('archivio-filter-tipo')?.value||'';
+    const stato = document.getElementById('archivio-filter-stato')?.value||'';
+    const tbody = document.getElementById('db-body');
+    if(!tbody) return;
+    const filtered = archivioAllRows.filter(r => {
+        if(q && !r.nome?.includes(q) && !String(r.id).includes(q) && !(r.telefono||'').includes(q)) return false;
+        if(tipo === 'G' && r.isSeasonal) return false;
+        if(tipo === 'S' && !r.isSeasonal) return false;
+        if(stato && r.pagamento !== stato) return false;
+        return true;
+    });
+    renderArchivioRows(filtered, tbody);
+};
+function renderArchivioRows(rows, tbody) {
+    if(!tbody) return;
+    tbody.innerHTML = rows.map(d => {
+        const bCls = d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';
+        return `<tr>
+            <td><b>#${d.id}</b></td>
+            <td>
+                <div style="font-weight:600;">${d.nome}</div>
+                ${d.weatherGuarantee ? '<span style="font-size:10px;">☀️ Garanzia Meteo</span>' : ''}
+            </td>
+            <td>${d.telefono||'-'}</td>
+            <td><span style="font-size:11px; font-weight:700; color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span></td>
+            <td>
+                <div style="font-weight:600;">${d.prezzo}€</div>
+                <div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div>
+                <div style="font-size:10px; color:var(--eb-muted);">${d.pct}% versato</div>
+            </td>
+            <td style="color:var(--bar); font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td>
+            <td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td>
+            <td style="font-size:11px; color:var(--eb-muted); max-width:120px; word-break:break-word;">${d.note||'-'}</td>
+            <td>
+                <button onclick="openPaymentModal(${d.id})" style="background:none; color:var(--eb-blue); border:1px solid var(--eb-blue); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:10px; font-family:'Poppins',sans-serif; font-weight:600; white-space:nowrap;">💳 Pagam.</button>
+                <button onclick="openQrModal(${d.id})" style="background:none; color:var(--eb-muted); border:1px solid var(--eb-border); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:10px; font-family:'Poppins',sans-serif; margin-top:4px; white-space:nowrap;">📱 QR</button>
+            </td>
+        </tr>`;
+    }).join('') || '<tr><td colspan="9" style="text-align:center; color:var(--eb-muted); padding:24px;">Nessun risultato</td></tr>';
+}
 
-            btn.innerText = 'Accesso in corso…';
-            btn.disabled = true;
+window.exportCSV = () => {
+    buildArchivioRows();
+    const header = ['#','Nome','Telefono','Tipo','Prezzo','Bar','Pagamento','Note'];
+    const rows = archivioAllRows.map(d => [d.id, d.nome, d.telefono||'', d.isSeasonal?'Stagionale':'Giornaliero', d.prezzo, parseFloat(d.barTotal||0).toFixed(2), d.pagamento||'nessuno', (d.note||'').replace(/,/g,' ')]);
+    const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = `lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;
+    a.click();
+    showToast('📥 CSV esportato!', 'success');
+};
 
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged handles the rest
-            } catch (err) {
-                let msg = 'Credenziali non valide. Riprova.';
-                if (err.code === 'auth/too-many-requests') msg = 'Troppi tentativi. Riprova più tardi.';
-                if (err.code === 'auth/invalid-email') msg = 'Formato email non valido.';
-                errEl.innerText = msg;
-                document.getElementById('userInput').style.borderColor = 'var(--expired)';
-                document.getElementById('passInput').style.borderColor = 'var(--expired)';
-            } finally {
-                btn.innerText = 'Accedi alla Suite';
-                btn.disabled = false;
-            }
-        };
+// ── FIREBASE LISTENERS ──
+onValue(usersRef, s => { usersData = s.val()||{}; renderUtenti(); });
+onValue(qrOrdersRef, s => { qrOrders = s.val()||{}; renderQrOrders(); });
+onValue(warehouseRef, s => { const v = s.val(); if(v) Object.assign(warehouseData, v); renderWarehouse(); });
 
-        function applyRoleUI() {
-            const isAdmin = currentUser && currentUser.role === 'admin';
-            // Show/hide admin-only cards
-            document.querySelectorAll('.admin-only').forEach(el => {
-                el.style.display = isAdmin ? '' : 'none';
+onAuthStateChanged(auth, async (firebaseUser) => {
+    if (firebaseUser) {
+        const snap = await new Promise(r => onValue(usersRef, r, { onlyOnce:true }));
+        const allUsers = snap.val()||{};
+        let role = 'staff';
+        if(allUsers[firebaseUser.uid]) role = allUsers[firebaseUser.uid].role||'staff';
+        else {
+            const match = Object.values(allUsers).find(u => u.email===firebaseUser.email||u.username===firebaseUser.email);
+            if(match) role = match.role||'staff';
+            else await set(ref(db,'utenti_suite/'+firebaseUser.uid), { email:firebaseUser.email, role:'staff' });
+        }
+        currentUser = { username:firebaseUser.email, role };
+        applyRoleUI();
+        updateHomeDate();
+        if(!window._dataStarted) {
+            window._dataStarted = true;
+            onValue(dbRef, s => { beachData=s.val()||{}; renderSpiaggia(); renderToday(); renderSubaffitto(); buildArchivioRows(); filterArchivio(); });
+            onValue(prodRef, s => { dynamicProducts=s.val()||{}; renderDynamicProducts(); });
+            onValue(prezzoLettiniRef, s => {
+                const v=s.val(); if(v&&v>0) prezzoLettino=parseFloat(v);
+                const d=document.getElementById('extra-price-display');
+                const i=document.getElementById('extra-price-input');
+                if(d) d.innerHTML=prezzoLettino.toFixed(2)+'€ <small>/ cad.</small>';
+                if(i) i.value=prezzoLettino.toFixed(2);
+                renderWarehouse();
             });
-            // Show/hide staff-hidden cards
-            document.querySelectorAll('.staff-hidden').forEach(el => {
-                el.style.display = isAdmin ? '' : 'none';
-            });
-            // Show/hide admin price editor in extra screen
-            const priceEditor = document.getElementById('admin-price-editor');
-            if (priceEditor) priceEditor.style.display = isAdmin ? 'block' : 'none';
-            // Update header with logged user + logout
-            const header = document.getElementById('home-header');
-            if (header) {
-                const displayEmail = currentUser.username.includes('@') ? currentUser.username.split('@')[0] : currentUser.username;
-                document.getElementById('logged-user-label').innerText = displayEmail + (isAdmin ? ' · Admin' : ' · Staff');
-            }
         }
+        const ls=document.getElementById('screen-login');
+        if(!ls.classList.contains('hidden')) navTo('screen-home');
+    } else {
+        currentUser=null;
+        document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+        document.getElementById('screen-login').classList.remove('hidden');
+        document.getElementById('main-topbar').classList.add('hidden');
+    }
+});
 
-        window.navTo = (id) => {
-            // Role guard for non-admin
-            if (currentUser && currentUser.role === 'staff' && !STAFF_SCREENS.includes(id)) {
-                alert('Accesso non autorizzato.');
-                return;
-            }
-            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
-        };
+window.savePrezzoLettino = () => {
+    const v=parseFloat(document.getElementById('extra-price-input').value);
+    if(isNaN(v)||v<=0) return alert('Prezzo non valido');
+    set(prezzoLettiniRef,v); showToast('✓ Prezzo aggiornato', 'success');
+};
 
-        window.logout = async () => {
-            await signOut(auth);
-            document.getElementById('userInput').value = '';
-            document.getElementById('passInput').value = '';
-            document.getElementById('login-error').innerText = '';
-            // onAuthStateChanged will redirect to login
-        };
+window.checkLogin = async () => {
+    const email=document.getElementById('userInput').value.trim();
+    const pass=document.getElementById('passInput').value;
+    const errEl=document.getElementById('login-error');
+    const btn=document.querySelector('#screen-login .btn-login');
+    errEl.innerText='';
+    if(!email||!pass){ errEl.innerText='Compila tutti i campi.'; return; }
+    btn.innerText='Accesso…'; btn.disabled=true;
+    try { await signInWithEmailAndPassword(auth,email,pass); }
+    catch(err) {
+        let m='Credenziali non valide.';
+        if(err.code==='auth/too-many-requests') m='Troppi tentativi.';
+        if(err.code==='auth/invalid-email') m='Email non valida.';
+        errEl.innerText=m;
+        document.getElementById('userInput').style.borderColor='var(--expired)';
+        document.getElementById('passInput').style.borderColor='var(--expired)';
+    } finally { btn.innerText='Accedi alla Suite'; btn.disabled=false; }
+};
 
-        // User management (admin only)
-        window.addUser = async () => {
-            const email = document.getElementById('new-username').value.trim();
-            const password = document.getElementById('new-password').value.trim();
-            const role = document.getElementById('new-role').value;
-            if (!email || !password) return alert('Compila email e password.');
-            if (password.length < 6) return alert('La password deve essere di almeno 6 caratteri.');
-            const btn = document.querySelector('#screen-admin-utenti .btn-sea');
-            btn.innerText = 'Creazione…'; btn.disabled = true;
-            try {
-                // Create user in Firebase Auth
-                const cred = await createUserWithEmailAndPassword(auth, email, password);
-                const uid = cred.user.uid;
-                // Store role in Realtime DB (NO password stored here)
-                await set(ref(db, 'utenti_suite/' + uid), { email, role });
-                document.getElementById('new-username').value = '';
-                document.getElementById('new-password').value = '';
-                document.getElementById('new-role').value = 'staff';
-                alert('✓ Utente creato!');
-            } catch (err) {
-                let msg = 'Errore nella creazione.';
-                if (err.code === 'auth/email-already-in-use') msg = 'Email già in uso.';
-                if (err.code === 'auth/invalid-email') msg = 'Formato email non valido.';
-                if (err.code === 'auth/weak-password') msg = 'Password troppo debole (min. 6 caratteri).';
-                alert(msg);
-            } finally {
-                btn.innerText = '➕ Aggiungi Utente'; btn.disabled = false;
-            }
-        };
+function applyRoleUI() {
+    const isAdmin=currentUser&&currentUser.role==='admin';
+    document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
+    document.querySelectorAll('.staff-hidden').forEach(el=>el.style.display=isAdmin?'':'none');
+    const pe=document.getElementById('admin-price-editor');
+    if(pe) pe.style.display=isAdmin?'block':'none';
+    document.getElementById('main-topbar').classList.remove('hidden');
+    const disp=currentUser.username.includes('@')?currentUser.username.split('@')[0]:currentUser.username;
+    document.getElementById('logged-user-label').innerText=disp+(isAdmin?' · Admin':' · Staff');
+}
 
-        window.deleteUser = (uid) => {
-            if (confirm('Eliminare questo utente? (Verrà rimosso solo dal database, non da Firebase Auth)')) {
-                delete usersData[uid];
-                set(usersRef, usersData);
-            }
-        };
+window.navTo = (id) => {
+    if(currentUser&&currentUser.role==='staff'&&!STAFF_SCREENS.includes(id)){ showToast('⛔ Accesso non autorizzato','warn'); return; }
+    document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if(id==='screen-home'){ updateHomeDate(); renderToday(); }
+    if(id==='screen-subaffitto') renderSubaffitto();
+    if(id==='screen-magazzino') renderWarehouse();
+    if(id==='screen-archivio'){ buildArchivioRows(); filterArchivio(); }
+};
 
-        function renderUtenti() {
-            const list = document.getElementById('lista-utenti');
-            if (!list) return;
-            const keys = Object.keys(usersData);
-            if (!keys.length) {
-                list.innerHTML = '<div style="color:#bbb; font-size:13px; text-align:center; padding:16px 0;">Nessun utente registrato</div>';
-                return;
-            }
-            list.innerHTML = keys.map(uid => {
-                const u = usersData[uid];
-                const isAdminRole = (u.role || 'staff') === 'admin';
-                const roleColor = isAdminRole ? '#c0392b' : 'var(--sea)';
-                const roleLabel = isAdminRole ? 'Admin' : 'Staff';
-                const toggleLabel = isAdminRole ? '→ Staff' : '→ Admin';
-                const displayName = u.email || u.username || uid;
-                return `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5; gap:8px;">
-                    <span style="font-size:13px; display:flex; align-items:center; gap:8px; flex:1; overflow:hidden;">
-                        <span style="font-size:18px;">👤</span>
-                        <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><b>${displayName}</b></span>
-                        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:${roleColor}20; color:${roleColor}; padding:2px 8px; border-radius:20px; flex-shrink:0;">${roleLabel}</span>
-                    </span>
-                    <div style="display:flex; gap:6px; flex-shrink:0;">
-                        <button onclick="toggleUserRole('${uid}')" style="background:none; color:var(--sea); border:1px solid var(--sea); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif; white-space:nowrap;">${toggleLabel}</button>
-                        <button onclick="deleteUser('${uid}')" style="background:none; color:var(--expired); border:1px solid var(--expired); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif;">Elimina</button>
-                    </div>
-                </div>`;
-            }).join('');
+window.logout = async () => {
+    await signOut(auth);
+    document.getElementById('userInput').value='';
+    document.getElementById('passInput').value='';
+    document.getElementById('login-error').innerText='';
+};
+
+window.addUser = async () => {
+    const email=document.getElementById('new-username').value.trim();
+    const pass=document.getElementById('new-password').value.trim();
+    const role=document.getElementById('new-role').value;
+    if(!email||!pass) return alert('Compila email e password.');
+    if(pass.length<6) return alert('Password troppo corta (min. 6).');
+    const btn=document.querySelector('#screen-admin-utenti .btn-sea');
+    btn.innerText='Creazione…'; btn.disabled=true;
+    try {
+        const c=await createUserWithEmailAndPassword(auth,email,pass);
+        await set(ref(db,'utenti_suite/'+c.user.uid),{email,role});
+        document.getElementById('new-username').value='';
+        document.getElementById('new-password').value='';
+        document.getElementById('new-role').value='staff';
+        showToast('✓ Utente creato!', 'success');
+    } catch(err) {
+        let m='Errore.';
+        if(err.code==='auth/email-already-in-use') m='Email già in uso.';
+        if(err.code==='auth/invalid-email') m='Email non valida.';
+        alert(m);
+    } finally { btn.innerText='➕ Aggiungi Utente'; btn.disabled=false; }
+};
+
+window.deleteUser = (uid) => {
+    if(confirm('Eliminare?')){ delete usersData[uid]; set(usersRef,usersData); }
+};
+window.toggleUserRole = (uid) => {
+    const u=usersData[uid]; u.role=u.role==='admin'?'staff':'admin';
+    set(ref(db,'utenti_suite/'+uid+'/role'),u.role);
+    showToast('Ruolo aggiornato', 'info');
+};
+
+function renderUtenti() {
+    const list=document.getElementById('lista-utenti'); if(!list) return;
+    const keys=Object.keys(usersData);
+    if(!keys.length){ list.innerHTML='<div style="color:#bbb;font-size:13px;text-align:center;padding:16px 0;">Nessun utente</div>'; return; }
+    list.innerHTML=keys.map(uid=>{
+        const u=usersData[uid];
+        const isA=(u.role||'staff')==='admin';
+        const rc=isA?'var(--expired)':'var(--eb-blue)';
+        const rl=isA?'Admin':'Staff';
+        const tl=isA?'→ Staff':'→ Admin';
+        const dn=u.email||u.username||uid;
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);gap:8px;">
+            <span style="font-size:13px;display:flex;align-items:center;gap:8px;flex:1;overflow:hidden;">
+                <span>👤</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b>${dn}</b></span>
+                <span style="font-size:10px;font-weight:700;text-transform:uppercase;background:${rc}20;color:${rc};padding:2px 8px;border-radius:20px;">${rl}</span>
+            </span>
+            <div style="display:flex;gap:6px;flex-shrink:0;">
+                <button onclick="toggleUserRole('${uid}')" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap;">${tl}</button>
+                <button onclick="deleteUser('${uid}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ── BEACH RENDER ──
+function renderSpiaggia() {
+    const west=document.getElementById('sector-west');
+    const east=document.getElementById('sector-east');
+    if(!west) return;
+    west.innerHTML=''; east.innerHTML='';
+    let mD=0,mS=0,booked=0,totalReal=0,barTotal=0,free=0;
+
+    for(let i=1;i<=200;i++) {
+        const d=beachData[i];
+        const div=document.createElement('div');
+        let cls='spot';
+        if(d){ cls+=d.isSeasonal?' seasonal':' booked'; if(d.subletActive) cls+=' sublet'; }
+        else { cls+=' free'; free++; }
+        if(d?.pagamento) cls+=` status-${d.pagamento}`;
+        div.className=cls;
+
+        const barHtml=(d?.barTotal>0)?`<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>`:'';
+        const weatherHtml=d?.weatherGuarantee?`<div class="weather-badge">☀️</div>`:'';
+        div.innerHTML=`${barHtml}${weatherHtml}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${d?d.nome:'LIBERO'}</div>`;
+        div.onclick=()=>handleOmbrellone(i);
+        if(i<=100) west.appendChild(div); else east.appendChild(div);
+
+        if(d){
+            booked++;
+            const p=parseFloat(d.prezzo||0);
+            if(d.isSeasonal) mS+=p; else mD+=p;
+            totalReal+=(d.rate||[]).reduce((a,b)=>a+b.importo,0);
+            barTotal+=parseFloat(d.barTotal||0);
         }
+    }
+    const els = { 'db-money-daily': mD.toFixed(2)+'€', 'db-money-seasonal': mS.toFixed(2)+'€', 'db-total-money': totalReal.toFixed(2)+'€', 'db-count-booked': booked, 'db-count-free': free, 'db-bar-total': barTotal.toFixed(2)+'€' };
+    Object.keys(els).forEach(k=>{ const e=document.getElementById(k); if(e) e.innerText=els[k]; });
+}
 
-        window.toggleUserRole = (uid) => {
-            const u = usersData[uid];
-            const currentRole = u.role || 'staff';
-            u.role = currentRole === 'admin' ? 'staff' : 'admin';
-            set(ref(db, 'utenti_suite/' + uid + '/role'), u.role);
-        };
+// ── HANDLE OMBRELLONE ──
+window.handleOmbrellone = (id) => {
+    const d=beachData[id];
+    if(!d) {
+        const nome=prompt('NOME CLIENTE:'); if(!nome) return;
+        const tipoInput=prompt("TIPO:\n'G' = Giornaliero  ·  'S' = Stagionale")?.toUpperCase();
+        if(tipoInput!=='G'&&tipoInput!=='S') return;
+        const isS=(tipoInput==='S');
+        const prezzo=prompt('PREZZO CONCORDATO (€):',isS?'500':'20'); if(prezzo===null) return;
+        const tel=prompt('TELEFONO:')||'-';
+        const today=new Date().toLocaleDateString('it-IT');
+        const partenza=prompt('DATA PARTENZA (gg/mm/aaaa):', today);
+        beachData[id]={ nome:nome.toUpperCase(), telefono:tel, email:'-', prezzo:parseFloat(prezzo).toFixed(2), isSeasonal:isS, pagamento:'nessuno', barTotal:0, rate:[], dataArrivo:today, dataPartenza:partenza||today, weatherGuarantee:false, cancellationPolicy:'nessuna', note:'' };
+        set(dbRef,beachData);
+        showToast(`✓ #${id} — ${nome.toUpperCase()} registrato`, 'success');
+    } else {
+        const op=prompt(`Ombrellone #${id} — ${d.nome}\n\n1 · Gestione Pagamenti\n2 · QR Code Bar\n3 · Azzera Bar\n4 · Subaffitto date\n5 · Libera postazione`);
+        if(op==='1') openPaymentModal(id);
+        else if(op==='2') openQrModal(id);
+        else if(op==='3'){ d.barTotal=0; set(dbRef,beachData); showToast('Bar azzerato','info'); }
+        else if(op==='4') { addSubletDate(id); }
+        else if(op==='5'){ if(confirm('Liberare la postazione?')){ delete beachData[id]; set(dbRef,beachData); showToast('Postazione liberata','info'); } }
+    }
+};
 
-        // dbRef and prodRef listeners started after auth — see onAuthStateChanged
+// ── PAYMENT MODAL ──
+window.openPaymentModal = (id) => {
+    currentEditingId=id;
+    const d=beachData[id];
+    if(!d.rate) d.rate=[];
+    document.getElementById('pm-title').innerText=`#${id} · ${d.nome} · Pagamenti`;
+    const total=parseFloat(d.prezzo);
+    const paid=(d.rate||[]).reduce((s,r)=>s+r.importo,0);
+    const pct=total>0?Math.min(100,Math.round((paid/total)*100)):0;
+    document.getElementById('pm-total').innerText=total.toFixed(2)+'€';
+    document.getElementById('pm-paid').innerText=paid.toFixed(2)+'€';
+    document.getElementById('pm-rem').innerText=(total-paid).toFixed(2)+'€';
+    document.getElementById('pm-progress').style.width=pct+'%';
+    document.getElementById('pm-weather').checked=d.weatherGuarantee||false;
+    document.getElementById('pm-cancellation').value=d.cancellationPolicy||'nessuna';
+    document.getElementById('pm-note').value=d.note||'';
+    document.getElementById('pm-history').innerHTML=d.rate.length
+        ? d.rate.map(r=>`<div style="padding:4px 0;border-bottom:1px solid var(--eb-bg);">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join('')
+        : '<div style="color:#aaa;text-align:center;padding:8px;">Nessun versamento</div>';
+    document.getElementById('payment-modal').style.display='block';
+    document.getElementById('overlay').style.display='block';
+};
 
-        function renderSpiaggia() {
-            const west = document.getElementById('sector-west');
-            const east = document.getElementById('sector-east');
-            const tbody = document.getElementById('db-body');
-            if (!west) return;
-            west.innerHTML = ''; east.innerHTML = ''; tbody.innerHTML = '';
-            let mD = 0, mS = 0, booked = 0, totalReal = 0;
+window.saveRata = () => {
+    const amt=parseFloat(document.getElementById('pm-new-amount').value);
+    if(isNaN(amt)||amt<=0) return showToast('Importo non valido','warn');
+    const d=beachData[currentEditingId];
+    d.rate.push({ importo:amt, data:new Date().toLocaleDateString('it-IT') });
+    const total=parseFloat(d.prezzo);
+    const paid=d.rate.reduce((s,r)=>s+r.importo,0);
+    d.pagamento=paid>=total?'saldo':paid>0?'acconto':'nessuno';
+    set(dbRef,beachData);
+    document.getElementById('pm-new-amount').value='';
+    openPaymentModal(currentEditingId);
+    showToast(`✓ ${amt.toFixed(2)}€ registrati`, 'success');
+};
 
-            for (let i = 1; i <= 200; i++) {
-                const d = beachData[i];
-                const div = document.createElement('div');
-                let cls = 'spot';
-                if (d) cls += d.isSeasonal ? ' seasonal' : ' booked';
-                else cls += ' free';
-                if (d?.pagamento) cls += ` status-${d.pagamento}`;
-                div.className = cls;
+window.saveModalExtras = () => {
+    const d=beachData[currentEditingId]; if(!d) return;
+    d.weatherGuarantee=document.getElementById('pm-weather').checked;
+    d.cancellationPolicy=document.getElementById('pm-cancellation').value;
+    d.note=document.getElementById('pm-note').value;
+    set(dbRef,beachData);
+    showToast('✓ Opzioni salvate', 'success');
+};
 
-                let barHtml = (d?.barTotal > 0) ? `<div class="bar-badge">🍹${d.barTotal}€</div>` : '';
-                div.innerHTML = `${barHtml}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${d ? d.nome : 'LIBERO'}</div>`;
-                div.onclick = () => handleOmbrellone(i);
-                if (i <= 100) west.appendChild(div); else east.appendChild(div);
+// ── CANCEL MODAL ──
+window.openCancelModal = () => {
+    selectedCancelOption=null;
+    document.querySelectorAll('.cancel-option').forEach(el=>el.classList.remove('selected'));
+    document.getElementById('btn-confirm-cancel').disabled=true;
+    document.getElementById('cancel-modal').style.display='block';
+    document.getElementById('payment-modal').style.display='none';
+};
+window.selectCancelOption = (el, val) => {
+    document.querySelectorAll('.cancel-option').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected'); selectedCancelOption=val;
+    document.getElementById('btn-confirm-cancel').disabled=false;
+};
+window.confirmCancel = () => {
+    if(!selectedCancelOption||!currentEditingId) return;
+    const d=beachData[currentEditingId];
+    const msgs = { rimborso:`✓ Prenotazione cancellata · Rimborso emesso per ${d.nome}`, voucher:`🎫 Voucher emesso per ${d.nome}`, trattieni:`🔒 Importo trattenuto · No-show ${d.nome}` };
+    delete beachData[currentEditingId];
+    set(dbRef,beachData);
+    closeModals();
+    showToast(msgs[selectedCancelOption]||'Cancellata', 'info');
+};
 
-                if (d) {
-                    booked++;
-                    let p = parseFloat(d.prezzo || 0);
-                    if (d.isSeasonal) mS += p; else mD += p;
-                    let versato = (d.rate || []).reduce((a, b) => a + b.importo, 0);
-                    totalReal += versato;
+window.closeModals = () => {
+    document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+    document.getElementById('overlay').style.display='none';
+};
 
-                    let bCls = d.pagamento === 'saldo' ? 'badge-saldo' : (d.pagamento === 'acconto' ? 'badge-acconto' : 'badge-none');
-                    tbody.innerHTML += `<tr>
-                        <td><b>#${i}</b></td>
-                        <td>${d.nome}</td>
-                        <td>${d.telefono}</td>
-                        <td>${d.email}</td>
-                        <td><span style="font-size:11px; font-weight:600; color:${d.isSeasonal ? 'var(--sea)' : 'var(--booked)'}">${d.isSeasonal ? 'STAG' : 'GIORN'}</span></td>
-                        <td style="font-weight:600">${d.prezzo}€</td>
-                        <td style="color:var(--bar); font-weight:600">${d.barTotal}€</td>
-                        <td><span class="badge ${bCls}">${d.pagamento || 'DA PAGARE'}</span></td>
-                    </tr>`;
-                }
-            }
-            document.getElementById('db-money-daily').innerText = mD.toFixed(2) + '€';
-            document.getElementById('db-money-seasonal').innerText = mS.toFixed(2) + '€';
-            document.getElementById('db-total-money').innerText = totalReal.toFixed(2) + '€';
-            document.getElementById('db-count-booked').innerText = booked;
-        }
+// ── PRODOTTI ──
+window.addProdotto = () => {
+    const nome=document.getElementById('prod-nome').value.trim();
+    const prezzo=parseFloat(document.getElementById('prod-prezzo').value);
+    const colore=document.getElementById('prod-colore').value;
+    if(!nome||isNaN(prezzo)) return showToast('Dati non validi','warn');
+    dynamicProducts['p_'+Date.now()]={nome,prezzo,colore};
+    set(prodRef,dynamicProducts);
+    document.getElementById('prod-nome').value='';
+    document.getElementById('prod-prezzo').value='';
+    showToast('✓ Prodotto aggiunto', 'success');
+};
+window.deleteProdotto = (id) => { if(confirm('Eliminare?')){ delete dynamicProducts[id]; set(prodRef,dynamicProducts); } };
 
-        window.handleOmbrellone = (id) => {
-            const d = beachData[id];
-            if (!d) {
-                const nome = prompt("NOME CLIENTE:"); if (!nome) return;
-                const tipoInput = prompt("TIPO:\n'G' = Giornaliero  ·  'S' = Stagionale").toUpperCase();
-                if (tipoInput !== 'G' && tipoInput !== 'S') return;
-                const isS = (tipoInput === 'S');
-                const prezzo = prompt("PREZZO CONCORDATO (€):", isS ? "500" : "20");
-                if (prezzo === null) return;
-                beachData[id] = { nome: nome.toUpperCase(), telefono: prompt("TELEFONO:") || "-", email: "-", prezzo: parseFloat(prezzo).toFixed(2), isSeasonal: isS, pagamento: 'nessuno', barTotal: 0, rate: [] };
-                set(dbRef, beachData);
-            } else {
-                const op = prompt(`Ombrellone #${id} — ${d.nome}\n\n1 · Gestione Acconti/Rate\n2 · Azzera Bar\n3 · Libera Postazione`);
-                if (op === "1") openPaymentModal(id);
-                else if (op === "2") { d.barTotal = 0; set(dbRef, beachData); }
-                else if (op === "3") { if (confirm("Liberare la postazione?")) { delete beachData[id]; set(ref(db, 'spiaggia_dati/' + id), null); } }
-            }
-        };
+function renderDynamicProducts() {
+    const admin=document.getElementById('lista-prodotti-admin');
+    const pos=document.getElementById('dynamic-pos-items');
+    let ah='', ph='';
+    Object.keys(dynamicProducts).forEach(id=>{
+        const p=dynamicProducts[id]; const c=p.colore||'#95a5a6';
+        ah+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);">
+            <span style="font-size:13px;display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block;"></span>${p.nome} · <b>${p.prezzo.toFixed(2)}€</b></span>
+            <button onclick="deleteProdotto('${id}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button>
+        </div>`;
+        ph+=`<button class="pos-btn" style="border-bottom-color:${c}" onclick="addToCart('${p.nome.replace(/'/g,"\\'")}',${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
+    });
+    if(admin) admin.innerHTML=ah||'<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">Nessun prodotto</div>';
+    if(pos) pos.innerHTML=ph;
+}
 
-        window.openPaymentModal = (id) => {
-            currentEditingId = id;
-            const d = beachData[id];
-            if (!d.rate) d.rate = [];
-            document.getElementById('pm-title').innerText = `Ombrellone #${id} · Pagamenti`;
-            const total = parseFloat(d.prezzo);
-            const paid = d.rate.reduce((sum, r) => sum + r.importo, 0);
-            document.getElementById('pm-total').innerText = total.toFixed(2) + '€';
-            document.getElementById('pm-paid').innerText = paid.toFixed(2) + '€';
-            document.getElementById('pm-rem').innerText = (total - paid).toFixed(2) + '€';
-            document.getElementById('pm-history').innerHTML = d.rate.length ?
-                d.rate.map(r => `<div style="padding:4px 0; border-bottom:1px solid #f5f5f5;">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join('') :
-                '<div style="color:#aaa; text-align:center; padding:8px 0;">Nessun versamento</div>';
-            document.getElementById('payment-modal').style.display = 'block';
-            document.getElementById('overlay').style.display = 'block';
-        };
+// ── EXTRA ──
+window.changeQty = (d) => { const e=document.getElementById('extra-qty'); e.value=Math.max(1,parseInt(e.value)+d); };
+window.filterClientsExtra = () => {
+    const v=document.getElementById('extraSearch').value.toUpperCase();
+    const r=document.getElementById('extra-results');
+    if(v.length<1){ r.classList.add('hidden'); return; }
+    let h='';
+    Object.keys(beachData).forEach(id=>{ if(id.includes(v)||beachData[id].nome.includes(v)) h+=`<div class="search-item" onclick="selectExtra('${id}','${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
+    r.innerHTML=h; r.classList.remove('hidden');
+};
+window.selectExtra = (id,nome) => {
+    document.getElementById('extra-selected-id').value=id;
+    document.getElementById('extraSearch').value=`#${id} ${nome}`;
+    document.getElementById('extra-results').classList.add('hidden');
+};
+window.chargeExtraToBeach = () => {
+    const id=document.getElementById('extra-selected-id').value;
+    const qty=parseInt(document.getElementById('extra-qty').value);
+    if(!id) return showToast('Seleziona un ombrellone','warn');
+    const d=beachData[id];
+    d.prezzo=(parseFloat(d.prezzo)+(qty*prezzoLettino)).toFixed(2);
+    d.lettiniExtra=(parseInt(d.lettiniExtra||0)+qty);
+    set(dbRef,beachData);
+    showToast(`✓ ${qty}x lettino addebitato su #${id}`, 'success');
+};
+window.directPayExtra = () => showToast('✓ Pagato in cassa!', 'success');
 
-        window.saveRata = () => {
-            const amt = parseFloat(document.getElementById('pm-new-amount').value);
-            if (isNaN(amt) || amt <= 0) return alert("Inserisci un importo valido");
-            const d = beachData[currentEditingId];
-            const dataOggi = new Date().toLocaleDateString('it-IT');
-            d.rate.push({ importo: amt, data: dataOggi });
-            const total = parseFloat(d.prezzo);
-            const paid = d.rate.reduce((sum, r) => sum + r.importo, 0);
-            if (paid >= total) d.pagamento = 'saldo';
-            else if (paid > 0) d.pagamento = 'acconto';
-            else d.pagamento = 'nessuno';
-            set(dbRef, beachData);
-            document.getElementById('pm-new-amount').value = '';
-            openPaymentModal(currentEditingId);
-        };
-
-        window.closeModals = () => {
-            document.getElementById('payment-modal').style.display = 'none';
-            document.getElementById('beer-menu').style.display = 'none';
-            document.getElementById('overlay').style.display = 'none';
-        };
-
-        window.addProdotto = () => {
-            const nome = document.getElementById('prod-nome').value.trim();
-            const prezzo = parseFloat(document.getElementById('prod-prezzo').value);
-            const colore = document.getElementById('prod-colore').value;
-            if (!nome || isNaN(prezzo)) return alert("Dati non validi");
-            const prodId = 'p_' + Date.now();
-            dynamicProducts[prodId] = { nome, prezzo, colore };
-            set(prodRef, dynamicProducts);
-            document.getElementById('prod-nome').value = '';
-            document.getElementById('prod-prezzo').value = '';
-        };
-
-        window.deleteProdotto = (id) => { if (confirm("Eliminare questo prodotto?")) { delete dynamicProducts[id]; set(prodRef, dynamicProducts); } };
-
-        function renderDynamicProducts() {
-            const adminList = document.getElementById('lista-prodotti-admin');
-            const posContainer = document.getElementById('dynamic-pos-items');
-            let adminHtml = '', posHtml = '';
-            Object.keys(dynamicProducts).forEach(id => {
-                const p = dynamicProducts[id];
-                const pCol = p.colore || '#95a5a6';
-                adminHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5;">
-                    <span style="font-size:14px; display:flex; align-items:center; gap:8px;">
-                        <span style="width:10px; height:10px; border-radius:50%; background:${pCol}; display:inline-block;"></span>
-                        ${p.nome} · <b>${p.prezzo.toFixed(2)}€</b>
-                    </span>
-                    <button onclick="deleteProdotto('${id}')" style="background:none; color:var(--expired); border:1px solid var(--expired); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif;">Elimina</button>
-                </div>`;
-                posHtml += `<button class="pos-btn" style="border-bottom-color:${pCol}" onclick="addToCart('${p.nome.replace(/'/g, "\\'")}', ${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
-            });
-            if (adminList) adminList.innerHTML = adminHtml || '<div style="color:#bbb; font-size:13px; text-align:center; padding:16px 0;">Nessun prodotto</div>';
-            if (posContainer) posContainer.innerHTML = posHtml;
-        }
-
-        // EXTRA
-        window.changeQty = (delta) => {
-            const el = document.getElementById('extra-qty');
-            el.value = Math.max(1, parseInt(el.value) + delta);
-        };
-        window.filterClientsExtra = () => {
-            const val = document.getElementById('extraSearch').value.toUpperCase();
-            const res = document.getElementById('extra-results');
-            if (val.length < 1) { res.classList.add('hidden'); return; }
-            let html = '';
-            Object.keys(beachData).forEach(id => { if (id.includes(val) || beachData[id].nome.includes(val)) html += `<div class="search-item" onclick="selectExtra('${id}', '${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
-            res.innerHTML = html; res.classList.remove('hidden');
-        };
-        window.selectExtra = (id, nome) => {
-            document.getElementById('extra-selected-id').value = id;
-            document.getElementById('extraSearch').value = `#${id} ${nome}`;
-            document.getElementById('extra-results').classList.add('hidden');
-        };
-        window.chargeExtraToBeach = () => {
-            const id = document.getElementById('extra-selected-id').value;
-            const qty = parseInt(document.getElementById('extra-qty').value);
-            if (!id) return alert("Seleziona un ombrellone");
-            beachData[id].prezzo = (parseFloat(beachData[id].prezzo) + (qty * prezzoLettino)).toFixed(2);
-            set(dbRef, beachData); alert("✓ Addebitato!");
-        };
-        window.directPayExtra = () => { alert("✓ Pagato!"); };
-
-        // BAR / CART
-        let cart = []; let cartTotal = 0;
-        window.addToCart = (n, p) => { cart.push({ n, p }); updateCartUI(); };
-        window.removeFromCart = (i) => { cart.splice(i, 1); updateCartUI(); };
-        function updateCartUI() {
-            cartTotal = cart.reduce((a, b) => a + b.p, 0);
-            document.getElementById('cart-list').innerHTML = cart.map((i, idx) =>
-                `<div class="cart-item"><span>${i.n}</span><div style="display:flex;align-items:center;gap:6px;"><b>${i.p.toFixed(2)}€</b><span class="remove-btn" onclick="removeFromCart(${idx})">🗑️</span></div></div>`
-            ).join('');
-            document.getElementById('cart-total').innerText = cartTotal.toFixed(2);
-        }
-        window.openBeerMenu = () => { document.getElementById('beer-menu').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; };
-        window.closeBeerMenu = () => { document.getElementById('beer-menu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; };
-        window.filterClients = () => {
-            const val = document.getElementById('clientSearch').value.toUpperCase();
-            const res = document.getElementById('search-results');
-            if (val.length < 1) { res.classList.add('hidden'); return; }
-            let html = '';
-            Object.keys(beachData).forEach(id => { if (id.includes(val) || beachData[id].nome.includes(val)) html += `<div class="search-item" onclick="selectClient('${id}', '${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
-            res.innerHTML = html; res.classList.remove('hidden');
-        };
-        window.selectClient = (id, nome) => {
-            document.getElementById('selected-id').value = id;
-            document.getElementById('clientSearch').value = `#${id} ${nome}`;
-            document.getElementById('search-results').classList.add('hidden');
-        };
-        window.chargeToSelected = () => {
-            const id = document.getElementById('selected-id').value;
-            if (!id || cartTotal === 0) return;
-            beachData[id].barTotal = (parseFloat(beachData[id].barTotal) + cartTotal).toFixed(2);
-            set(dbRef, beachData); alert("✓ Addebitato!"); cart = []; updateCartUI();
-        };
-        window.directPay = () => { alert("✓ Pagato!"); cart = []; updateCartUI(); };
-    </script>
+// ── BAR / CART ──
+let cart=[]; let cartTotal=0;
+window.addToCart = (n,p) => { cart.push({n,p}); updateCartUI(); };
+window.removeFromCart = (i) => { cart.splice(i,1); updateCartUI(); };
+function updateCartUI() {
+    cartTotal=cart.reduce((a,b)=>a+b.p,0);
+    document.getElementById('cart-list').innerHTML=cart.map((i,idx)=>
+        `<div class="cart-item"><span>${i.n}</span><div style="display:flex;align-items:center;gap:6px;"><b>${i.p.toFixed(2)}€</b><span class="remove-btn" onclick="removeFromCart(${idx})">🗑️</span></div></div>`
+    ).join('');
+    document.getElementById('cart-total').innerText=cartTotal.toFixed(2);
+}
+window.openBeerMenu = () => { document.getElementById('beer-menu').style.display='block'; document.getElementById('overlay').style.display='block'; };
+window.closeBeerMenu = () => { document.getElementById('beer-menu').style.display='none'; document.getElementById('overlay').style.display='none'; };
+window.filterClients = () => {
+    const v=document.getElementById('clientSearch').value.toUpperCase();
+    const r=document.getElementById('search-results');
+    if(v.length<1){ r.classList.add('hidden'); return; }
+    let h='';
+    Object.keys(beachData).forEach(id=>{ if(id.includes(v)||beachData[id].nome.includes(v)) h+=`<div class="search-item" onclick="selectClient('${id}','${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
+    r.innerHTML=h; r.classList.remove('hidden');
+};
+window.selectClient = (id,nome) => {
+    document.getElementById('selected-id').value=id;
+    document.getElementById('clientSearch').value=`#${id} ${nome}`;
+    document.getElementById('search-results').classList.add('hidden');
+};
+window.chargeToSelected = () => {
+    const id=document.getElementById('selected-id').value;
+    if(!id||cartTotal===0) return showToast('Seleziona un cliente e aggiungi prodotti','warn');
+    beachData[id].barTotal=(parseFloat(beachData[id].barTotal||0)+cartTotal).toFixed(2);
+    set(dbRef,beachData);
+    showToast(`✓ ${cartTotal.toFixed(2)}€ addebitati su #${id}`, 'success');
+    cart=[]; updateCartUI();
+    document.getElementById('selected-id').value='';
+    document.getElementById('clientSearch').value='';
+};
+window.directPay = () => { showToast('✓ Pagato in cassa!', 'success'); cart=[]; updateCartUI(); };
+</script>
 </body>
 </html>
