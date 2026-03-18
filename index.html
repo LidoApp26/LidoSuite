@@ -1185,7 +1185,7 @@
                 const op = prompt(`Ombrellone #${id} — ${d.nome}\n\n1 · Gestione Acconti/Rate\n2 · Azzera Bar\n3 · Libera Postazione`);
                 if (op === "1") openPaymentModal(id);
                 else if (op === "2") { d.barTotal = 0; set(dbRef, beachData); }
-                else if (op === "3") { if (confirm("Liberare la postazione?")) { delete beachData[id]; set(dbRef, beachData); } }
+                else if (op === "3") { if (confirm("Liberare la postazione?")) { delete beachData[id]; set(ref(db, 'spiaggia_dati/' + id), null); } }
             }
         };
 
