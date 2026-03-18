@@ -907,19 +907,34 @@
         // ── FIREBASE AUTH STATE ──
         onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
-                // User is signed in — load their role from DB
-                const roleSnap = await new Promise(resolve => {
-                    const roleRef = ref(db, 'utenti_suite/' + firebaseUser.uid + '/role');
-                    onValue(roleRef, resolve, { onlyOnce: true });
+                // User is signed in — load role from DB
+                // Strategy: try by UID first, then fallback to email match across all nodes
+                const allUsersSnap = await new Promise(resolve => {
+                    onValue(usersRef, resolve, { onlyOnce: true });
                 });
-                const role = roleSnap.val() || 'staff';
-                // DEBUG: mostra UID e ruolo letto — rimuovere dopo verifica
-                console.log('🔑 UID Firebase:', firebaseUser.uid);
-                console.log('📋 Ruolo letto dal DB:', roleSnap.val(), '→ usato:', role);
-                console.log('📂 Percorso DB:', 'utenti_suite/' + firebaseUser.uid + '/role');
-                // Mostra anche nell'UI per comodità
-                document.getElementById('login-error').style.color = 'var(--sea)';
-                document.getElementById('login-error').innerText = '🔑 UID: ' + firebaseUser.uid + ' | Ruolo: ' + (roleSnap.val() || 'null (→ staff)');
+                const allUsers = allUsersSnap.val() || {};
+
+                let role = 'staff';
+
+                // 1. Try direct UID lookup
+                if (allUsers[firebaseUser.uid]) {
+                    role = allUsers[firebaseUser.uid].role || 'staff';
+                } else {
+                    // 2. Fallback: search by email across all nodes
+                    const match = Object.values(allUsers).find(u =>
+                        u.email === firebaseUser.email || u.username === firebaseUser.email
+                    );
+                    if (match) role = match.role || 'staff';
+
+                    // 3. If nothing found, auto-create the node with UID as key
+                    if (!match) {
+                        await set(ref(db, 'utenti_suite/' + firebaseUser.uid), {
+                            email: firebaseUser.email,
+                            role: 'staff'
+                        });
+                    }
+                }
+
                 currentUser = { username: firebaseUser.email, role };
                 applyRoleUI();
                 // Only navigate to home if we're on login screen
