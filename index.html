@@ -913,6 +913,13 @@
                     onValue(roleRef, resolve, { onlyOnce: true });
                 });
                 const role = roleSnap.val() || 'staff';
+                // DEBUG: mostra UID e ruolo letto — rimuovere dopo verifica
+                console.log('🔑 UID Firebase:', firebaseUser.uid);
+                console.log('📋 Ruolo letto dal DB:', roleSnap.val(), '→ usato:', role);
+                console.log('📂 Percorso DB:', 'utenti_suite/' + firebaseUser.uid + '/role');
+                // Mostra anche nell'UI per comodità
+                document.getElementById('login-error').style.color = 'var(--sea)';
+                document.getElementById('login-error').innerText = '🔑 UID: ' + firebaseUser.uid + ' | Ruolo: ' + (roleSnap.val() || 'null (→ staff)');
                 currentUser = { username: firebaseUser.email, role };
                 applyRoleUI();
                 // Only navigate to home if we're on login screen
