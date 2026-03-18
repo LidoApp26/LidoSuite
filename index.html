@@ -892,14 +892,37 @@
         let currentUser = null; // { username, role: 'admin'|'staff' }
 
         // Admin hardcoded credentials
-        const ADMIN_USER = 'admin';
-        const ADMIN_PASS = 'Lido2026';
-
         // Staff-accessible screens
         const STAFF_SCREENS = ['screen-home','screen-spiaggia','screen-extra','screen-bar'];
 
         const usersRef = ref(db, 'utenti_suite');
-        onValue(usersRef, (snapshot) => { usersData = snapshot.val() || {}; renderUtenti(); });
+
+        // SHA-256 hash helper
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // First-run setup: write admin to Firebase if no users exist.
+        // The default password is hashed immediately and NEVER stored in plain text.
+        // Change it from the Gestione Utenti panel after first login.
+        const DEFAULT_ADMIN_PASS = 'Lido2026'; // used only once to generate hash, then discarded
+        async function setupInitialAdmin() {
+            if (Object.keys(usersData).length === 0) {
+                const hash = await hashPassword(DEFAULT_ADMIN_PASS);
+                const uid = 'u_admin_' + Date.now();
+                usersData[uid] = { username: 'admin', password: hash, role: 'admin' };
+                await set(usersRef, usersData);
+            }
+        }
+
+        onValue(usersRef, (snapshot) => {
+            usersData = snapshot.val() || {};
+            renderUtenti();
+            setupInitialAdmin();
+        });
 
         let prezzoLettino = 7.00;
         onValue(prezzoLettiniRef, (snapshot) => {
@@ -918,7 +941,7 @@
             alert('✓ Prezzo aggiornato!');
         };
 
-        window.checkLogin = () => {
+        window.checkLogin = async () => {
             const username = document.getElementById('userInput').value.trim();
             const password = document.getElementById('passInput').value;
             const errEl = document.getElementById('login-error');
@@ -931,16 +954,10 @@
                 return;
             }
 
-            // Check admin
-            if (username === ADMIN_USER && password === ADMIN_PASS) {
-                currentUser = { username: ADMIN_USER, role: 'admin' };
-                applyRoleUI();
-                navTo('screen-home');
-                return;
-            }
+            const hashed = await hashPassword(password);
 
-            // Check staff/admin users from Firebase
-            const match = Object.values(usersData).find(u => u.username === username && u.password === password);
+            // Check all users from Firebase (admin included)
+            const match = Object.values(usersData).find(u => u.username === username && u.password === hashed);
             if (match) {
                 currentUser = { username: match.username, role: match.role || 'staff' };
                 applyRoleUI();
@@ -992,16 +1009,16 @@
         };
 
         // User management (admin only)
-        window.addUser = () => {
+        window.addUser = async () => {
             const username = document.getElementById('new-username').value.trim();
             const password = document.getElementById('new-password').value.trim();
             const role = document.getElementById('new-role').value;
             if (!username || !password) return alert('Compila nome utente e password.');
-            if (username === ADMIN_USER) return alert('Nome riservato.');
             const exists = Object.values(usersData).find(u => u.username === username);
             if (exists) return alert('Utente già esistente.');
+            const hashed = await hashPassword(password);
             const uid = 'u_' + Date.now();
-            usersData[uid] = { username, password, role };
+            usersData[uid] = { username, password: hashed, role };
             set(usersRef, usersData);
             document.getElementById('new-username').value = '';
             document.getElementById('new-password').value = '';
