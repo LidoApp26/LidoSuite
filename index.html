@@ -747,6 +747,10 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
+// App secondaria per creare utenti senza disconnettere l'admin dalla sessione principale
+const secondaryApp = initializeApp(firebaseConfig, 'secondary');
+const secondaryAuth = getAuth(secondaryApp);
+
 const dbRef = ref(db, 'spiaggia_dati');
 const prodRef = ref(db, 'prodotti_bar_dinamici');
 const prezzoLettiniRef = ref(db, 'prezzo_lettino');
@@ -1093,6 +1097,7 @@ window.navTo = (id) => {
     if(id==='screen-subaffitto') renderSubaffitto();
     if(id==='screen-magazzino') renderWarehouse();
     if(id==='screen-archivio'){ buildArchivioRows(); filterArchivio(); }
+    if(id==='screen-admin-utenti') renderUtenti();
 };
 
 window.logout = async () => {
@@ -1106,22 +1111,28 @@ window.addUser = async () => {
     const email=document.getElementById('new-username').value.trim();
     const pass=document.getElementById('new-password').value.trim();
     const role=document.getElementById('new-role').value;
-    if(!email||!pass) return alert('Compila email e password.');
-    if(pass.length<6) return alert('Password troppo corta (min. 6).');
+    if(!email||!pass) return showToast('Compila email e password.','warn');
+    if(pass.length<6) return showToast('Password troppo corta (min. 6 caratteri).','warn');
     const btn=document.querySelector('#screen-admin-utenti .btn-sea');
     btn.innerText='Creazione…'; btn.disabled=true;
     try {
-        const c=await createUserWithEmailAndPassword(auth,email,pass);
-        await set(ref(db,'utenti_suite/'+c.user.uid),{email,role});
+        // Usa l'app secondaria: non disconnette l'admin dalla sessione principale
+        const c = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
+        const uid = c.user.uid;
+        // Salva ruolo nel DB
+        await set(ref(db, 'utenti_suite/' + uid), { email, role });
+        // Disconnetti subito la sessione secondaria
+        await signOut(secondaryAuth);
         document.getElementById('new-username').value='';
         document.getElementById('new-password').value='';
         document.getElementById('new-role').value='staff';
-        showToast('✓ Utente creato!', 'success');
+        showToast('✓ Utente creato: ' + email, 'success');
     } catch(err) {
-        let m='Errore.';
+        let m='Errore nella creazione.';
         if(err.code==='auth/email-already-in-use') m='Email già in uso.';
-        if(err.code==='auth/invalid-email') m='Email non valida.';
-        alert(m);
+        if(err.code==='auth/invalid-email') m='Formato email non valido.';
+        if(err.code==='auth/weak-password') m='Password troppo debole (min. 6 caratteri).';
+        showToast(m, 'warn');
     } finally { btn.innerText='➕ Aggiungi Utente'; btn.disabled=false; }
 };
 
