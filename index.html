@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lido Suite 2026 🏖️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sand: #f5ede0;
+            --sand-dark: #e8d9c4;
+            --sand-deep: #c8b49a;
+            --sea: #1a6b8a;
+            --sea-mid: #2589ac;
+            --sea-light: #4aa8c8;
+            --sea-pale: #e8f4f8;
+            --foam: #f0f8fb;
+            --free: #2a9d5c;
+            --booked: #e07b30;
+            --seasonal: #1a6b8a;
+            --wood: #8b5e3c;
+            --wood-light: #c49a72;
+            --acconto: #e8a020;
+            --saldo: #2a9d5c;
+            --expired: #c0392b;
+            --dark: #1a2533;
+            --text: #2c3a47;
+            --text-muted: #7a8a96;
+            --white: #ffffff;
+            --bar: #e07b30;
+            --extra: #7b4ea6;
+            --surface: rgba(255,255,255,0.85);
+            --glass: rgba(255,255,255,0.6);
+            --shadow-sm: 0 2px 8px rgba(26,38,51,0.08);
+            --shadow-md: 0 8px 24px rgba(26,38,51,0.12);
+            --shadow-lg: 0 20px 48px rgba(26,38,51,0.16);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--sand);
+            min-height: 100vh;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle wave background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 320px;
+            background: linear-gradient(160deg, #1a6b8a 0%, #2589ac 40%, #4aa8c8 70%, #c8e8f0 100%);
+            z-index: -2;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 220px; left: -5%; right: -5%;
+            height: 120px;
+            background: var(--sand);
+            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+            z-index: -1;
+        }
+
+        .screen { width: 100%; display: flex; flex-direction: column; align-items: center; animation: fadeUp 0.4s ease; }
+        .hidden { display: none !important; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── APP HEADER ── */
+        .app-header {
+            width: 100%;
+            max-width: 1150px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0 28px 0;
+        }
+        .app-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: -0.5px;
+        }
+        .app-logo span { opacity: 0.7; font-weight: 400; font-size: 14px; margin-left: 8px; }
+        .version-tag { font-size: 10px; color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 20px; }
+
+        /* ── LOGIN ── */
+        .login-box {
+            background: var(--surface);
+            backdrop-filter: blur(20px);
+            padding: 48px 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            margin-top: 8vh;
+            width: 100%;
+            max-width: 380px;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .login-icon { font-size: 48px; margin-bottom: 16px; }
+        .login-box h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        .login-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 32px; }
+        .login-box input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--sand-dark);
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            text-align: center;
+            background: var(--foam);
+            color: var(--text);
+            transition: border-color 0.2s;
+            letter-spacing: 3px;
+        }
+        .login-box input:focus { outline: none; border-color: var(--sea-mid); background: white; }
+        .login-box input::placeholder { letter-spacing: 0; }
+        .login-box button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--sea), var(--sea-mid));
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 16px rgba(26,107,138,0.35);
+        }
+        .login-box button:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,107,138,0.45); }
+
+        /* ── HOME ── */
+        .home-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--white);
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        .home-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 980px;
+        }
+        .home-card {
+            background: var(--surface);
+            backdrop-filter: blur(16px);
+            border-radius: var(--radius);
+            padding: 32px 16px 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        .home-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 4px;
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .home-card.spiaggia::before { background: linear-gradient(90deg, var(--sea), var(--sea-light)); }
+        .home-card.bar::before { background: linear-gradient(90deg, var(--bar), #f0a460); }
+        .home-card.extra::before { background: linear-gradient(90deg, var(--extra), #a57bc8); }
+        .home-card.archive::before { background: linear-gradient(90deg, var(--dark), #4a6070); }
+        .home-card.settings::before { background: linear-gradient(90deg, var(--wood), var(--wood-light)); }
+        .home-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-lg); }
+        .home-icon { font-size: 38px; margin-bottom: 14px; }
+        .home-card h3 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--dark); font-weight: 600; margin-bottom: 4px; }
+        .home-card small { font-size: 11px; color: var(--text-muted); }
+
+        /* ── NAV ── */
+        .nav-bar {
+            width: 100%;
+            max-width: 1150px;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+        }
+        .btn-back {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            color: var(--white);
+            padding: 10px 20px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.25); transform: translateX(-3px); }
+
+        /* ── DASHBOARD ── */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 1150px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-sm);
+            padding: 18px 16px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: var(--shadow-sm);
+        }
+        .stat-card .value {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--sea);
+            display: block;
+        }
+        .stat-card label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; }
+
+        /* ── BEACH LAYOUT ── */
+        .beach-wrapper {
+            width: 100%;
+            max-width: 1150px;
+            background: linear-gradient(180deg, #c8e8f0 0%, #e8d9c4 60%, #f5ede0 100%);
+            border-radius: 20px;
+            padding: 40px 24px;
+            box-shadow: var(--shadow-md);
+            border: 2px solid rgba(255,255,255,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        .beach-wrapper::before {
+            content: '🌊';
+            position: absolute;
+            top: 8px; left: 16px;
+            font-size: 22px;
+            opacity: 0.4;
+        }
+        .beach-wrapper::after { content: none; }
+        .beach-divider {
+            position: absolute;
+            left: 50%; top: 20px; bottom: 20px;
+            transform: translateX(-50%);
+            width: 28px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--wood) 0px, var(--wood) 14px,
+                var(--wood-light) 14px, var(--wood-light) 16px
+            );
+            border-radius: 4px;
+            opacity: 0.6;
+            z-index: 1;
+        }
+        .beach-sectors { display: flex; justify-content: center; gap: 48px; }
+        .sector-label {
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--sea);
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            opacity: 0.7;
+        }
+        .sector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; z-index: 1; }
+
+        .spot {
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 10px 4px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 11px;
+            min-width: 62px;
+            position: relative;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+        }
+        .spot:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.14); }
+        .spot b { display: block; font-size: 13px; color: var(--dark); }
+        .spot .owner { font-size: 9px; color: var(--text-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 58px; margin: 0 auto; margin-top: 2px; }
+        
+        .spot.booked { border-color: var(--booked); background: #fff8f2; }
+        .spot.seasonal { border-color: var(--sea); background: #f0f8fb; }
+        .spot.free { border-color: #d0e8d0; }
+
+        .pay-indicator {
+            position: absolute;
+            top: 4px; right: 4px;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            display: none;
+            border: 1.5px solid white;
+        }
+        .spot.status-acconto .pay-indicator { display: block; background: var(--acconto); }
+        .spot.status-saldo .pay-indicator { display: block; background: var(--saldo); }
+
+        .bar-badge {
+            position: absolute;
+            top: -8px; left: -4px;
+            background: var(--bar);
+            color: white;
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 700;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(224,123,48,0.4);
+        }
+
+        /* ── POS / BAR ── */
+        .pos-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            align-items: flex-start;
+        }
+        .pos-grid-wrap { flex: 1; }
+        .pos-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-left: 2px;
+        }
+        .pos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+        }
+        .pos-btn {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            border-bottom: 4px solid #ddd;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--text);
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: var(--shadow-sm);
+            line-height: 1.4;
+        }
+        .pos-btn:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .pos-btn:active { transform: scale(0.96); }
+
+        .cart-panel {
+            width: 300px;
+            background: white;
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 20px;
+            border: 1px solid var(--sand-dark);
+        }
+        .cart-panel h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--sand);
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        .cart-item span { color: var(--text); }
+        .remove-btn { color: var(--expired); cursor: pointer; font-size: 16px; padding: 0 4px; transition: transform 0.15s; }
+        .remove-btn:hover { transform: scale(1.2); }
+        .cart-total-row { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--bar); margin: 16px 0; }
+        .cart-total-row span { font-size: 14px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-weight: 400; }
+
+        .search-results {
+            position: absolute;
+            background: white;
+            border: 1px solid var(--sand-dark);
+            border-top: none;
+            width: 100%;
+            z-index: 100;
+            max-height: 160px;
+            overflow-y: auto;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            box-shadow: var(--shadow-md);
+        }
+        .search-item { padding: 12px 14px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #f5f5f5; transition: background 0.1s; }
+        .search-item:hover { background: var(--sea-pale); }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            margin-top: 10px;
+        }
+        .btn-primary:hover { transform: translateY(-2px); }
+        .btn-charge { background: linear-gradient(135deg, var(--bar), #f0a460); color: white; box-shadow: 0 4px 14px rgba(224,123,48,0.35); }
+        .btn-pay { background: linear-gradient(135deg, var(--free), #4ac880); color: white; box-shadow: 0 4px 14px rgba(42,157,92,0.35); }
+        .btn-sea { background: linear-gradient(135deg, var(--sea), var(--sea-mid)); color: white; box-shadow: 0 4px 14px rgba(26,107,138,0.35); }
+        .btn-extra { background: linear-gradient(135deg, var(--extra), #a57bc8); color: white; box-shadow: 0 4px 14px rgba(123,78,166,0.35); }
+
+        input[type="text"], input[type="number"], input[type="password"] {
+            font-family: 'DM Sans', sans-serif;
+        }
+        .field {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--sand-dark);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--foam);
+            color: var(--text);
+            transition: border-color 0.2s;
+        }
+        .field:focus { outline: none; border-color: var(--sea-mid); background: white; }
+
+        /* ── EXTRA ── */
+        .extra-container {
+            background: white;
+            padding: 40px 36px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            border: 1px solid var(--sand-dark);
+        }
+        .extra-container h2 { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--dark); margin-bottom: 8px; }
+        .extra-container p { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+        .price-display {
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--extra);
+            margin: 24px 0;
+            line-height: 1;
+        }
+        .price-display small { font-size: 18px; color: var(--text-muted); font-family: 'DM Sans', sans-serif; }
+        .qty-wrap { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 24px; }
+        .qty-btn { background: var(--sand); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; font-weight: bold; color: var(--dark); transition: background 0.2s; }
+        .qty-btn:hover { background: var(--sand-dark); }
+        .qty-input { width: 70px; padding: 10px; font-size: 20px; text-align: center; border: 2px solid var(--sand-dark); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-weight: 700; }
+        .divider { height: 1px; background: var(--sand-dark); margin: 28px 0; }
+
+        /* ── ARCHIVIO ── */
+        .db-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--sand-dark);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            background: var(--dark);
+            color: rgba(255,255,255,0.85);
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        td { padding: 13px 16px; font-size: 13px; border-bottom: 1px solid var(--sand); }
+        tr:hover td { background: var(--foam); }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-acconto { background: #fef3cd; color: #a07000; }
+        .badge-saldo { background: #d4f0e0; color: #1a6b3a; }
+        .badge-none { background: #f0f0f0; color: #888; }
+
+        /* ── MODALS ── */
+        #beer-menu, #payment-modal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 36px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg), 0 0 80px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            max-width: 92%;
+            width: 420px;
+            border: 1px solid var(--sand-dark);
+        }
+        #beer-menu h3, #payment-modal h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+        #beer-menu button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--sand-dark);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            color: var(--dark);
+            transition: all 0.15s;
+        }
+        #beer-menu button:hover { background: var(--sea-pale); border-color: var(--sea); color: var(--sea); }
+
+        .overlay-bg {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(26,37,51,0.55);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+        }
+
+        /* Payment modal internals */
+        .pm-summary {
+            background: var(--foam);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: left;
+            border: 1px solid var(--sand-dark);
+        }
+        .pm-row { display: flex; justify-content: space-between; font-size: 14px; padding: 4px 0; }
+        .pm-row b { font-weight: 600; }
+        .pm-row.total { border-top: 1px solid var(--sand-dark); margin-top: 6px; padding-top: 10px; font-weight: 700; }
+
+        #pm-history {
+            max-height: 110px;
+            overflow-y: auto;
+            font-size: 12px;
+            text-align: left;
+            margin-bottom: 16px;
+            border: 1px solid var(--sand-dark);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            background: var(--foam);
+        }
+
+        /* Gestione prodotti */
+        .prodotti-container {
+            background: white;
+            padding: 36px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--sand-dark);
+        }
+        .prodotti-container h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: var(--dark); margin-bottom: 24px; }
+        .color-field-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .color-field-row input[type="color"] { width: 44px; height: 44px; border: 2px solid var(--sand-dark); border-radius: 8px; cursor: pointer; padding: 2px; background: none; }
+        .color-field-row span { font-size: 14px; color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+            .pos-container { flex-direction: column; }
+            .cart-panel { width: 100%; position: static; }
+            .beach-sectors { flex-direction: column; gap: 24px; }
+            .beach-divider { display: none; }
+            .sector { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+            .spot { min-width: 52px; padding: 8px 2px; }
+        }
+
+        @media print { .nav-bar, .dashboard, .beach-wrapper, .pos-container, .home-grid, .extra-container { display: none !important; } }
+    </style>
+</head>
+<body>
+
+    <div class="overlay-bg" id="overlay" onclick="closeModals()"></div>
+
+    <!-- BEER MODAL -->
+    <div id="beer-menu">
+        <h3>🍺 Formato Birra</h3>
+        <button onclick="addToCart('Birra Piccola', 3.50); closeBeerMenu()">Piccola — 3.50€</button>
+        <button onclick="addToCart('Birra Media', 5.00); closeBeerMenu()">Media — 5.00€</button>
+        <button onclick="closeBeerMenu()" style="background: var(--sand); border-color: var(--sand-dark); color: var(--text-muted);">Annulla</button>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div id="payment-modal">
+        <h3 id="pm-title">Gestione Rate</h3>
+        <div class="pm-summary">
+            <div class="pm-row"><span>Totale dovuto</span><b id="pm-total">0€</b></div>
+            <div class="pm-row"><span>Versato</span><b id="pm-paid" style="color:var(--free)">0€</b></div>
+            <div class="pm-row total"><span>Rimanente</span><b id="pm-rem" style="color:var(--expired)">0€</b></div>
+        </div>
+        <div id="pm-history"></div>
+        <input type="number" id="pm-new-amount" class="field" placeholder="Importo rata (€)" style="margin-bottom: 12px;">
+        <button onclick="saveRata()" class="btn-primary btn-pay">✓ Registra Versamento</button>
+        <button onclick="closeModals()" class="btn-primary" style="background: var(--sand); color: var(--text-muted); box-shadow: none; margin-top: 8px;">Chiudi</button>
+    </div>
+
+    <!-- ── LOGIN ── -->
+    <div id="screen-login" class="screen">
+        <div class="app-header" style="max-width: 380px; justify-content: center; padding-bottom: 0;">
+            <div class="app-logo" style="margin-bottom: 8px;">Lido Suite <span>2026</span></div>
+        </div>
+        <div class="login-box">
+            <div class="login-icon">🏖️</div>
+            <h1>Accedi</h1>
+            <p>Inserisci le tue credenziali per continuare</p>
+            <input type="text" id="userInput" class="field" placeholder="Nome utente" style="margin-bottom: 12px;" onkeydown="if(event.key==='Enter') checkLogin()">
+            <input type="password" id="passInput" class="field" placeholder="••••••••" onkeydown="if(event.key==='Enter') checkLogin()" style="margin-bottom: 0;">
+            <div id="login-error" style="font-size: 12px; color: var(--expired); margin-top: 10px; min-height: 18px;"></div>
+            <button onclick="checkLogin()" style="margin-top: 8px; width: 100%; padding: 16px; background: linear-gradient(135deg, var(--sea), var(--sea-mid)); color: white; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 16px rgba(26,107,138,0.35);">Accedi alla Suite</button>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 20px;">v4.8 · Stagione 2026</div>
+        </div>
+    </div>
+
+    <!-- ── ADMIN UTENTI ── -->
+    <div id="screen-admin-utenti" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')"><- Home</button></div>
+        <div class="prodotti-container" style="max-width: 580px;">
+            <h2>👤 Gestione Utenti</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Solo l'amministratore può creare o eliminare utenti.</p>
+            <input type="text" id="new-username" class="field" placeholder="Nome utente" style="margin-bottom: 12px;">
+            <input type="password" id="new-password" class="field" placeholder="Password" style="margin-bottom: 12px;">
+            <select id="new-role" class="field" style="margin-bottom: 20px; cursor:pointer;">
+                <option value="staff">Staff</option>
+                <option value="admin">Amministratore</option>
+            </select>
+            <button onclick="addUser()" class="btn-primary btn-sea">➕ Aggiungi Utente</button>
+            <div class="divider"></div>
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 14px;">Utenti registrati</div>
+            <div id="lista-utenti" style="max-height: 300px; overflow-y: auto; border: 1px solid var(--sand-dark); border-radius: var(--radius-sm); padding: 10px;"></div>
+        </div>
+    </div>
+
+        <!-- ── HOME ── -->
+    <div id="screen-home" class="screen hidden">
+        <div class="app-header" id="home-header">
+            <div class="app-logo">Lido Suite <span>2026</span></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span id="logged-user-label" style="font-size:12px; color:rgba(255,255,255,0.75); font-weight:500;"></span>
+                <div class="version-tag">v4.8</div>
+                <button onclick="logout()" style="background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,255,255,0.3); border-radius:20px; padding:6px 14px; font-size:12px; font-family:'DM Sans',sans-serif; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">Esci</button>
+            </div>
+        </div>
+        <div class="home-grid">
+            <div class="home-card spiaggia" onclick="navTo('screen-spiaggia')">
+                <div class="home-icon">🏖️</div>
+                <h3>Spiaggia</h3>
+                <small>Mappa & prenotazioni</small>
+            </div>
+            <div class="home-card extra" onclick="navTo('screen-extra')">
+                <div class="home-icon">🛌</div>
+                <h3>Lettini Extra</h3>
+                <small>Noleggio giornaliero</small>
+            </div>
+            <div class="home-card bar" onclick="navTo('screen-bar')">
+                <div class="home-icon">🍹</div>
+                <h3>Bar POS</h3>
+                <small>Cassa & ordini</small>
+            </div>
+            <div class="home-card archive staff-hidden" onclick="navTo('screen-archivio')">
+                <div class="home-icon">📊</div>
+                <h3>Archivio</h3>
+                <small>Storico clienti</small>
+            </div>
+            <div class="home-card settings staff-hidden" onclick="navTo('screen-prodotti')">
+                <div class="home-icon">📦</div>
+                <h3>Prodotti</h3>
+                <small>Gestione menu bar</small>
+            </div>
+            <div class="home-card staff-hidden" style="border-bottom: 4px solid transparent;" onclick="navTo('screen-flussi')">
+                <div style="position:absolute;bottom:0;left:0;right:0;height:4px;border-radius:0 0 var(--radius) var(--radius);background:linear-gradient(90deg,var(--free),#4ac880);"></div>
+                <div class="home-icon">💰</div>
+                <h3>Flussi di Cassa</h3>
+                <small>Incassi & statistiche</small>
+            </div>
+            <div class="home-card admin-only" id="card-admin-utenti" style="border-bottom: 4px solid transparent;" onclick="navTo('screen-admin-utenti')">
+                <div style="position:absolute;bottom:0;left:0;right:0;height:4px;border-radius:0 0 var(--radius) var(--radius);background:linear-gradient(90deg,#c0392b,#e74c3c);"></div>
+                <div class="home-icon">🔐</div>
+                <h3>Gestione Utenti</h3>
+                <small>Solo amministratore</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── FLUSSI DI CASSA ── -->
+    <div id="screen-flussi" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="dashboard">
+            <div class="stat-card"><span class="value" id="db-money-daily">0€</span><label>Giornalieri</label></div>
+            <div class="stat-card"><span class="value" id="db-money-seasonal">0€</span><label>Stagionali</label></div>
+            <div class="stat-card"><span class="value" id="db-total-money">0€</span><label>Incassato</label></div>
+            <div class="stat-card"><span class="value" id="db-count-booked">0</span><label>Occupati</label></div>
+        </div>
+    </div>
+
+    <!-- ── SPIAGGIA ── -->
+    <div id="screen-spiaggia" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="beach-wrapper">
+            <div class="beach-divider"></div>
+            <div class="beach-sectors">
+                <div>
+                    <div class="sector-label">Settore A · 1–100</div>
+                    <div class="sector" id="sector-west"></div>
+                </div>
+                <div>
+                    <div class="sector-label">Settore B · 101–200</div>
+                    <div class="sector" id="sector-east"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── EXTRA ── -->
+    <div id="screen-extra" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="extra-container">
+            <h2>Lettini Extra</h2>
+            <p>Noleggio giornaliero per clienti esterni</p>
+            <div class="price-display" id="extra-price-display">7.00€ <small>/ cad.</small></div>
+            <div id="admin-price-editor" style="display:none; margin-bottom: 8px;">
+                <div style="display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom: 6px;">
+                    <input type="number" id="extra-price-input" step="0.50" min="0.50" class="qty-input" style="width:90px;" placeholder="€">
+                    <button onclick="savePrezzoLettino()" style="background:linear-gradient(135deg,var(--sea),var(--sea-mid)); color:white; border:none; border-radius:var(--radius-sm); padding:10px 18px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer;">Salva</button>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted);">Modifica prezzo per lettino (solo admin)</div>
+            </div>
+            <div class="qty-wrap">
+                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <input type="number" id="extra-qty" value="1" min="1" class="qty-input">
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <div class="divider"></div>
+            <div style="position: relative;">
+                <input type="text" id="extraSearch" class="field" placeholder="Cerca ombrellone o nome…" onkeyup="filterClientsExtra()">
+                <div id="extra-results" class="search-results hidden"></div>
+            </div>
+            <input type="hidden" id="extra-selected-id">
+            <button onclick="chargeExtraToBeach()" class="btn-primary btn-sea" style="margin-top: 16px;">🏖️ Addebita su Ombrellone</button>
+            <button onclick="directPayExtra()" class="btn-primary btn-pay">💰 Cliente Esterno (Pagato)</button>
+        </div>
+    </div>
+
+    <!-- ── BAR ── -->
+    <div id="screen-bar" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="pos-container">
+            <div class="pos-grid-wrap">
+                <div class="pos-section-title">Prodotti</div>
+                <div class="pos-grid">
+                    <button class="pos-btn" style="border-bottom-color:#795548" onclick="addToCart('Caffè', 1.20)">☕ Caffè<br><small>1.20€</small></button>
+                    <button class="pos-btn" style="border-bottom-color:#2196F3" onclick="addToCart('Acqua', 1.00)">💧 Acqua<br><small>1.00€</small></button>
+                    <button class="pos-btn" style="border-bottom-color:#e07b30" onclick="openBeerMenu()">🍺 Birra Spina<br><small>scegli formato</small></button>
+                    <button class="pos-btn" style="border-bottom-color:#E91E63" onclick="addToCart('Spritz', 6.00)">🍹 Spritz<br><small>6.00€</small></button>
+                    <div id="dynamic-pos-items" style="display: contents"></div>
+                </div>
+            </div>
+            <div class="cart-panel">
+                <h3>🛒 Carrello</h3>
+                <div id="cart-list"></div>
+                <div class="cart-total-row"><span>Totale: </span><span id="cart-total">0.00</span>€</div>
+                <div style="position: relative;">
+                    <input type="text" id="clientSearch" class="field" placeholder="Cerca cliente…" onkeyup="filterClients()">
+                    <div id="search-results" class="search-results hidden"></div>
+                </div>
+                <input type="hidden" id="selected-id">
+                <button onclick="chargeToSelected()" class="btn-primary btn-charge">Addebita su Ombrellone</button>
+                <button onclick="directPay()" class="btn-primary btn-pay">Pagato in Cassa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── PRODOTTI ── -->
+    <div id="screen-prodotti" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="prodotti-container">
+            <h2>📦 Gestione Prodotti</h2>
+            <input type="text" id="prod-nome" class="field" placeholder="Nome prodotto (es. 🍦 Gelato)" style="margin-bottom: 12px;">
+            <input type="number" id="prod-prezzo" class="field" placeholder="Prezzo (es. 2.50)" step="0.10" style="margin-bottom: 12px;">
+            <div class="color-field-row">
+                <input type="color" id="prod-colore" value="#9b59b6">
+                <span>Colore del tasto POS</span>
+            </div>
+            <button onclick="addProdotto()" class="btn-primary btn-sea">➕ Aggiungi al POS</button>
+            <div class="divider"></div>
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Prodotti aggiuntivi</div>
+            <div id="lista-prodotti-admin" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--sand-dark); border-radius: var(--radius-sm); padding: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- ── ARCHIVIO ── -->
+    <div id="screen-archivio" class="screen hidden">
+        <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
+        <div class="db-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th><th>Cliente</th><th>Telefono</th><th>E-mail</th>
+                        <th>Tipo</th><th>Spiaggia</th><th>Bar</th><th>Stato</th>
+                    </tr>
+                </thead>
+                <tbody id="db-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
+            authDomain: "lido-d7fdf.firebaseapp.com",
+            databaseURL: "https://lido-d7fdf-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lido-d7fdf",
+            appId: "1:830446694284:web:284451a591ec296d2ef0a9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const dbRef = ref(db, 'spiaggia_dati');
+        const prodRef = ref(db, 'prodotti_bar_dinamici');
+        const prezzoLettiniRef = ref(db, 'prezzo_lettino');
+
+        let beachData = {};
+        let dynamicProducts = {};
+        let usersData = {};
+        let currentEditingId = null;
+        let currentUser = null; // { username, role: 'admin'|'staff' }
+
+        // Admin hardcoded credentials
+        const ADMIN_USER = 'admin';
+        const ADMIN_PASS = 'Lido2026';
+
+        // Staff-accessible screens
+        const STAFF_SCREENS = ['screen-home','screen-spiaggia','screen-extra','screen-bar'];
+
+        const usersRef = ref(db, 'utenti_suite');
+        onValue(usersRef, (snapshot) => { usersData = snapshot.val() || {}; renderUtenti(); });
+
+        let prezzoLettino = 7.00;
+        onValue(prezzoLettiniRef, (snapshot) => {
+            const val = snapshot.val();
+            if (val && val > 0) prezzoLettino = parseFloat(val);
+            const disp = document.getElementById('extra-price-display');
+            const inp = document.getElementById('extra-price-input');
+            if (disp) disp.innerHTML = prezzoLettino.toFixed(2) + '€ <small>/ cad.</small>';
+            if (inp) inp.value = prezzoLettino.toFixed(2);
+        });
+
+        window.savePrezzoLettino = () => {
+            const val = parseFloat(document.getElementById('extra-price-input').value);
+            if (isNaN(val) || val <= 0) return alert('Inserisci un prezzo valido');
+            set(prezzoLettiniRef, val);
+            alert('✓ Prezzo aggiornato!');
+        };
+
+        window.checkLogin = () => {
+            const username = document.getElementById('userInput').value.trim();
+            const password = document.getElementById('passInput').value;
+            const errEl = document.getElementById('login-error');
+            errEl.innerText = '';
+            document.getElementById('userInput').style.borderColor = '';
+            document.getElementById('passInput').style.borderColor = '';
+
+            if (!username || !password) {
+                errEl.innerText = 'Compila tutti i campi.';
+                return;
+            }
+
+            // Check admin
+            if (username === ADMIN_USER && password === ADMIN_PASS) {
+                currentUser = { username: ADMIN_USER, role: 'admin' };
+                applyRoleUI();
+                navTo('screen-home');
+                return;
+            }
+
+            // Check staff/admin users from Firebase
+            const match = Object.values(usersData).find(u => u.username === username && u.password === password);
+            if (match) {
+                currentUser = { username: match.username, role: match.role || 'staff' };
+                applyRoleUI();
+                navTo('screen-home');
+                return;
+            }
+
+            errEl.innerText = 'Credenziali non valide. Riprova.';
+            document.getElementById('userInput').style.borderColor = 'var(--expired)';
+            document.getElementById('passInput').style.borderColor = 'var(--expired)';
+        };
+
+        function applyRoleUI() {
+            const isAdmin = currentUser && currentUser.role === 'admin';
+            // Show/hide admin-only cards
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+            // Show/hide staff-hidden cards
+            document.querySelectorAll('.staff-hidden').forEach(el => {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+            // Show/hide admin price editor in extra screen
+            const priceEditor = document.getElementById('admin-price-editor');
+            if (priceEditor) priceEditor.style.display = isAdmin ? 'block' : 'none';
+            // Update header with logged user + logout
+            const header = document.getElementById('home-header');
+            if (header) {
+                document.getElementById('logged-user-label').innerText = currentUser.username + (isAdmin ? ' · Admin' : ' · Staff');
+            }
+        }
+
+        window.navTo = (id) => {
+            // Role guard for non-admin
+            if (currentUser && currentUser.role === 'staff' && !STAFF_SCREENS.includes(id)) {
+                alert('Accesso non autorizzato.');
+                return;
+            }
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        window.logout = () => {
+            currentUser = null;
+            document.getElementById('userInput').value = '';
+            document.getElementById('passInput').value = '';
+            document.getElementById('login-error').innerText = '';
+            navTo('screen-login');
+        };
+
+        // User management (admin only)
+        window.addUser = () => {
+            const username = document.getElementById('new-username').value.trim();
+            const password = document.getElementById('new-password').value.trim();
+            const role = document.getElementById('new-role').value;
+            if (!username || !password) return alert('Compila nome utente e password.');
+            if (username === ADMIN_USER) return alert('Nome riservato.');
+            const exists = Object.values(usersData).find(u => u.username === username);
+            if (exists) return alert('Utente già esistente.');
+            const uid = 'u_' + Date.now();
+            usersData[uid] = { username, password, role };
+            set(usersRef, usersData);
+            document.getElementById('new-username').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('new-role').value = 'staff';
+        };
+
+        window.deleteUser = (uid) => {
+            if (confirm('Eliminare questo utente?')) {
+                delete usersData[uid];
+                set(usersRef, usersData);
+            }
+        };
+
+        function renderUtenti() {
+            const list = document.getElementById('lista-utenti');
+            if (!list) return;
+            const keys = Object.keys(usersData);
+            if (!keys.length) {
+                list.innerHTML = '<div style="color:#bbb; font-size:13px; text-align:center; padding:16px 0;">Nessun utente registrato</div>';
+                return;
+            }
+            list.innerHTML = keys.map(uid => {
+                const u = usersData[uid];
+                const isAdminRole = (u.role || 'staff') === 'admin';
+                const roleColor = isAdminRole ? '#c0392b' : 'var(--sea)';
+                const roleLabel = isAdminRole ? 'Admin' : 'Staff';
+                const toggleLabel = isAdminRole ? '→ Staff' : '→ Admin';
+                return `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5; gap:8px;">
+                    <span style="font-size:14px; display:flex; align-items:center; gap:8px; flex:1;">
+                        <span style="font-size:18px;">👤</span>
+                        <b>${u.username}</b>
+                        <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; background:${roleColor}20; color:${roleColor}; padding:2px 8px; border-radius:20px;">${roleLabel}</span>
+                    </span>
+                    <div style="display:flex; gap:6px;">
+                        <button onclick="toggleUserRole('${uid}')" style="background:none; color:var(--sea); border:1px solid var(--sea); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif; white-space:nowrap;">${toggleLabel}</button>
+                        <button onclick="deleteUser('${uid}')" style="background:none; color:var(--expired); border:1px solid var(--expired); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif;">Elimina</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        window.toggleUserRole = (uid) => {
+            const u = usersData[uid];
+            const currentRole = u.role || 'staff';
+            u.role = currentRole === 'admin' ? 'staff' : 'admin';
+            set(usersRef, usersData);
+        };
+
+        onValue(dbRef, (snapshot) => { beachData = snapshot.val() || {}; renderSpiaggia(); });
+        onValue(prodRef, (snapshot) => { dynamicProducts = snapshot.val() || {}; renderDynamicProducts(); });
+
+        function renderSpiaggia() {
+            const west = document.getElementById('sector-west');
+            const east = document.getElementById('sector-east');
+            const tbody = document.getElementById('db-body');
+            if (!west) return;
+            west.innerHTML = ''; east.innerHTML = ''; tbody.innerHTML = '';
+            let mD = 0, mS = 0, booked = 0, totalReal = 0;
+
+            for (let i = 1; i <= 200; i++) {
+                const d = beachData[i];
+                const div = document.createElement('div');
+                let cls = 'spot';
+                if (d) cls += d.isSeasonal ? ' seasonal' : ' booked';
+                else cls += ' free';
+                if (d?.pagamento) cls += ` status-${d.pagamento}`;
+                div.className = cls;
+
+                let barHtml = (d?.barTotal > 0) ? `<div class="bar-badge">🍹${d.barTotal}€</div>` : '';
+                div.innerHTML = `${barHtml}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${d ? d.nome : 'LIBERO'}</div>`;
+                div.onclick = () => handleOmbrellone(i);
+                if (i <= 100) west.appendChild(div); else east.appendChild(div);
+
+                if (d) {
+                    booked++;
+                    let p = parseFloat(d.prezzo || 0);
+                    if (d.isSeasonal) mS += p; else mD += p;
+                    let versato = (d.rate || []).reduce((a, b) => a + b.importo, 0);
+                    totalReal += versato;
+
+                    let bCls = d.pagamento === 'saldo' ? 'badge-saldo' : (d.pagamento === 'acconto' ? 'badge-acconto' : 'badge-none');
+                    tbody.innerHTML += `<tr>
+                        <td><b>#${i}</b></td>
+                        <td>${d.nome}</td>
+                        <td>${d.telefono}</td>
+                        <td>${d.email}</td>
+                        <td><span style="font-size:11px; font-weight:600; color:${d.isSeasonal ? 'var(--sea)' : 'var(--booked)'}">${d.isSeasonal ? 'STAG' : 'GIORN'}</span></td>
+                        <td style="font-weight:600">${d.prezzo}€</td>
+                        <td style="color:var(--bar); font-weight:600">${d.barTotal}€</td>
+                        <td><span class="badge ${bCls}">${d.pagamento || 'DA PAGARE'}</span></td>
+                    </tr>`;
+                }
+            }
+            document.getElementById('db-money-daily').innerText = mD.toFixed(2) + '€';
+            document.getElementById('db-money-seasonal').innerText = mS.toFixed(2) + '€';
+            document.getElementById('db-total-money').innerText = totalReal.toFixed(2) + '€';
+            document.getElementById('db-count-booked').innerText = booked;
+        }
+
+        window.handleOmbrellone = (id) => {
+            const d = beachData[id];
+            if (!d) {
+                const nome = prompt("NOME CLIENTE:"); if (!nome) return;
+                const tipoInput = prompt("TIPO:\n'G' = Giornaliero  ·  'S' = Stagionale").toUpperCase();
+                if (tipoInput !== 'G' && tipoInput !== 'S') return;
+                const isS = (tipoInput === 'S');
+                const prezzo = prompt("PREZZO CONCORDATO (€):", isS ? "500" : "20");
+                if (prezzo === null) return;
+                beachData[id] = { nome: nome.toUpperCase(), telefono: prompt("TELEFONO:") || "-", email: "-", prezzo: parseFloat(prezzo).toFixed(2), isSeasonal: isS, pagamento: 'nessuno', barTotal: 0, rate: [] };
+                set(dbRef, beachData);
+            } else {
+                const op = prompt(`Ombrellone #${id} — ${d.nome}\n\n1 · Gestione Acconti/Rate\n2 · Azzera Bar\n3 · Libera Postazione`);
+                if (op === "1") openPaymentModal(id);
+                else if (op === "2") { d.barTotal = 0; set(dbRef, beachData); }
+                else if (op === "3") { if (confirm("Liberare la postazione?")) { delete beachData[id]; set(dbRef, beachData); } }
+            }
+        };
+
+        window.openPaymentModal = (id) => {
+            currentEditingId = id;
+            const d = beachData[id];
+            if (!d.rate) d.rate = [];
+            document.getElementById('pm-title').innerText = `Ombrellone #${id} · Pagamenti`;
+            const total = parseFloat(d.prezzo);
+            const paid = d.rate.reduce((sum, r) => sum + r.importo, 0);
+            document.getElementById('pm-total').innerText = total.toFixed(2) + '€';
+            document.getElementById('pm-paid').innerText = paid.toFixed(2) + '€';
+            document.getElementById('pm-rem').innerText = (total - paid).toFixed(2) + '€';
+            document.getElementById('pm-history').innerHTML = d.rate.length ?
+                d.rate.map(r => `<div style="padding:4px 0; border-bottom:1px solid #f5f5f5;">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join('') :
+                '<div style="color:#aaa; text-align:center; padding:8px 0;">Nessun versamento</div>';
+            document.getElementById('payment-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        };
+
+        window.saveRata = () => {
+            const amt = parseFloat(document.getElementById('pm-new-amount').value);
+            if (isNaN(amt) || amt <= 0) return alert("Inserisci un importo valido");
+            const d = beachData[currentEditingId];
+            const dataOggi = new Date().toLocaleDateString('it-IT');
+            d.rate.push({ importo: amt, data: dataOggi });
+            const total = parseFloat(d.prezzo);
+            const paid = d.rate.reduce((sum, r) => sum + r.importo, 0);
+            if (paid >= total) d.pagamento = 'saldo';
+            else if (paid > 0) d.pagamento = 'acconto';
+            else d.pagamento = 'nessuno';
+            set(dbRef, beachData);
+            document.getElementById('pm-new-amount').value = '';
+            openPaymentModal(currentEditingId);
+        };
+
+        window.closeModals = () => {
+            document.getElementById('payment-modal').style.display = 'none';
+            document.getElementById('beer-menu').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        };
+
+        window.addProdotto = () => {
+            const nome = document.getElementById('prod-nome').value.trim();
+            const prezzo = parseFloat(document.getElementById('prod-prezzo').value);
+            const colore = document.getElementById('prod-colore').value;
+            if (!nome || isNaN(prezzo)) return alert("Dati non validi");
+            const prodId = 'p_' + Date.now();
+            dynamicProducts[prodId] = { nome, prezzo, colore };
+            set(prodRef, dynamicProducts);
+            document.getElementById('prod-nome').value = '';
+            document.getElementById('prod-prezzo').value = '';
+        };
+
+        window.deleteProdotto = (id) => { if (confirm("Eliminare questo prodotto?")) { delete dynamicProducts[id]; set(prodRef, dynamicProducts); } };
+
+        function renderDynamicProducts() {
+            const adminList = document.getElementById('lista-prodotti-admin');
+            const posContainer = document.getElementById('dynamic-pos-items');
+            let adminHtml = '', posHtml = '';
+            Object.keys(dynamicProducts).forEach(id => {
+                const p = dynamicProducts[id];
+                const pCol = p.colore || '#95a5a6';
+                adminHtml += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f5f5f5;">
+                    <span style="font-size:14px; display:flex; align-items:center; gap:8px;">
+                        <span style="width:10px; height:10px; border-radius:50%; background:${pCol}; display:inline-block;"></span>
+                        ${p.nome} · <b>${p.prezzo.toFixed(2)}€</b>
+                    </span>
+                    <button onclick="deleteProdotto('${id}')" style="background:none; color:var(--expired); border:1px solid var(--expired); border-radius:6px; padding:4px 10px; cursor:pointer; font-size:11px; font-family:'DM Sans',sans-serif;">Elimina</button>
+                </div>`;
+                posHtml += `<button class="pos-btn" style="border-bottom-color:${pCol}" onclick="addToCart('${p.nome.replace(/'/g, "\\'")}', ${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
+            });
+            if (adminList) adminList.innerHTML = adminHtml || '<div style="color:#bbb; font-size:13px; text-align:center; padding:16px 0;">Nessun prodotto</div>';
+            if (posContainer) posContainer.innerHTML = posHtml;
+        }
+
+        // EXTRA
+        window.changeQty = (delta) => {
+            const el = document.getElementById('extra-qty');
+            el.value = Math.max(1, parseInt(el.value) + delta);
+        };
+        window.filterClientsExtra = () => {
+            const val = document.getElementById('extraSearch').value.toUpperCase();
+            const res = document.getElementById('extra-results');
+            if (val.length < 1) { res.classList.add('hidden'); return; }
+            let html = '';
+            Object.keys(beachData).forEach(id => { if (id.includes(val) || beachData[id].nome.includes(val)) html += `<div class="search-item" onclick="selectExtra('${id}', '${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
+            res.innerHTML = html; res.classList.remove('hidden');
+        };
+        window.selectExtra = (id, nome) => {
+            document.getElementById('extra-selected-id').value = id;
+            document.getElementById('extraSearch').value = `#${id} ${nome}`;
+            document.getElementById('extra-results').classList.add('hidden');
+        };
+        window.chargeExtraToBeach = () => {
+            const id = document.getElementById('extra-selected-id').value;
+            const qty = parseInt(document.getElementById('extra-qty').value);
+            if (!id) return alert("Seleziona un ombrellone");
+            beachData[id].prezzo = (parseFloat(beachData[id].prezzo) + (qty * prezzoLettino)).toFixed(2);
+            set(dbRef, beachData); alert("✓ Addebitato!");
+        };
+        window.directPayExtra = () => { alert("✓ Pagato!"); };
+
+        // BAR / CART
+        let cart = []; let cartTotal = 0;
+        window.addToCart = (n, p) => { cart.push({ n, p }); updateCartUI(); };
+        window.removeFromCart = (i) => { cart.splice(i, 1); updateCartUI(); };
+        function updateCartUI() {
+            cartTotal = cart.reduce((a, b) => a + b.p, 0);
+            document.getElementById('cart-list').innerHTML = cart.map((i, idx) =>
+                `<div class="cart-item"><span>${i.n}</span><div style="display:flex;align-items:center;gap:6px;"><b>${i.p.toFixed(2)}€</b><span class="remove-btn" onclick="removeFromCart(${idx})">🗑️</span></div></div>`
+            ).join('');
+            document.getElementById('cart-total').innerText = cartTotal.toFixed(2);
+        }
+        window.openBeerMenu = () => { document.getElementById('beer-menu').style.display = 'block'; document.getElementById('overlay').style.display = 'block'; };
+        window.closeBeerMenu = () => { document.getElementById('beer-menu').style.display = 'none'; document.getElementById('overlay').style.display = 'none'; };
+        window.filterClients = () => {
+            const val = document.getElementById('clientSearch').value.toUpperCase();
+            const res = document.getElementById('search-results');
+            if (val.length < 1) { res.classList.add('hidden'); return; }
+            let html = '';
+            Object.keys(beachData).forEach(id => { if (id.includes(val) || beachData[id].nome.includes(val)) html += `<div class="search-item" onclick="selectClient('${id}', '${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
+            res.innerHTML = html; res.classList.remove('hidden');
+        };
+        window.selectClient = (id, nome) => {
+            document.getElementById('selected-id').value = id;
+            document.getElementById('clientSearch').value = `#${id} ${nome}`;
+            document.getElementById('search-results').classList.add('hidden');
+        };
+        window.chargeToSelected = () => {
+            const id = document.getElementById('selected-id').value;
+            if (!id || cartTotal === 0) return;
+            beachData[id].barTotal = (parseFloat(beachData[id].barTotal) + cartTotal).toFixed(2);
+            set(dbRef, beachData); alert("✓ Addebitato!"); cart = []; updateCartUI();
+        };
+        window.directPay = () => { alert("✓ Pagato!"); cart = []; updateCartUI(); };
+    </script>
+</body>
+</html>
