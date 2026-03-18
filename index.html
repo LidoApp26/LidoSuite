@@ -937,6 +937,22 @@
 
                 currentUser = { username: firebaseUser.email, role };
                 applyRoleUI();
+
+                // Start data listeners only once, after auth is confirmed
+                if (!window._dataListenersStarted) {
+                    window._dataListenersStarted = true;
+                    onValue(dbRef, (snapshot) => { beachData = snapshot.val() || {}; renderSpiaggia(); });
+                    onValue(prodRef, (snapshot) => { dynamicProducts = snapshot.val() || {}; renderDynamicProducts(); });
+                    onValue(prezzoLettiniRef, (snapshot) => {
+                        const val = snapshot.val();
+                        if (val && val > 0) prezzoLettino = parseFloat(val);
+                        const disp = document.getElementById('extra-price-display');
+                        const inp = document.getElementById('extra-price-input');
+                        if (disp) disp.innerHTML = prezzoLettino.toFixed(2) + '€ <small>/ cad.</small>';
+                        if (inp) inp.value = prezzoLettino.toFixed(2);
+                    });
+                }
+
                 // Only navigate to home if we're on login screen
                 const loginScreen = document.getElementById('screen-login');
                 if (!loginScreen.classList.contains('hidden')) {
@@ -950,15 +966,7 @@
             }
         });
 
-        let prezzoLettino = 7.00;
-        onValue(prezzoLettiniRef, (snapshot) => {
-            const val = snapshot.val();
-            if (val && val > 0) prezzoLettino = parseFloat(val);
-            const disp = document.getElementById('extra-price-display');
-            const inp = document.getElementById('extra-price-input');
-            if (disp) disp.innerHTML = prezzoLettino.toFixed(2) + '€ <small>/ cad.</small>';
-            if (inp) inp.value = prezzoLettino.toFixed(2);
-        });
+        let prezzoLettino = 7.00; // listener started after auth — see onAuthStateChanged
 
         window.savePrezzoLettino = () => {
             const val = parseFloat(document.getElementById('extra-price-input').value);
@@ -1112,8 +1120,7 @@
             set(ref(db, 'utenti_suite/' + uid + '/role'), u.role);
         };
 
-        onValue(dbRef, (snapshot) => { beachData = snapshot.val() || {}; renderSpiaggia(); });
-        onValue(prodRef, (snapshot) => { dynamicProducts = snapshot.val() || {}; renderDynamicProducts(); });
+        // dbRef and prodRef listeners started after auth — see onAuthStateChanged
 
         function renderSpiaggia() {
             const west = document.getElementById('sector-west');
