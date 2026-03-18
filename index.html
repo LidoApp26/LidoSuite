@@ -542,6 +542,25 @@
             <div class="sd-rate-list" id="sm-rate-list"></div>
         </div>
 
+        <!-- Lettini extra -->
+        <div class="sd-section">
+            <div class="sd-section-title">&#x1F6CC; Lettini Extra</div>
+            <div style="background:var(--eb-bg); border-radius:10px; padding:14px; border:1.5px solid var(--eb-border);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+                    <div style="font-size:12px; color:var(--eb-muted);">Gia assegnati: <b id="sm-lettini-assegnati" style="color:var(--eb-text);">0</b></div>
+                    <div style="font-size:12px; color:var(--eb-muted);">Disponibili: <b id="sm-lettini-disponibili" style="color:var(--free);">-</b></div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button onclick="smChangeLettinoQty(-1)" style="background:white; border:1.5px solid var(--eb-border); border-radius:50%; width:36px; height:36px; font-size:18px; font-weight:700; cursor:pointer; color:var(--eb-text); flex-shrink:0;">-</button>
+                    <input type="number" id="sm-lettino-qty" value="1" min="1" style="flex:1; padding:9px; font-size:18px; font-weight:700; text-align:center; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); font-family:Poppins,sans-serif;">
+                    <button onclick="smChangeLettinoQty(1)" style="background:white; border:1.5px solid var(--eb-border); border-radius:50%; width:36px; height:36px; font-size:18px; font-weight:700; cursor:pointer; color:var(--eb-text); flex-shrink:0;">+</button>
+                </div>
+                <button onclick="smAddLettini()" style="width:100%; margin-top:10px; padding:12px; background:linear-gradient(135deg,var(--extra),#a78bfa); color:white; border:none; border-radius:10px; font-family:Poppins,sans-serif; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(139,92,246,0.28);">
+                    Addebita Lettini su Ombrellone
+                </button>
+            </div>
+        </div>
+
         <!-- Azioni principali -->
         <div class="sd-section">
             <div class="sd-section-title">Azioni</div>
@@ -1563,6 +1582,14 @@ window.openSpotModal = (id) => {
     } else { nw.style.display = 'none'; }
 
     document.getElementById('sm-bar-btn').style.display = parseFloat(d.barTotal || 0) > 0 ? 'flex' : 'none';
+
+    // Lettini extra: aggiorna contatori nella scheda
+    const lettinoAssegnati = parseInt(d.lettiniExtra || 0);
+    const lettinoDisponibili = getLettinoDisponibili();
+    document.getElementById('sm-lettini-assegnati').textContent = lettinoAssegnati;
+    document.getElementById('sm-lettini-disponibili').textContent = lettinoDisponibili;
+    document.getElementById('sm-lettini-disponibili').style.color = lettinoDisponibili === 0 ? 'var(--expired)' : lettinoDisponibili <= 3 ? 'var(--acconto)' : 'var(--free)';
+    document.getElementById('sm-lettino-qty').value = 1;
     document.getElementById('sm-sublet-btn').style.display = d.isSeasonal ? 'flex' : 'none';
 
     const rl = document.getElementById('sm-rate-list');
@@ -1612,6 +1639,40 @@ window.smFreeSpot = () => {
     set(dbRef, beachData);
     closeSpotDrawer();
     showToast('Postazione #' + _currentSpotId + ' liberata', 'info');
+};
+window.smChangeLettinoQty = (delta) => {
+    const e = document.getElementById('sm-lettino-qty');
+    const disponibili = getLettinoDisponibili();
+    const nuovoVal = Math.max(1, parseInt(e.value) + delta);
+    if (disponibili === 0) {
+        e.value = 1;
+        showToast('Nessun lettino disponibile in magazzino!', 'warn');
+    } else if (nuovoVal > disponibili) {
+        e.value = disponibili;
+        showToast('Massimo ' + disponibili + ' lettino' + (disponibili > 1 ? 'i' : '') + ' disponibile' + (disponibili > 1 ? 'i' : ''), 'warn');
+    } else {
+        e.value = nuovoVal;
+    }
+};
+window.smAddLettini = () => {
+    const id = _currentSpotId;
+    const qty = parseInt(document.getElementById('sm-lettino-qty').value);
+    const disponibili = getLettinoDisponibili();
+    if (disponibili === 0) {
+        showToast('Nessun lettino disponibile in magazzino!', 'warn');
+        return;
+    }
+    if (qty > disponibili) {
+        showToast('Solo ' + disponibili + ' lettino' + (disponibili > 1 ? 'i' : '') + ' disponibile' + (disponibili > 1 ? 'i' : '') + ' in magazzino', 'warn');
+        document.getElementById('sm-lettino-qty').value = disponibili;
+        return;
+    }
+    const d = beachData[id];
+    d.prezzo = (parseFloat(d.prezzo) + (qty * prezzoLettino)).toFixed(2);
+    d.lettiniExtra = (parseInt(d.lettiniExtra || 0) + qty);
+    set(dbRef, beachData);
+    showToast('Addebitati ' + qty + ' lettino' + (qty > 1 ? 'i' : '') + ' su #' + id, 'success');
+    openSpotModal(id);
 };
 
 // Nuova prenotazione
@@ -1766,7 +1827,20 @@ function renderDynamicProducts() {
 }
 
 // ── EXTRA ──
-window.changeQty = (d) => { const e=document.getElementById('extra-qty'); e.value=Math.max(1,parseInt(e.value)+d); };
+window.changeQty = (d) => {
+    const e = document.getElementById('extra-qty');
+    const disponibili = getLettinoDisponibili();
+    const nuovoVal = Math.max(1, parseInt(e.value) + d);
+    if(nuovoVal > disponibili && disponibili > 0) {
+        e.value = disponibili;
+        showToast(`⚠️ Massimo ${disponibili} lettino${disponibili > 1 ? 'i' : ''} disponibile${disponibili > 1 ? 'i' : ''}`, 'warn');
+    } else if(disponibili === 0) {
+        e.value = 1;
+        showToast('⚠️ Nessun lettino disponibile in magazzino!', 'warn');
+    } else {
+        e.value = nuovoVal;
+    }
+};
 window.filterClientsExtra = () => {
     const v=document.getElementById('extraSearch').value.toUpperCase();
     const r=document.getElementById('extra-results');
@@ -1780,17 +1854,48 @@ window.selectExtra = (id,nome) => {
     document.getElementById('extraSearch').value=`#${id} ${nome}`;
     document.getElementById('extra-results').classList.add('hidden');
 };
+// Calcola lettini disponibili in magazzino sottraendo quelli già assegnati
+function getLettinoDisponibili() {
+    const totale = parseInt(warehouseData.lettini?.totale || 0);
+    const usati = Object.values(beachData).reduce((sum, d) => sum + parseInt(d?.lettiniExtra || 0), 0);
+    return Math.max(0, totale - usati);
+}
+
 window.chargeExtraToBeach = () => {
     const id=document.getElementById('extra-selected-id').value;
     const qty=parseInt(document.getElementById('extra-qty').value);
     if(!id) return showToast('Seleziona un ombrellone','warn');
+    const disponibili = getLettinoDisponibili();
+    if(qty > disponibili) {
+        if(disponibili === 0) {
+            showToast('⚠️ Nessun lettino disponibile in magazzino!', 'warn');
+        } else {
+            showToast(`⚠️ Solo ${disponibili} lettino${disponibili > 1 ? 'i' : ''} disponibile${disponibili > 1 ? 'i' : ''} in magazzino`, 'warn');
+        }
+        // Correggi la quantità al massimo disponibile
+        document.getElementById('extra-qty').value = disponibili || 1;
+        return;
+    }
     const d=beachData[id];
     d.prezzo=(parseFloat(d.prezzo)+(qty*prezzoLettino)).toFixed(2);
     d.lettiniExtra=(parseInt(d.lettiniExtra||0)+qty);
     set(dbRef,beachData);
     showToast(`✓ ${qty}x lettino addebitato su #${id}`, 'success');
 };
-window.directPayExtra = () => showToast('✓ Pagato in cassa!', 'success');
+window.directPayExtra = () => {
+    const qty=parseInt(document.getElementById('extra-qty').value);
+    const disponibili = getLettinoDisponibili();
+    if(qty > disponibili) {
+        if(disponibili === 0) {
+            showToast('⚠️ Nessun lettino disponibile in magazzino!', 'warn');
+        } else {
+            showToast(`⚠️ Solo ${disponibili} lettino${disponibili > 1 ? 'i' : ''} disponibile${disponibili > 1 ? 'i' : ''} in magazzino`, 'warn');
+        }
+        document.getElementById('extra-qty').value = disponibili || 1;
+        return;
+    }
+    showToast('✓ Pagato in cassa!', 'success');
+};
 
 // ── BAR / CART ──
 let cart=[]; let cartTotal=0;
