@@ -1337,14 +1337,13 @@ onValue(warehouseRef, s => { const v = s.val(); if(v) Object.assign(warehouseDat
 
 onAuthStateChanged(auth, async (firebaseUser) => {
     if (firebaseUser) {
-        const snap = await new Promise(r => onValue(usersRef, r, { onlyOnce:true }));
-        const allUsers = snap.val()||{};
+        const snap = await new Promise(r => onValue(ref(db,'utenti_suite/'+firebaseUser.uid), r, { onlyOnce:true }));
+        const userData = snap.val();
         let role = 'staff';
-        if(allUsers[firebaseUser.uid]) role = allUsers[firebaseUser.uid].role||'staff';
-        else {
-            const match = Object.values(allUsers).find(u => u.email===firebaseUser.email||u.username===firebaseUser.email);
-            if(match) role = match.role||'staff';
-            else await set(ref(db,'utenti_suite/'+firebaseUser.uid), { email:firebaseUser.email, role:'staff' });
+        if(userData && userData.role) {
+            role = userData.role;
+        } else {
+            await set(ref(db,'utenti_suite/'+firebaseUser.uid), { email:firebaseUser.email, role:'staff' });
         }
         currentUser = { username:firebaseUser.email, role };
         applyRoleUI();
