@@ -1220,14 +1220,14 @@ window.addSubletDate = (id) => {
     if (!d.subletDates) d.subletDates = [];
     if (d.subletDates.includes(dt)) return showToast('Data già presente', 'warn');
     d.subletDates.push(dt);
-    set(dbRef, beachData);
+    set(ref(db, 'spiaggia_dati/' + id), d);
     showToast('📅 Data aggiunta al subaffitto', 'success');
 };
 window.removeSubletDate = (id, dt) => {
     if (!confirm(`Rimuovere il ${dt} dal subaffitto?`)) return;
     const d = beachData[id];
     d.subletDates = (d.subletDates || []).filter(x => x !== dt);
-    set(dbRef, beachData);
+    set(ref(db, 'spiaggia_dati/' + id), d);
     showToast('Data rimossa', 'info');
 };
 
@@ -1331,25 +1331,28 @@ window.exportCSV = () => {
 };
 
 // ── FIREBASE LISTENERS ──
-onValue(usersRef, s => { usersData = s.val()||{}; renderUtenti(); });
 onValue(qrOrdersRef, s => { qrOrders = s.val()||{}; renderQrOrders(); });
 onValue(warehouseRef, s => { const v = s.val(); if(v) Object.assign(warehouseData, v); renderWarehouse(); });
 
 onAuthStateChanged(auth, async (firebaseUser) => {
     if (firebaseUser) {
-        const snap = await new Promise(r => onValue(ref(db,'utenti_suite/'+firebaseUser.uid), r, { onlyOnce:true }));
-        const userData = snap.val();
+        const snap = await new Promise(r => onValue(usersRef, r, { onlyOnce:true }));
+        const allUsers = snap.val()||{};
         let role = 'staff';
-        if(userData && userData.role) {
-            role = userData.role;
-        } else {
-            await set(ref(db,'utenti_suite/'+firebaseUser.uid), { email:firebaseUser.email, role:'staff' });
+        if(allUsers[firebaseUser.uid]) role = allUsers[firebaseUser.uid].role||'staff';
+        else {
+            const match = Object.values(allUsers).find(u => u.email===firebaseUser.email||u.username===firebaseUser.email);
+            if(match) role = match.role||'staff';
+            else await set(ref(db,'utenti_suite/'+firebaseUser.uid), { email:firebaseUser.email, role:'staff' });
         }
         currentUser = { username:firebaseUser.email, role };
         applyRoleUI();
         updateHomeDate();
         if(!window._dataStarted) {
             window._dataStarted = true;
+            if(role === 'admin') {
+                onValue(usersRef, s => { usersData = s.val()||{}; renderUtenti(); });
+            }
             onValue(dbRef, s => { beachData=s.val()||{}; renderSpiaggia(); renderToday(); renderSubaffitto(); buildArchivioRows(); filterArchivio(); });
             onValue(prodRef, s => { dynamicProducts=s.val()||{}; renderDynamicProducts(); });
             onValue(prezzoLettiniRef, s => {
@@ -1633,14 +1636,14 @@ window.smAddSublet = () => {
 };
 window.smResetBar = () => {
     beachData[_currentSpotId].barTotal = 0;
-    set(dbRef, beachData);
+    set(ref(db, 'spiaggia_dati/' + _currentSpotId), beachData[_currentSpotId]);
     showToast('🍹 Bar azzerato', 'info');
     openSpotModal(_currentSpotId); // refresh scheda
 };
 window.smFreeSpot = () => {
     if (!confirm('Liberare la postazione #' + _currentSpotId + '?')) return;
     delete beachData[_currentSpotId];
-    set(dbRef, beachData);
+    set(ref(db, 'spiaggia_dati/' + _currentSpotId), null);
     closeSpotDrawer();
     showToast('Postazione #' + _currentSpotId + ' liberata', 'info');
 };
@@ -1676,7 +1679,7 @@ window.smAddLettini = () => {
     // Accumula il costo lettini in un campo dedicato, senza alterare il prezzo base
     d.lettiniCosto = parseFloat((parseFloat(d.lettiniCosto || 0) + costoAggiunto).toFixed(2));
     d.lettiniExtra = (parseInt(d.lettiniExtra || 0) + qty);
-    set(dbRef, beachData);
+    set(ref(db, 'spiaggia_dati/' + id), d);
     showToast('Addebitati ' + qty + ' lettino' + (qty > 1 ? 'i' : '') + ' (' + costoAggiunto.toFixed(2) + '\u20ac) su #' + id, 'success');
     openSpotModal(id);
 };
@@ -1723,7 +1726,7 @@ window.nbConfirm = () => {
         dataArrivo: toIT(arrivo), dataPartenza: toIT(partenza),
         weatherGuarantee: weather, cancellationPolicy: 'nessuna', note: ''
     };
-    set(dbRef, beachData);
+    set(ref(db, 'spiaggia_dati/' + id), beachData[id]);
     closeModals();
     showToast('✓ #' + id + ' — ' + nome.toUpperCase() + ' registrato', 'success');
 };
@@ -1760,7 +1763,7 @@ window.saveRata = () => {
     const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
     const paid=d.rate.reduce((s,r)=>s+r.importo,0);
     d.pagamento=paid>=total?'saldo':paid>0?'acconto':'nessuno';
-    set(dbRef,beachData);
+    set(ref(db, 'spiaggia_dati/' + currentEditingId), d);
     document.getElementById('pm-new-amount').value='';
     openPaymentModal(currentEditingId);
     showToast(`✓ ${amt.toFixed(2)}€ registrati`, 'success');
@@ -1771,7 +1774,7 @@ window.saveModalExtras = () => {
     d.weatherGuarantee=document.getElementById('pm-weather').checked;
     d.cancellationPolicy=document.getElementById('pm-cancellation').value;
     d.note=document.getElementById('pm-note').value;
-    set(dbRef,beachData);
+    set(ref(db, 'spiaggia_dati/' + currentEditingId), d);
     showToast('✓ Opzioni salvate', 'success');
 };
 
@@ -1793,7 +1796,7 @@ window.confirmCancel = () => {
     const d=beachData[currentEditingId];
     const msgs = { rimborso:`✓ Prenotazione cancellata · Rimborso emesso per ${d.nome}`, voucher:`🎫 Voucher emesso per ${d.nome}`, trattieni:`🔒 Importo trattenuto · No-show ${d.nome}` };
     delete beachData[currentEditingId];
-    set(dbRef,beachData);
+    set(ref(db, 'spiaggia_dati/' + currentEditingId), null);
     closeModals();
     showToast(msgs[selectedCancelOption]||'Cancellata', 'info');
 };
@@ -1886,7 +1889,7 @@ window.chargeExtraToBeach = () => {
     const d=beachData[id];
     d.prezzo=(parseFloat(d.prezzo)+(qty*prezzoLettino)).toFixed(2);
     d.lettiniExtra=(parseInt(d.lettiniExtra||0)+qty);
-    set(dbRef,beachData);
+    set(ref(db, 'spiaggia_dati/' + id), d);
     showToast(`✓ ${qty}x lettino addebitato su #${id}`, 'success');
 };
 window.directPayExtra = () => {
@@ -1934,7 +1937,7 @@ window.chargeToSelected = () => {
     const id=document.getElementById('selected-id').value;
     if(!id||cartTotal===0) return showToast('Seleziona un cliente e aggiungi prodotti','warn');
     beachData[id].barTotal=(parseFloat(beachData[id].barTotal||0)+cartTotal).toFixed(2);
-    set(dbRef,beachData);
+    set(ref(db, 'spiaggia_dati/' + id), beachData[id]);
     showToast(`✓ ${cartTotal.toFixed(2)}€ addebitati su #${id}`, 'success');
     cart=[]; updateCartUI();
     document.getElementById('selected-id').value='';
