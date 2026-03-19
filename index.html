@@ -561,6 +561,29 @@
             </div>
         </div>
 
+        <!-- ── CONSUMAZIONI DEL GIORNO ── -->
+        <div class="sd-section" id="sd-consumazioni-wrap">
+            <div class="sd-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+                <span>🍹 Consumazioni Bar</span>
+                <span id="sd-cons-total-badge" style="font-size:11px;font-weight:700;background:var(--bar);color:white;padding:2px 10px;border-radius:20px;">0.00€</span>
+            </div>
+            <!-- Lista consumazioni -->
+            <div id="sd-cons-list" style="border:1.5px solid var(--eb-border);border-radius:12px;overflow:hidden;margin-bottom:10px;"></div>
+            <!-- Aggiungi consumazione manuale -->
+            <div style="background:var(--eb-bg);border-radius:12px;padding:14px;border:1.5px solid var(--eb-border);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--eb-muted);margin-bottom:10px;">Aggiungi Consumazione</div>
+                <div style="display:flex;gap:8px;margin-bottom:8px;">
+                    <input type="text" id="sd-cons-nome" placeholder="Es. Aperol, Acqua…" style="flex:1;padding:9px 12px;border:1.5px solid var(--eb-border);border-radius:9px;font-size:13px;font-family:Poppins,sans-serif;background:white;color:var(--eb-text);">
+                    <input type="number" id="sd-cons-prezzo" placeholder="€" step="0.50" min="0" style="width:72px;padding:9px 10px;border:1.5px solid var(--eb-border);border-radius:9px;font-size:13px;font-family:Poppins,sans-serif;text-align:center;background:white;color:var(--eb-text);">
+                </div>
+                <!-- Prodotti rapidi -->
+                <div id="sd-cons-quick" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+                <button onclick="sdAddConsumazione()" style="width:100%;padding:11px;background:linear-gradient(135deg,var(--bar),#fb923c);color:white;border:none;border-radius:9px;font-family:Poppins,sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(249,115,22,0.28);">
+                    ➕ Aggiungi e Addebita
+                </button>
+            </div>
+        </div>
+
         <!-- Azioni principali -->
         <div class="sd-section">
             <div class="sd-section-title">Azioni</div>
@@ -1611,6 +1634,9 @@ window.openSpotModal = (id) => {
         rl.innerHTML = '<div class="sd-rate-empty">Nessun versamento registrato</div>';
     }
 
+    // Renderizza consumazioni
+    sdRenderConsumazioni(id);
+
     // Apri drawer + overlay
     document.getElementById('spot-drawer').classList.add('open');
     document.getElementById('overlay').style.display = 'block';
@@ -1636,6 +1662,7 @@ window.smAddSublet = () => {
 };
 window.smResetBar = () => {
     beachData[_currentSpotId].barTotal = 0;
+    beachData[_currentSpotId].consumazioni = [];
     set(ref(db, 'spiaggia_dati/' + _currentSpotId), beachData[_currentSpotId]);
     showToast('🍹 Bar azzerato', 'info');
     openSpotModal(_currentSpotId); // refresh scheda
@@ -1943,7 +1970,121 @@ window.chargeToSelected = () => {
     document.getElementById('selected-id').value='';
     document.getElementById('clientSearch').value='';
 };
-window.directPay = () => { showToast('✓ Pagato in cassa!', 'success'); cart=[]; updateCartUI(); };
+
+// ── CONSUMAZIONI OMBRELLONE ──
+// Ogni consumazione: { nome, prezzo, ora }
+// Salvate in beachData[id].consumazioni = []
+
+function sdRenderConsumazioni(id) {
+    const d = beachData[id];
+    const cons = d?.consumazioni || [];
+    const total = cons.reduce((s, c) => s + parseFloat(c.prezzo || 0), 0);
+
+    // Badge totale
+    const badge = document.getElementById('sd-cons-total-badge');
+    if (badge) {
+        badge.textContent = total.toFixed(2) + '€';
+        badge.style.background = total > 0 ? 'var(--bar)' : 'var(--eb-muted)';
+    }
+
+    // Lista
+    const list = document.getElementById('sd-cons-list');
+    if (!list) return;
+    if (!cons.length) {
+        list.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna consumazione registrata</div>';
+    } else {
+        list.innerHTML = cons.map((c, idx) => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--eb-bg);font-size:13px;">
+                <div style="display:flex;align-items:center;gap:8px;flex:1;">
+                    <span style="font-size:16px;">🥤</span>
+                    <div>
+                        <div style="font-weight:600;color:var(--eb-text);">${c.nome}</div>
+                        <div style="font-size:10px;color:var(--eb-muted);">🕐 ${c.ora}</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-weight:700;color:var(--bar);">+${parseFloat(c.prezzo).toFixed(2)}€</span>
+                    <button onclick="sdRemoveConsumazione(${idx})" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-family:Poppins,sans-serif;">✕</button>
+                </div>
+            </div>`).join('');
+        // Riga totale
+        list.innerHTML += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--eb-bg);font-size:13px;font-weight:700;">
+            <span>Totale consumazioni</span>
+            <span style="color:var(--bar);font-size:15px;">${total.toFixed(2)}€</span>
+        </div>`;
+    }
+
+    // Prodotti rapidi dal menu dinamico
+    const quick = document.getElementById('sd-cons-quick');
+    if (quick) {
+        const prods = Object.values(dynamicProducts);
+        if (prods.length) {
+            quick.innerHTML = prods.map(p =>
+                `<button onclick="sdQuickAdd('${p.nome.replace(/'/g,"\\'")}',${p.prezzo})" style="padding:5px 12px;border:1.5px solid ${p.colore||'#f97316'}33;background:${p.colore||'#f97316'}18;color:${p.colore||'#f97316'};border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif;transition:all 0.15s;">${p.nome} ${p.prezzo.toFixed(2)}€</button>`
+            ).join('');
+        } else {
+            quick.innerHTML = '<span style="font-size:11px;color:var(--eb-muted);">Nessun prodotto nel menu</span>';
+        }
+    }
+}
+
+window.sdQuickAdd = (nome, prezzo) => {
+    document.getElementById('sd-cons-nome').value = nome;
+    document.getElementById('sd-cons-prezzo').value = prezzo.toFixed(2);
+};
+
+window.sdAddConsumazione = () => {
+    const id = _currentSpotId;
+    if (!id) return;
+    const nomeEl = document.getElementById('sd-cons-nome');
+    const prezzoEl = document.getElementById('sd-cons-prezzo');
+    const nome = nomeEl.value.trim();
+    const prezzo = parseFloat(prezzoEl.value);
+    if (!nome) return showToast('Inserisci il nome della consumazione', 'warn');
+    if (isNaN(prezzo) || prezzo <= 0) return showToast('Inserisci un prezzo valido', 'warn');
+
+    const d = beachData[id];
+    if (!d.consumazioni) d.consumazioni = [];
+    const now = new Date();
+    const ora = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    d.consumazioni.push({ nome, prezzo, ora });
+
+    // Aggiorna anche il barTotal per compatibilità con il sistema esistente
+    d.barTotal = parseFloat((parseFloat(d.barTotal || 0) + prezzo).toFixed(2));
+
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    nomeEl.value = '';
+    prezzoEl.value = '';
+    sdRenderConsumazioni(id);
+    // Aggiorna tile bar nel drawer
+    const barTile = document.getElementById('sm-bar');
+    if (barTile) barTile.textContent = parseFloat(d.barTotal).toFixed(2) + '€';
+    // Mostra pulsante "Azzera Bar"
+    const barBtn = document.getElementById('sm-bar-btn');
+    if (barBtn) barBtn.style.display = 'flex';
+    showToast(`✓ ${nome} (+${prezzo.toFixed(2)}€) addebitato su #${id}`, 'success');
+};
+
+window.sdRemoveConsumazione = (idx) => {
+    const id = _currentSpotId;
+    if (!id) return;
+    const d = beachData[id];
+    if (!d.consumazioni || !d.consumazioni[idx]) return;
+    const rimossa = d.consumazioni[idx];
+    if (!confirm(`Rimuovere "${rimossa.nome}" (${parseFloat(rimossa.prezzo).toFixed(2)}€)?`)) return;
+    d.consumazioni.splice(idx, 1);
+    // Ricalcola barTotal dal totale delle consumazioni rimaste
+    const nuovoTotal = d.consumazioni.reduce((s, c) => s + parseFloat(c.prezzo || 0), 0);
+    d.barTotal = parseFloat(nuovoTotal.toFixed(2));
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    sdRenderConsumazioni(id);
+    const barTile = document.getElementById('sm-bar');
+    if (barTile) barTile.textContent = nuovoTotal.toFixed(2) + '€';
+    const barBtn = document.getElementById('sm-bar-btn');
+    if (barBtn) barBtn.style.display = nuovoTotal > 0 ? 'flex' : 'none';
+    showToast('Consumazione rimossa', 'info');
+};
+
 </script>
 </body>
 </html>
