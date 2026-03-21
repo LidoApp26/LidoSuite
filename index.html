@@ -611,6 +611,125 @@
     </div>
 </div>
 
+<!-- ── DRAWER OSPITE SUBAFFITTO ── -->
+<style>
+    #guest-drawer {
+        position: fixed; top:0; right:0;
+        width: 420px; max-width:100vw; height:100vh;
+        background: #fff; z-index: 1002;
+        display: flex; flex-direction: column;
+        box-shadow: -8px 0 40px rgba(13,44,70,.18);
+        transform: translateX(110%);
+        transition: transform .32s cubic-bezier(.4,0,.2,1);
+        overflow: hidden;
+    }
+    #guest-drawer.open { transform: translateX(0); }
+    .gd-hero {
+        background: linear-gradient(135deg,#7c3aed 0%,#8b5cf6 60%,#a78bfa 100%);
+        padding: 28px 24px 22px; color:white; flex-shrink:0; position:relative;
+    }
+    .gd-close {
+        position:absolute; top:16px; right:16px;
+        width:32px; height:32px; border-radius:50%;
+        background:rgba(255,255,255,.2); border:none; color:white;
+        font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+        transition:background .2s;
+    }
+    .gd-close:hover { background:rgba(255,255,255,.35); }
+    .gd-tag   { font-size:11px; font-weight:700; opacity:.75; text-transform:uppercase; letter-spacing:2px; margin-bottom:2px; }
+    .gd-name  { font-size:24px; font-weight:700; letter-spacing:-.4px; margin-bottom:3px; }
+    .gd-tel   { font-size:13px; opacity:.8; margin-bottom:14px; }
+    .gd-pills { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+    .gd-pill  { font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px; background:rgba(255,255,255,.22); }
+    .gd-pay-row { display:flex; justify-content:space-between; font-size:13px; font-weight:600; }
+    .gd-pay-amount { font-size:22px; font-weight:700; margin-top:4px; }
+    .gd-body  { flex:1; overflow-y:auto; padding:0 24px 24px; }
+    .gd-section { margin-top:20px; }
+    .gd-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--eb-muted); margin-bottom:10px; }
+    .gd-info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; border-bottom:1px solid var(--eb-bg); font-size:13px; }
+    .gd-info-row:last-child { border-bottom:none; }
+    .gd-info-row .gd-label { color:var(--eb-muted); font-size:12px; }
+    .gd-info-row .gd-val   { font-weight:700; }
+    .gd-box { background:var(--eb-bg); border-radius:12px; border:1.5px solid var(--eb-border); overflow:hidden; margin-bottom:10px; }
+    .gd-btn-primary { width:100%; padding:13px; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:transform .15s; margin-top:8px; }
+    .gd-btn-primary:hover { transform:translateY(-2px); }
+    .gd-btn-pay  { background:linear-gradient(135deg,var(--free),#4ade80); color:white; box-shadow:0 4px 14px rgba(34,197,94,.28); }
+    .gd-btn-blue { background:linear-gradient(135deg,var(--eb-blue),var(--eb-blue-mid)); color:white; box-shadow:0 4px 14px rgba(13,92,140,.28); }
+    .gd-btn-orange { background:linear-gradient(135deg,var(--bar),#fb923c); color:white; box-shadow:0 4px 14px rgba(249,115,22,.28); }
+    .gd-btn-ghost { background:white; color:var(--expired); border:1.5px solid #fecaca; }
+    /* Split view badge on spot */
+    .spot .split-badge { position:absolute; bottom:-6px; left:-4px; font-size:8px; background:#7c3aed; color:white; border-radius:4px; padding:1px 4px; font-weight:700; box-shadow:0 1px 4px rgba(124,58,237,.4); white-space:nowrap; }
+</style>
+
+<div id="guest-drawer">
+    <div class="gd-hero">
+        <button class="gd-close" onclick="closeGuestDrawer()">✕</button>
+        <div class="gd-tag">🔄 Ospite Subaffitto · <span id="gd-spot-label"></span></div>
+        <div class="gd-name" id="gd-nome">—</div>
+        <div class="gd-tel" id="gd-tel"></div>
+        <div class="gd-pills">
+            <span class="gd-pill" id="gd-dates-pill"></span>
+            <span class="gd-pill" id="gd-pay-pill"></span>
+        </div>
+        <div class="gd-pay-row">
+            <span style="opacity:.8;">Importo dovuto</span>
+            <span style="opacity:.8;" id="gd-pay-status"></span>
+        </div>
+        <div class="gd-pay-amount" id="gd-amount">0.00€</div>
+    </div>
+    <div class="gd-body">
+
+        <!-- Riepilogo costi -->
+        <div class="gd-section">
+            <div class="gd-section-title">Riepilogo Costi</div>
+            <div class="gd-box" id="gd-cost-list"></div>
+        </div>
+
+        <!-- Titolare ombrellone -->
+        <div class="gd-section">
+            <div class="gd-section-title">Titolare Ombrellone</div>
+            <div class="gd-box">
+                <div class="gd-info-row">
+                    <span class="gd-label">Titolare</span>
+                    <span class="gd-val" id="gd-titolare-nome">—</span>
+                </div>
+                <div class="gd-info-row">
+                    <span class="gd-label">Accredito maturato</span>
+                    <span class="gd-val" style="color:var(--free);" id="gd-credito">0.00€</span>
+                </div>
+            </div>
+            <button class="gd-btn-primary gd-btn-blue" onclick="gdOpenTitolare()">
+                📋 Apri scheda titolare
+            </button>
+        </div>
+
+        <!-- Consumazioni bar ospite -->
+        <div class="gd-section">
+            <div class="gd-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+                <span>🍹 Consumazioni Bar</span>
+                <span id="gd-bar-badge" style="font-size:11px;font-weight:700;background:var(--bar);color:white;padding:2px 10px;border-radius:20px;">0.00€</span>
+            </div>
+            <div id="gd-bar-list" style="border:1.5px solid var(--eb-border);border-radius:12px;overflow:hidden;margin-bottom:10px;"></div>
+            <div style="background:var(--eb-bg);border-radius:12px;padding:12px;border:1.5px solid var(--eb-border);">
+                <div style="display:flex;gap:8px;margin-bottom:8px;">
+                    <input type="text" id="gd-cons-nome" placeholder="Es. Aperol, Acqua…" style="flex:1;padding:9px 12px;border:1.5px solid var(--eb-border);border-radius:9px;font-size:13px;font-family:Poppins,sans-serif;background:white;">
+                    <input type="number" id="gd-cons-prezzo" placeholder="€" step="0.50" min="0" style="width:72px;padding:9px 10px;border:1.5px solid var(--eb-border);border-radius:9px;font-size:13px;font-family:Poppins,sans-serif;text-align:center;background:white;">
+                </div>
+                <div id="gd-cons-quick" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;"></div>
+                <button onclick="gdAddConsumazione()" style="width:100%;padding:11px;background:linear-gradient(135deg,var(--bar),#fb923c);color:white;border:none;border-radius:9px;font-family:Poppins,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">➕ Aggiungi e Addebita</button>
+            </div>
+        </div>
+
+        <!-- Azioni -->
+        <div class="gd-section">
+            <div class="gd-section-title">Azioni</div>
+            <button class="gd-btn-primary gd-btn-pay" id="gd-btn-paga" onclick="gdSegnaComePagato()">✓ Segna come Pagato</button>
+            <button class="gd-btn-primary gd-btn-ghost" onclick="gdTerminaSubaffitto()">❌ Termina Subaffitto</button>
+        </div>
+
+    </div>
+</div>
+
 <!-- ── NUOVA PRENOTAZIONE (ombrellone libero) ── -->
 <div id="new-booking-modal" class="modal" style="width:480px;padding:0;overflow:hidden;text-align:left;max-height:92vh;">
     <div style="padding:22px 28px 18px;background:linear-gradient(135deg,#15803d,var(--free));color:white;">
@@ -1452,9 +1571,11 @@ function renderSpiaggia() {
         const barBadge     = d?.barTotal>0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
         const weatherBadge = d?.weatherGuarantee ? `<div class="weather-badge">☀️</div>` : '';
         const subletBadge  = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:rgba(0,0,0,.3);">🔄</div>` : '';
+        // Quando c'è un ospite, mostriamo nome ospite + nome titolare in piccolo
         const ownerLabel   = todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
+        const splitBadge   = todayGuest ? `<div class="split-badge">${d.nome.split(' ')[0]}</div>` : '';
 
-        div.innerHTML = `${barBadge}${weatherBadge}${subletBadge}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${ownerLabel}</div>`;
+        div.innerHTML = `${barBadge}${weatherBadge}${subletBadge}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${ownerLabel}</div>${splitBadge}`;
 
         if (!d)               div.onclick = () => handleOmbrellone(i);
         else if (todayGuest)  div.onclick = () => slbmOpenSpotGuest(i);
@@ -1811,7 +1932,7 @@ function renderSubaffitto() {
             if (g) return `<div onclick="slbmShowGuestDetail('${id}','${dt}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#ede9fe;border:2px solid #8b5cf6;font-size:12px;font-weight:700;color:#7c3aed;cursor:pointer;">🔄 ${dt} · <b>${g.nome}</b> <span style="font-size:10px;background:#8b5cf6;color:white;padding:1px 7px;border-radius:10px;">${g.pagato?'✓ Pagato':'⏳ Da pagare'}</span></div>`;
             return `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:${isToday?'#fef3c7':'white'};border:2px solid ${isToday?'#f59e0b':'var(--eb-border)'};font-size:12px;font-weight:600;color:var(--eb-muted);"><span onclick="slbmOpenBookingFromDate('${id}','${dt}')" style="cursor:pointer;">📅 ${dt}${isToday?' ⬅️':''}</span><button onclick="slbmRemoveDate('${id}','${dt}')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:11px;padding:0;" title="Rimuovi">✕</button></div>`;
         }).join('') : '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data inserita</span>';
-        const guestsHtml = guests.filter(g=>g.active).length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>${guests.filter(g=>g.active).map((g,gi)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);"><div><b>${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}</span><br><span style="color:#7c3aed;">${(g.dates||[]).join(', ')}</span></div><div style="text-align:right;flex-shrink:0;margin-left:10px;"><div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(g.totalePagato||0).toFixed(2)+'€':'⏳ Da pagare'}</div><button onclick="slbmToggleGuestPaid('${id}',${gi})" style="font-size:10px;background:none;border:1px solid ${g.pagato?'var(--eb-muted)':'var(--free)'};color:${g.pagato?'var(--eb-muted)':'var(--free)'};border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Poppins,sans-serif;margin-top:3px;">${g.pagato?'✓ Pagato':'Segna Pagato'}</button></div></div>`).join('')}</div>` : '';
+        const guestsHtml = guests.filter(g=>g.active).length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>${guests.filter(g=>g.active).map((g,gi)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);"><div><b>${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}</span><br><span style="color:#7c3aed;">${(g.dates||[]).join(', ')}</span></div><div style="text-align:right;flex-shrink:0;margin-left:10px;display:flex;flex-direction:column;gap:4px;"><div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(parseFloat(g.totalePagato||0)+parseFloat(g.barTotal||0)).toFixed(2)+'€ ✓':'⏳ Da pagare'}</div><button onclick="gdOpenByIndex('${id}',${gi})" style="font-size:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:6px;padding:3px 10px;cursor:pointer;font-family:Poppins,sans-serif;font-weight:700;">📋 Scheda</button></div></div>`).join('')}</div>` : '';
         return `<div class="sublet-card"><div class="sublet-header"><div><div class="sublet-name">🏖️ #${id} — ${d.nome}</div><div class="sublet-spot" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:4px;"><span>Stagionale · ${d.prezzo}€</span>${credito>0?`<span style="color:var(--free);font-weight:700;background:#dcfce7;padding:2px 10px;border-radius:20px;font-size:11px;">💰 Accredito: +${credito.toFixed(2)}€</span>`:''}</div></div><button class="btn-sm btn-sea" onclick="slbmOpenAddDate('${id}')">📅 Aggiungi date</button></div><div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>${guestsHtml}</div>`;
     }).join('');
     renderSubletTodayBanner();
@@ -1841,7 +1962,7 @@ window.slbmOpen = id => {
 };
 window.slbmOpenBookingFromSpot = id => { const d=beachData[id]; if(!d) return; _slbmId=id; _slbmDates=[todayIT()]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Disponibile oggi`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
 window.slbmOpenBookingFromDate= (id,dt) => { _slbmId=id; _slbmDates=[dt]; const d=beachData[id]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Ospite per ${dt}`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
-window.slbmOpenSpotGuest = id => { const g=slbmTodayGuest(id), d=beachData[id]; if(!g){handleOmbrellone(id);return;} if(confirm(`🔄 Ospite oggi\n👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${g.pagato?(g.totalePagato||0).toFixed(2)+'€ pagati':'Non ancora pagato'}\n\nAprire la scheda del titolare?`)) openSpotModal(id); };
+// slbmOpenSpotGuest: definita nel blocco drawer ospite in fondo
 
 function slbmBuildDatesPicker(id) {
     const picker=$('slbm-dates-picker'); if(!picker) return;
@@ -2094,6 +2215,184 @@ onAuthStateChanged(auth, async firebaseUser => {
         $('main-topbar').classList.add('hidden');
     }
 });
+
+// ════════════════════════════════════════════════════════════════════════
+// DRAWER OSPITE SUBAFFITTO — scheda completa del nuovo cliente
+// ════════════════════════════════════════════════════════════════════════
+
+let _gdSpotId   = null;  // id ombrellone corrente
+let _gdGuestIdx = null;  // indice nell'array subletGuests
+
+// Trova l'ospite di oggi su uno spot (o per indice specifico)
+function gdGetGuest(id, idx) {
+    const guests = beachData[id]?.subletGuests || [];
+    if (idx !== undefined && idx !== null) return guests[idx] || null;
+    const today = todayIT();
+    return guests.find(g => g.active && (g.dates||[]).includes(today)) || null;
+}
+
+// Apri drawer ospite — chiamato dal click sullo spot lilla con ospite
+window.slbmOpenSpotGuest = id => {
+    const today = todayIT();
+    const guests = beachData[id]?.subletGuests || [];
+    const idx    = guests.findIndex(g => g.active && (g.dates||[]).includes(today));
+    if (idx < 0) { handleOmbrellone(id); return; }
+    gdOpen(id, idx);
+};
+
+// Apri drawer ospite per un ospite specifico (dalla scheda subaffitto)
+window.gdOpenByIndex = (id, idx) => gdOpen(id, idx);
+
+function gdOpen(id, idx) {
+    _gdSpotId   = id;
+    _gdGuestIdx = idx;
+    const d     = beachData[id];
+    const g     = gdGetGuest(id, idx);
+    if (!g || !d) return;
+
+    const days   = (g.dates||[]).length;
+    const barTot = parseFloat(g.barTotal || 0);
+
+    // Hero
+    $('gd-spot-label').textContent   = `Ombrellone #${id}`;
+    $('gd-nome').textContent          = g.nome;
+    $('gd-tel').textContent           = g.telefono && g.telefono !== '-' ? '📞 ' + g.telefono : '';
+    $('gd-dates-pill').textContent    = `📅 ${(g.dates||[]).join(' · ')}`;
+    $('gd-pay-pill').textContent      = `${days} giorno${days>1?'i':''}`;
+    $('gd-pay-status').textContent    = g.pagato ? '✓ Pagato' : '⏳ Da pagare';
+    $('gd-amount').textContent        = (parseFloat(g.totalePagato||0) + barTot).toFixed(2) + '€';
+
+    // Bottone pagato
+    const btnP = $('gd-btn-paga');
+    btnP.textContent = g.pagato ? '↩ Annulla pagamento' : '✓ Segna come Pagato';
+    btnP.className   = 'gd-btn-primary ' + (g.pagato ? 'gd-btn-ghost' : 'gd-btn-pay');
+
+    // Riepilogo costi
+    let costHtml = `<div class="gd-info-row"><span class="gd-label">Tariffa base</span><span class="gd-val">${parseFloat(g.basePrice||SUBLET_BASE).toFixed(2)}€</span></div>`;
+    if (g.extraDettaglio?.length) {
+        g.extraDettaglio.forEach(e => {
+            costHtml += `<div class="gd-info-row"><span class="gd-label">${e.nome} × ${days} gg</span><span class="gd-val">${(e.prezzo*days).toFixed(2)}€</span></div>`;
+        });
+    }
+    if (barTot > 0) {
+        costHtml += `<div class="gd-info-row"><span class="gd-label">🍹 Consumazioni bar</span><span class="gd-val" style="color:var(--bar);">${barTot.toFixed(2)}€</span></div>`;
+    }
+    const totaleCliente = parseFloat(g.totalePagato||0) + barTot;
+    costHtml += `<div class="gd-info-row" style="background:var(--eb-bg);font-weight:700;"><span class="gd-label" style="font-weight:700;color:var(--eb-text);">Totale</span><span class="gd-val" style="font-size:15px;">${totaleCliente.toFixed(2)}€</span></div>`;
+    $('gd-cost-list').innerHTML = costHtml;
+
+    // Titolare
+    $('gd-titolare-nome').textContent = d.nome;
+    $('gd-credito').textContent       = '+' + parseFloat(d.subletCredito||0).toFixed(2) + '€';
+
+    // Bar
+    gdRenderBar(g);
+
+    // Apri drawer
+    $('guest-drawer').classList.add('open');
+    $('overlay').style.display = 'block';
+}
+
+function gdRenderBar(g) {
+    const cons   = g.consumazioni || [];
+    const barTot = cons.reduce((s,c) => s+parseFloat(c.prezzo||0), 0);
+    const badge  = $('gd-bar-badge');
+    if (badge) { badge.textContent = barTot.toFixed(2)+'€'; badge.style.background = barTot>0?'var(--bar)':'var(--eb-muted)'; }
+    const list = $('gd-bar-list');
+    if (!list) return;
+    if (!cons.length) {
+        list.innerHTML = '<div style="padding:14px;text-align:center;font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna consumazione</div>';
+    } else {
+        list.innerHTML = cons.map((c,i) =>
+            `<div class="gd-info-row"><div><div style="font-weight:600;">${c.nome}</div><div style="font-size:10px;color:var(--eb-muted);">🕐 ${c.ora}</div></div><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:700;color:var(--bar);">+${parseFloat(c.prezzo).toFixed(2)}€</span><button onclick="gdRemoveConsumazione(${i})" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:11px;font-family:Poppins,sans-serif;">✕</button></div></div>`
+        ).join('');
+    }
+    // Pill rapide dal menu
+    const quick = $('gd-cons-quick');
+    if (quick) quick.innerHTML = Object.values(dynamicProducts).map(p =>
+        `<button onclick="$('gd-cons-nome').value='${p.nome.replace(/'/g,"\\'")}';$('gd-cons-prezzo').value='${p.prezzo.toFixed(2)}'" style="padding:5px 12px;border:1.5px solid ${p.colore||'#f97316'}33;background:${p.colore||'#f97316'}18;color:${p.colore||'#f97316'};border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif;">${p.nome} ${p.prezzo.toFixed(2)}€</button>`
+    ).join('') || '<span style="font-size:11px;color:var(--eb-muted);">Nessun prodotto nel menu</span>';
+    // Aggiorna importo totale nell'hero
+    const gCurrent = gdGetGuest(_gdSpotId, _gdGuestIdx);
+    if (gCurrent) {
+        const tot = parseFloat(gCurrent.totalePagato||0) + barTot;
+        $('gd-amount').textContent = tot.toFixed(2) + '€';
+    }
+}
+
+window.closeGuestDrawer = () => {
+    $('guest-drawer').classList.remove('open');
+    $('overlay').style.display = 'none';
+    _gdSpotId = null; _gdGuestIdx = null;
+};
+
+window.gdOpenTitolare = () => {
+    const id = _gdSpotId;
+    closeGuestDrawer();
+    openSpotModal(id);
+};
+
+window.gdSegnaComePagato = () => {
+    const d = beachData[_gdSpotId];
+    const g = d?.subletGuests?.[_gdGuestIdx];
+    if (!g) return;
+    g.pagato = !g.pagato;
+    fdb(_gdSpotId, d);
+    showToast(g.pagato ? '✓ Pagamento registrato' : 'Pagamento rimosso', g.pagato ? 'success' : 'info');
+    gdOpen(_gdSpotId, _gdGuestIdx); // refresh
+};
+
+window.gdAddConsumazione = () => {
+    const d = beachData[_gdSpotId];
+    const g = d?.subletGuests?.[_gdGuestIdx];
+    if (!g) return;
+    const nome   = $('gd-cons-nome').value.trim();
+    const prezzo = parseFloat($('gd-cons-prezzo').value);
+    if (!nome) return showToast('Inserisci il nome', 'warn');
+    if (isNaN(prezzo)||prezzo<=0) return showToast('Prezzo non valido', 'warn');
+    if (!g.consumazioni) g.consumazioni = [];
+    const ora = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    g.consumazioni.push({nome, prezzo, ora});
+    // Aggiorna anche barTotal ospite (campo dedicato sull'oggetto guest)
+    g.barTotal = (g.consumazioni.reduce((s,c)=>s+parseFloat(c.prezzo||0),0));
+    fdb(_gdSpotId, d);
+    $('gd-cons-nome').value=''; $('gd-cons-prezzo').value='';
+    gdRenderBar(g);
+    showToast(`✓ ${nome} (+${prezzo.toFixed(2)}€) addebitato`, 'success');
+};
+
+window.gdRemoveConsumazione = idx => {
+    const d = beachData[_gdSpotId];
+    const g = d?.subletGuests?.[_gdGuestIdx];
+    if (!g?.consumazioni?.[idx]) return;
+    if (!confirm(`Rimuovere "${g.consumazioni[idx].nome}"?`)) return;
+    g.consumazioni.splice(idx, 1);
+    g.barTotal = g.consumazioni.reduce((s,c)=>s+parseFloat(c.prezzo||0),0);
+    fdb(_gdSpotId, d);
+    gdRenderBar(g);
+    showToast('Consumazione rimossa', 'info');
+};
+
+window.gdTerminaSubaffitto = () => {
+    const d = beachData[_gdSpotId];
+    const g = d?.subletGuests?.[_gdGuestIdx];
+    if (!g) return;
+    if (!confirm(`Terminare il subaffitto di ${g.nome}?\nLe date occupate torneranno disponibili.`)) return;
+    // Rimuovi le sue date dal pool subletDates
+    const gdDates = g.dates || [];
+    d.subletDates = (d.subletDates||[]).filter(dt => !gdDates.includes(dt));
+    g.active = false;
+    fdb(_gdSpotId, d);
+    closeGuestDrawer();
+    showToast(`Subaffitto di ${g.nome} terminato`, 'info');
+};
+
+
+
+
+// ════════════════════════════════════════════════════════════════════════
+// FINE DRAWER OSPITE SUBAFFITTO
+// ════════════════════════════════════════════════════════════════════════
 
 </script>
 </body>
