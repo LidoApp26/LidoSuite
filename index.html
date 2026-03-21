@@ -2749,6 +2749,324 @@ window.openSpotModal = function(id) {
 // FINE PATCH V3
 // ════════════════════════════════════════════════════════════════════════
 
+
+// ════════════════════════════════════════════════════════════════════════
+// PATCH V4: CALENDARIO MULTI-DATA + COLORE LILLA + LEGENDA AGGIORNATA
+// ════════════════════════════════════════════════════════════════════════
+
+// 1. CSS: colore lilla per tutti gli spot subaffittati + calendario
+(function injectV4CSS() {
+    const style = document.createElement('style');
+    style.textContent = `
+        /* Subaffittato (libero o con ospite): lilla */
+        .spot.sublet,
+        .spot.sublet-guest {
+            background: #8b5cf6 !important;
+            border-color: #7c3aed !important;
+        }
+        .spot.sublet b, .spot.sublet-guest b {
+            color: #fff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,.22) !important;
+        }
+        .spot.sublet .owner, .spot.sublet-guest .owner {
+            color: rgba(255,255,255,.88) !important;
+        }
+        .spot.sublet:hover, .spot.sublet-guest:hover {
+            background: #a78bfa !important;
+        }
+        .spot.sublet .pay-indicator,
+        .spot.sublet-guest .pay-indicator {
+            border-color: rgba(255,255,255,.85) !important;
+        }
+        .spot.sublet .bar-badge,
+        .spot.sublet-guest .bar-badge {
+            background: rgba(0,0,0,.3) !important;
+            box-shadow: none !important;
+        }
+
+        /* ── CALENDARIO SUBAFFITTO ── */
+        #slbm-cal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(13,44,70,.48);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            animation: fadeIn .18s ease;
+        }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        #slbm-cal-box {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 24px 64px rgba(13,44,70,.28);
+            width: 360px;
+            max-width: 96vw;
+            overflow: hidden;
+            animation: slideUp .22s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+        #slbm-cal-header {
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+            padding: 18px 22px 14px;
+            color: white;
+        }
+        #slbm-cal-header .cal-title { font-size: 13px; font-weight: 700; opacity: .85; margin-bottom: 2px; }
+        #slbm-cal-header .cal-spot  { font-size: 18px; font-weight: 700; }
+        .cal-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px 6px;
+        }
+        .cal-nav-btn {
+            background: var(--eb-bg); border: 1.5px solid var(--eb-border);
+            border-radius: 8px; width: 34px; height: 34px;
+            cursor: pointer; font-size: 16px; font-weight: 700;
+            color: var(--eb-text); display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .cal-nav-btn:hover { background: #ede9fe; border-color: #a78bfa; color: #7c3aed; }
+        .cal-month-label { font-size: 14px; font-weight: 700; color: var(--eb-text); }
+        .cal-grid {
+            display: grid; grid-template-columns: repeat(7,1fr);
+            gap: 3px; padding: 4px 14px 10px;
+        }
+        .cal-day-name {
+            text-align: center; font-size: 10px; font-weight: 700;
+            color: var(--eb-muted); padding: 4px 0; text-transform: uppercase; letter-spacing: .5px;
+        }
+        .cal-day {
+            text-align: center; padding: 7px 2px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            color: var(--eb-text); transition: background .12s, color .12s;
+            position: relative; user-select: none;
+        }
+        .cal-day:hover:not(.cal-empty):not(.cal-past):not(.cal-has-guest) {
+            background: #ede9fe; color: #7c3aed;
+        }
+        .cal-day.cal-empty { visibility: hidden; cursor: default; }
+        .cal-day.cal-past  { color: #d1d5db; cursor: not-allowed; }
+        .cal-day.cal-has-guest { color: #d1d5db; cursor: not-allowed; }
+        .cal-day.cal-has-guest::after {
+            content: ''; position: absolute; bottom: 3px; left: 50%;
+            transform: translateX(-50%);
+            width: 4px; height: 4px; border-radius: 50%; background: #8b5cf6;
+        }
+        .cal-day.cal-already { background: #ede9fe; color: #7c3aed; }
+        .cal-day.cal-already::after {
+            content: ''; position: absolute; bottom: 3px; left: 50%;
+            transform: translateX(-50%);
+            width: 4px; height: 4px; border-radius: 50%; background: #7c3aed;
+        }
+        .cal-day.cal-selected {
+            background: #7c3aed; color: #fff !important;
+            box-shadow: 0 2px 8px rgba(124,58,237,.35);
+        }
+        .cal-day.cal-selected.cal-already {
+            background: #a78bfa;
+        }
+        .cal-day.cal-today { font-weight: 800; }
+        .cal-day.cal-today:not(.cal-selected) { color: #7c3aed; }
+        .cal-footer {
+            padding: 10px 14px 16px;
+            border-top: 1px solid var(--eb-border);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .cal-selected-preview {
+            font-size: 11px; color: var(--eb-muted); min-height: 18px;
+            padding: 0 4px; line-height: 1.5;
+        }
+        .cal-selected-preview b { color: #7c3aed; }
+        .cal-btn-confirm {
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+            color: white; border: none; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700;
+            cursor: pointer; box-shadow: 0 4px 12px rgba(124,58,237,.3);
+            transition: transform .15s;
+        }
+        .cal-btn-confirm:hover { transform: translateY(-1px); }
+        .cal-btn-cancel {
+            width: 100%; padding: 10px;
+            background: white; color: var(--eb-muted);
+            border: 1.5px solid var(--eb-border); border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600;
+            cursor: pointer;
+        }
+    `;
+    document.head.appendChild(style);
+})();
+
+// 2. Override legenda: solo "Subaffittato" lilla (unificato)
+(function patchLegendV4() {
+    function doUpdate() {
+        const legend = document.querySelector('.beach-legend');
+        if (!legend) return;
+        legend.innerHTML = `
+            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f1f5f9;border:2px solid #cbd5e1;"></div>Libero</div>
+            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f97316;"></div>Giornaliero</div>
+            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#0d5c8c;"></div>Stagionale</div>
+            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#8b5cf6;"></div>Subaffittato</div>
+            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
+            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>`;
+    }
+    // Aspetta che la V3 finisca di caricare, poi sovrascriviamo
+    const _prevNavTo = window.navTo;
+    window.navTo = function(id) {
+        _prevNavTo(id);
+        if (id === 'screen-spiaggia') setTimeout(doUpdate, 80);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', doUpdate);
+    else setTimeout(doUpdate, 80);
+})();
+
+// 3. Calendario multi-selezione per slbmOpenAddDate
+(function overrideSlbmOpenAddDate() {
+
+    // Stato interno del calendario
+    let _calId = null;
+    let _calYear = null;
+    let _calMonth = null;
+    let _calSelected = [];   // date nuove selezionate (dd/mm/yyyy)
+
+    const MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+                       'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+    const DAYS_IT   = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function toKey(y, m, d) { return `${pad(d)}/${pad(m+1)}/${y}`; }
+    function todayYMD() {
+        const n = new Date();
+        return { y: n.getFullYear(), m: n.getMonth(), d: n.getDate() };
+    }
+
+    function buildCalHTML() {
+        const d = beachData[_calId];
+        const alreadyDates = new Set(d.subletDates || []);
+        const guestDates   = new Set();
+        (d.subletGuests || []).filter(g => g.active).forEach(g => (g.dates||[]).forEach(dt => guestDates.add(dt)));
+
+        const t = todayYMD();
+        const firstDay = new Date(_calYear, _calMonth, 1).getDay(); // 0=dom
+        const daysInMonth = new Date(_calYear, _calMonth + 1, 0).getDate();
+        // Converti domenica da 0 → 6 (settimana lun-dom)
+        const startOffset = (firstDay === 0 ? 6 : firstDay - 1);
+
+        let cells = '';
+        // Nomi giorni
+        DAYS_IT.forEach(d => { cells += `<div class="cal-day-name">${d}</div>`; });
+        // Celle vuote iniziali
+        for (let i = 0; i < startOffset; i++) cells += `<div class="cal-day cal-empty"></div>`;
+        // Giorni
+        for (let day = 1; day <= daysInMonth; day++) {
+            const key = toKey(_calYear, _calMonth, day);
+            const isPast = _calYear < t.y || (_calYear === t.y && _calMonth < t.m) || (_calYear === t.y && _calMonth === t.m && day < t.d);
+            const isToday = _calYear === t.y && _calMonth === t.m && day === t.d;
+            const hasGuest = guestDates.has(key);
+            const already  = alreadyDates.has(key);
+            const selected = _calSelected.includes(key);
+            let cls = 'cal-day';
+            if (isPast)    cls += ' cal-past';
+            if (isToday)   cls += ' cal-today';
+            if (hasGuest)  cls += ' cal-has-guest';
+            if (already && !selected) cls += ' cal-already';
+            if (selected)  cls += ' cal-selected';
+            const clickable = !isPast && !hasGuest;
+            const onclick = clickable ? `_calToggleDay('${key}')` : '';
+            cells += `<div class="${cls}" onclick="${onclick}">${day}</div>`;
+        }
+        return cells;
+    }
+
+    function buildPreview() {
+        if (!_calSelected.length) return 'Nessuna data selezionata';
+        return `<b>${_calSelected.length}</b> data${_calSelected.length > 1 ? 'e' : ''} selezionata${_calSelected.length > 1 ? 'e' : ''}: ${_calSelected.join(', ')}`;
+    }
+
+    function renderCalendar() {
+        const grid = document.getElementById('slbm-cal-grid');
+        const preview = document.getElementById('slbm-cal-preview');
+        const label = document.getElementById('slbm-cal-month-label');
+        if (grid)    grid.innerHTML = buildCalHTML();
+        if (preview) preview.innerHTML = buildPreview();
+        if (label)   label.textContent = `${MONTHS_IT[_calMonth]} ${_calYear}`;
+    }
+
+    window._calToggleDay = function(key) {
+        const idx = _calSelected.indexOf(key);
+        if (idx >= 0) _calSelected.splice(idx, 1);
+        else _calSelected.push(key);
+        renderCalendar();
+    };
+
+    window._calPrevMonth = function() {
+        _calMonth--;
+        if (_calMonth < 0) { _calMonth = 11; _calYear--; }
+        renderCalendar();
+    };
+    window._calNextMonth = function() {
+        _calMonth++;
+        if (_calMonth > 11) { _calMonth = 0; _calYear++; }
+        renderCalendar();
+    };
+
+    window._calClose = function() {
+        const ov = document.getElementById('slbm-cal-overlay');
+        if (ov) ov.remove();
+    };
+
+    window._calConfirm = function() {
+        if (!_calSelected.length) { showToast('Seleziona almeno una data', 'warn'); return; }
+        const d = beachData[_calId];
+        if (!d.subletDates) d.subletDates = [];
+        let added = 0;
+        _calSelected.forEach(dt => {
+            if (!d.subletDates.includes(dt)) { d.subletDates.push(dt); added++; }
+        });
+        d.subletActive = true;
+        set(ref(db, 'spiaggia_dati/' + _calId), d);
+        _calClose();
+        showToast(`📅 ${added} data${added > 1 ? 'e' : ''} aggiunta${added > 1 ? 'e' : ''}`, 'success');
+    };
+
+    // Override di slbmOpenAddDate
+    window.slbmOpenAddDate = function(id) {
+        _calId = id;
+        const t = todayYMD();
+        _calYear  = t.y;
+        _calMonth = t.m;
+        _calSelected = [];
+        const d = beachData[id];
+
+        // Crea overlay
+        const ov = document.createElement('div');
+        ov.id = 'slbm-cal-overlay';
+        ov.innerHTML = `
+            <div id="slbm-cal-box">
+                <div id="slbm-cal-header">
+                    <div class="cal-title">📅 Date Subaffitto</div>
+                    <div class="cal-spot">Ombrellone #${id} — ${d.nome}</div>
+                </div>
+                <div class="cal-nav">
+                    <button class="cal-nav-btn" onclick="_calPrevMonth()">‹</button>
+                    <span class="cal-month-label" id="slbm-cal-month-label"></span>
+                    <button class="cal-nav-btn" onclick="_calNextMonth()">›</button>
+                </div>
+                <div class="cal-grid" id="slbm-cal-grid"></div>
+                <div class="cal-footer">
+                    <div class="cal-selected-preview" id="slbm-cal-preview"></div>
+                    <button class="cal-btn-confirm" onclick="_calConfirm()">✓ Aggiungi date selezionate</button>
+                    <button class="cal-btn-cancel"  onclick="_calClose()">Annulla</button>
+                </div>
+            </div>`;
+        // Chiudi cliccando fuori dal box
+        ov.addEventListener('click', e => { if (e.target === ov) _calClose(); });
+        document.body.appendChild(ov);
+        renderCalendar();
+    };
+})();
+
+// ════════════════════════════════════════════════════════════════════════
+// FINE PATCH V4
+// ════════════════════════════════════════════════════════════════════════
+
 </script>
 </body>
 </html>
