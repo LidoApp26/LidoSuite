@@ -2591,6 +2591,164 @@ window.openSpotModal = function(id) {
 // FINE SISTEMA SUBAFFITTO V2
 // ════════════════════════════════════════════════════════════════════════
 
+
+// ════════════════════════════════════════════════════════════════════════
+// PATCH V3: SPOT COLORATI PIENI + INFO SUBAFFITTO NEL DRAWER TITOLARE
+// ════════════════════════════════════════════════════════════════════════
+
+// 1. CSS spot colorati pieni
+(function injectSpotColorCSS() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .spot.free { background:#f1f5f9; border-color:#cbd5e1; }
+        .spot.free b { color:#94a3b8; }
+        .spot.free .owner { color:#94a3b8; }
+        .spot.booked { background:#f97316; border-color:#ea6b0a; }
+        .spot.booked b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.booked .owner { color:rgba(255,255,255,.88); }
+        .spot.booked:hover { background:#fb923c; }
+        .spot.seasonal { background:#0d5c8c; border-color:#0a4a72; }
+        .spot.seasonal b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.seasonal .owner { color:rgba(255,255,255,.82); }
+        .spot.seasonal:hover { background:#1a7db8; }
+        .spot.sublet { background:#0891b2; border-color:#0779a0; }
+        .spot.sublet b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.sublet .owner { color:rgba(255,255,255,.88); }
+        .spot.sublet:hover { background:#22a8c8; }
+        .spot.sublet-guest { background:#0e7490; border-color:#0c6278; }
+        .spot.sublet-guest b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.sublet-guest .owner { color:rgba(255,255,255,.88); }
+        .spot.sublet-guest:hover { background:#1590b0; }
+        .spot.booked .pay-indicator,
+        .spot.seasonal .pay-indicator,
+        .spot.sublet .pay-indicator,
+        .spot.sublet-guest .pay-indicator { border-color:rgba(255,255,255,.85); }
+        .spot.booked .bar-badge,
+        .spot.seasonal .bar-badge,
+        .spot.sublet .bar-badge,
+        .spot.sublet-guest .bar-badge { background:rgba(0,0,0,.3); box-shadow:none; }
+        .spot.booked .weather-badge,
+        .spot.seasonal .weather-badge,
+        .spot.sublet .weather-badge,
+        .spot.sublet-guest .weather-badge { background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.3); }
+        .sd-sublet-guest-banner { background:linear-gradient(135deg,#0891b2,#22d3ee); border-radius:12px; padding:14px 16px; color:white; margin-bottom:10px; }
+        .sd-sublet-guest-banner .sgb-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; opacity:.8; margin-bottom:6px; }
+        .sd-sublet-guest-banner .sgb-name { font-size:16px; font-weight:700; margin-bottom:3px; }
+        .sd-sublet-guest-banner .sgb-dates { font-size:11px; opacity:.85; }
+        .sd-sublet-guest-banner .sgb-pay { display:inline-block; margin-top:7px; background:rgba(255,255,255,.22); border-radius:20px; padding:3px 12px; font-size:11px; font-weight:700; }
+    `;
+    document.head.appendChild(style);
+})();
+
+// 2. Aggiorna legenda mappa
+(function patchBeachLegend() {
+    function doUpdate() {
+        const legend = document.querySelector('.beach-legend');
+        if (!legend) return;
+        legend.innerHTML = `
+            <div class="legend-item"><div class="legend-dot" style="background:#f1f5f9;border:2px solid #cbd5e1;border-radius:3px;width:12px;height:12px;"></div>Libero</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f97316;border-radius:3px;width:12px;height:12px;"></div>Giornaliero</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#0d5c8c;border-radius:3px;width:12px;height:12px;"></div>Stagionale</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#0891b2;border-radius:3px;width:12px;height:12px;"></div>Sub libero</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#0e7490;border-radius:3px;width:12px;height:12px;"></div>Sub ospite</div>
+            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
+            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>`;
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', doUpdate);
+    else doUpdate();
+    // Re-patch ogni volta che si naviga alla spiaggia
+    const _origNavTo = window.navTo;
+    window.navTo = function(id) {
+        _origNavTo(id);
+        if (id === 'screen-spiaggia') setTimeout(doUpdate, 50);
+    };
+})();
+
+// 3. Upgrade _slbmPatchSpots: usa classe sublet-guest distinta
+(function upgradeSlbmPatchSpots() {
+    window._slbmPatchSpots = function() {
+        const today = slbmTodayStr();
+        for (let i = 1; i <= 200; i++) {
+            const d = beachData[i];
+            if (!d || !d.isSeasonal) continue;
+            if (!d.subletDates || !d.subletDates.length) continue;
+            const sector = document.getElementById(i <= 100 ? 'sector-west' : 'sector-east');
+            if (!sector) continue;
+            const spotEl = sector.children[i <= 100 ? i - 1 : i - 101];
+            if (!spotEl) continue;
+            const todayGuest = slbmGetTodayGuest(i);
+            const todayIsSublet = d.subletDates.includes(today);
+            if (todayGuest) {
+                spotEl.className = 'spot sublet-guest status-' + (todayGuest.pagato ? 'saldo' : 'nessuno');
+                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+                spotEl.innerHTML = `${barHtml}<div class="pay-indicator"></div><div style="position:absolute;top:-7px;left:-3px;background:rgba(0,0,0,.32);color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;">🔄</div><b>${i}</b><div class="owner">${todayGuest.nome}</div>`;
+                spotEl.onclick = () => slbmOpenSpotGuest(i);
+            } else if (todayIsSublet) {
+                spotEl.className = 'spot sublet';
+                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+                spotEl.innerHTML = `${barHtml}<div style="position:absolute;top:-7px;left:-3px;background:rgba(0,0,0,.25);color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;">🔄</div><b>${i}</b><div class="owner">SUB</div>`;
+                spotEl.onclick = () => slbmOpenBookingFromSpot(i);
+            }
+        }
+    };
+})();
+
+// 4. Info ospite subaffitto nel drawer del TITOLARE
+(function hookDrawerSubletInfo() {
+    const _prev = window.openSpotModal;
+    window.openSpotModal = function(id) {
+        _prev(id);
+        // Rimuovi banner precedente
+        const old = document.getElementById('v3-slb-info');
+        if (old) old.remove();
+        const d = beachData[id];
+        if (!d || !d.isSeasonal) return;
+        const today = slbmTodayStr();
+        const todayGuest = slbmGetTodayGuest(id);
+        const allDates = d.subletDates || [];
+        const allGuests = (d.subletGuests || []).filter(g => g.active);
+        const freeFuture = allDates.filter(dt => dt !== today && !slbmDateHasGuest(id, dt));
+        const upcomingGuests = allGuests.filter(g => g.dates && g.dates.some(dt => dt !== today));
+        // Non mostrare se non c'è nulla di rilevante
+        if (!todayGuest && !freeFuture.length && !upcomingGuests.length) return;
+        let html = '';
+        if (todayGuest) {
+            html += `<div class="sd-sublet-guest-banner">
+                <div class="sgb-label">🔄 Subaffitto attivo oggi</div>
+                <div class="sgb-name">👤 ${todayGuest.nome}</div>
+                <div class="sgb-dates">📅 ${(todayGuest.dates||[]).join(', ')} &nbsp;·&nbsp; 📞 ${todayGuest.telefono||'-'}</div>
+                <div class="sgb-pay">${todayGuest.pagato ? '✓ Pagato ' + (todayGuest.totalePagato||0).toFixed(2) + '€' : '⏳ Da pagare ' + (todayGuest.totalePagato||0).toFixed(2) + '€'}</div>
+            </div>`;
+        }
+        if (freeFuture.length || upcomingGuests.length) {
+            html += `<div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:12px 14px;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#0891b2;margin-bottom:8px;">🔄 Prossimi Subaffitti</div>`;
+            if (freeFuture.length) {
+                html += `<div style="font-size:12px;color:var(--eb-muted);margin-bottom:6px;">📅 Date libere: ${freeFuture.map(dt => `<span style="background:#ecfeff;color:#0891b2;font-weight:700;padding:2px 8px;border-radius:20px;font-size:11px;">${dt}</span>`).join(' ')}</div>`;
+            }
+            upcomingGuests.forEach(g => {
+                const futureDatesOfGuest = (g.dates||[]).filter(dt => dt !== today);
+                if (!futureDatesOfGuest.length) return;
+                html += `<div style="font-size:12px;background:white;border-radius:8px;padding:8px 10px;margin-top:5px;border:1.5px solid var(--eb-border);">
+                    <b style="color:#0891b2;">👤 ${g.nome}</b> · ${futureDatesOfGuest.join(', ')}<br>
+                    <span style="color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?'✓ '+((g.totalePagato||0).toFixed(2))+'€':'⏳ Da pagare'}</span>
+                </div>`;
+            });
+            html += `</div>`;
+        }
+        const wrapper = document.createElement('div');
+        wrapper.id = 'v3-slb-info';
+        wrapper.className = 'sd-section';
+        wrapper.innerHTML = html;
+        const noteWrap = document.getElementById('sm-note-wrap');
+        if (noteWrap) noteWrap.parentNode.insertBefore(wrapper, noteWrap);
+    };
+})();
+
+// ════════════════════════════════════════════════════════════════════════
+// FINE PATCH V3
+// ════════════════════════════════════════════════════════════════════════
+
 </script>
 </body>
 </html>
