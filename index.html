@@ -1984,31 +1984,37 @@ window.slbmCalcPreview = () => {
         else extra+=parseFloat(cb.dataset.price||0)*days;
     });
     if(days===0){preview.style.display='none';return;}
+    const base = SUBLET_BASE * days;
     preview.style.display='block';
     $('slbm-prev-days').textContent=`${days} gg`;
     $('slbm-prev-credit').textContent=`+${(days*SUBLET_CREDIT_DAY).toFixed(2)}€`;
-    $('slbm-prev-base').textContent=`${SUBLET_BASE.toFixed(2)}€`;
+    $('slbm-prev-base').textContent=`${SUBLET_BASE.toFixed(2)}€ × ${days} gg = ${base.toFixed(2)}€`;
     const er=$('slbm-prev-extras-row'), ev=$('slbm-prev-extras');
     if(er&&ev){er.style.display=extra>0?'flex':'none'; ev.textContent=`${extra.toFixed(2)}€`;}
-    $('slbm-prev-total').textContent=`${(SUBLET_BASE+extra).toFixed(2)}€`;
+    $('slbm-prev-total').textContent=`${(base+extra).toFixed(2)}€`;
 };
 window.slbmConfirm = () => {
     const id=_slbmId, nome=$('slbm-nome').value.trim().toUpperCase(), tel=$('slbm-tel').value.trim()||'-', pagato=$('slbm-pagato').checked;
     if(!nome) return showToast('Inserisci il nome dell\'ospite','warn');
     if(!_slbmDates.length) return showToast('Seleziona almeno una data','warn');
     const d=beachData[id]; if(!d.subletGuests) d.subletGuests=[];
+    const days=_slbmDates.length;
     let extraTot=0, extraDet=[];
     document.querySelectorAll('.slbm-extra-cb').forEach(cb=>{
         if(!cb.checked) return;
-        if(cb.dataset.custom==='1'){const v=parseFloat($('slbm-custom-extra')?.value||0); if(!isNaN(v)&&v>0){extraTot+=v*_slbmDates.length;extraDet.push({nome:'Extra personalizzato',prezzo:v});}}
-        else{const p=parseFloat(cb.dataset.price||0); const lbl=cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim()||'Extra'; extraTot+=p*_slbmDates.length; extraDet.push({nome:lbl,prezzo:p});}
+        if(cb.dataset.custom==='1'){const v=parseFloat($('slbm-custom-extra')?.value||0); if(!isNaN(v)&&v>0){extraTot+=v*days;extraDet.push({nome:'Extra personalizzato',prezzo:v});}}
+        else{const p=parseFloat(cb.dataset.price||0); const lbl=cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim()||'Extra'; extraTot+=p*days; extraDet.push({nome:lbl,prezzo:p});}
     });
-    const totPagato=SUBLET_BASE+extraTot, credito=_slbmDates.length*SUBLET_CREDIT_DAY;
-    d.subletGuests.push({nome,telefono:tel,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
+    const base=SUBLET_BASE*days;
+    const totPagato=base+extraTot, credito=days*SUBLET_CREDIT_DAY;
+    d.subletGuests.push({nome,telefono:tel,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,baseTotale:base,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
     d.subletCredito=parseFloat((parseFloat(d.subletCredito||0)+credito).toFixed(2));
     d.subletActive=true;
-    fdb(id,d); closeModals();
-    showToast(`✓ ${nome} registrato · Accredito +${credito.toFixed(2)}€`, 'success');
+    fdb(id,d);
+    renderSpiaggia();
+    renderSubaffitto();
+    closeModals();
+    showToast(`✓ ${nome} registrato · ${days} gg · ${totPagato.toFixed(2)}€ · Accredito +${credito.toFixed(2)}€`, 'success');
 };
 window.slbmRemoveDate = (id,dt) => { if(!confirm(`Rimuovere il ${dt}?`)) return; if(slbmDateHasGuest(id,dt)) return showToast('Data con ospite: non rimuovibile','warn'); const d=beachData[id]; d.subletDates=(d.subletDates||[]).filter(x=>x!==dt); fdb(id,d); showToast('Data rimossa','info'); };
 window.slbmShowGuestDetail = (id,dt) => { const d=beachData[id]; const g=(d.subletGuests||[]).find(x=>x.active&&(x.dates||[]).includes(dt)); if(!g) return; alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`); };
@@ -2268,7 +2274,7 @@ function gdOpen(id, idx) {
     btnP.className   = 'gd-btn-primary ' + (g.pagato ? 'gd-btn-ghost' : 'gd-btn-pay');
 
     // Riepilogo costi
-    let costHtml = `<div class="gd-info-row"><span class="gd-label">Tariffa base</span><span class="gd-val">${parseFloat(g.basePrice||SUBLET_BASE).toFixed(2)}€</span></div>`;
+    let costHtml = `<div class="gd-info-row"><span class="gd-label">Tariffa base (${parseFloat(g.basePrice||SUBLET_BASE).toFixed(2)}€ × ${days} gg)</span><span class="gd-val">${parseFloat(g.baseTotale || (parseFloat(g.basePrice||SUBLET_BASE)*days)).toFixed(2)}€</span></div>`;
     if (g.extraDettaglio?.length) {
         g.extraDettaglio.forEach(e => {
             costHtml += `<div class="gd-info-row"><span class="gd-label">${e.nome} × ${days} gg</span><span class="gd-val">${(e.prezzo*days).toFixed(2)}€</span></div>`;
@@ -2383,6 +2389,7 @@ window.gdTerminaSubaffitto = () => {
     d.subletDates = (d.subletDates||[]).filter(dt => !gdDates.includes(dt));
     g.active = false;
     fdb(_gdSpotId, d);
+    renderSpiaggia();
     closeGuestDrawer();
     showToast(`Subaffitto di ${g.nome} terminato`, 'info');
 };
