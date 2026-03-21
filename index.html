@@ -2944,6 +2944,269 @@ window.openSpotModal = function(id) {
 // ════════════════════════════════════════════════════════════════════════
 // FINE PATCH V4
 -e 
+
+// ════════════════════════════════════════════════════════════════════════
+// PATCH V5: FIX TIPO STAGIONALE + CALENDARIO IN NUOVA PRENOTAZIONE
+// ════════════════════════════════════════════════════════════════════════
+
+// ── CSS aggiuntivo per il modal nuova prenotazione ────────────────────
+(function(){
+    const s = document.createElement('style');
+    s.textContent = `
+        .nb-tipo-card { border:2.5px solid var(--eb-border)!important; border-radius:10px; padding:13px;
+            text-align:center; cursor:pointer; background:white; transition:all .18s; }
+        .nb-tipo-card:hover { border-color:#94a3b8!important; }
+        .nb-tipo-card.nb-active-g { border-color:var(--free)!important; background:#f0fdf4!important; }
+        .nb-tipo-card.nb-active-s { border-color:var(--eb-blue)!important; background:var(--eb-blue-pale)!important; }
+        #nb-sublet-section { display:none; margin-top:14px; padding:14px; background:#f5f3ff;
+            border:1.5px solid #ddd6fe; border-radius:12px; }
+        #nb-sublet-section .nb-sl-title { font-size:10px; font-weight:700; text-transform:uppercase;
+            letter-spacing:1px; color:#7c3aed; margin-bottom:10px; }
+        .nb-sl-dates-wrap { display:flex; flex-wrap:wrap; gap:6px; min-height:32px;
+            padding:8px; background:white; border-radius:8px; border:1.5px solid #ddd6fe; }
+        .nb-sl-date-pill { display:inline-flex; align-items:center; gap:4px; padding:4px 10px;
+            background:#ede9fe; color:#7c3aed; border-radius:20px; font-size:11px; font-weight:700; }
+        .nb-sl-date-pill button { background:none; border:none; color:#7c3aed; cursor:pointer;
+            font-size:12px; padding:0; line-height:1; }
+        #nb-sl-empty { font-size:11px; color:#a78bfa; font-style:italic; }
+    `;
+    document.head.appendChild(s);
+})();
+
+// ── Override nbSetTipo: gestisce anche la sezione subaffitto ──────────
+window.nbSetTipo = function(tipo) {
+    document.getElementById('nb-tipo-val').value = tipo;
+    const gEl = document.getElementById('nb-tipo-g');
+    const sEl = document.getElementById('nb-tipo-s');
+    // Usa le nuove classi invece di stili inline (che potrebbero non sovrascrivere)
+    if (tipo === 'G') {
+        gEl.className = 'nb-tipo-card nb-active-g';
+        sEl.className = 'nb-tipo-card';
+        document.getElementById('nb-prezzo').placeholder = 'Es. 25.00';
+        const slSec = document.getElementById('nb-sublet-section');
+        if (slSec) slSec.style.display = 'none';
+    } else {
+        sEl.className = 'nb-tipo-card nb-active-s';
+        gEl.className = 'nb-tipo-card';
+        document.getElementById('nb-prezzo').placeholder = 'Es. 500.00';
+        const slSec = document.getElementById('nb-sublet-section');
+        if (slSec) slSec.style.display = 'block';
+    }
+};
+
+// ── Inject sezione subaffitto nel modal nuova prenotazione ────────────
+(function(){
+    function inject() {
+        // Aggiorna le classi dei bottoni tipo (rimuove stili inline precedenti)
+        const gEl = document.getElementById('nb-tipo-g');
+        const sEl = document.getElementById('nb-tipo-s');
+        if (gEl) { gEl.className = 'nb-tipo-card nb-active-g'; gEl.removeAttribute('style'); gEl.setAttribute('style',''); }
+        if (sEl) { sEl.className = 'nb-tipo-card'; sEl.removeAttribute('style'); sEl.setAttribute('style',''); }
+
+        // Aggiunge sezione subaffitto dopo il blocco date se non esiste già
+        if (document.getElementById('nb-sublet-section')) return;
+        const weatherLabel = document.querySelector('#new-booking-modal label');
+        if (!weatherLabel) return;
+        const sec = document.createElement('div');
+        sec.id = 'nb-sublet-section';
+        sec.innerHTML = `
+            <div class="nb-sl-title">&#128197; Date disponibili per subaffitto (opzionale)</div>
+            <div class="nb-sl-dates-wrap" id="nb-sl-dates-wrap">
+                <span id="nb-sl-empty">Nessuna data aggiunta</span>
+            </div>
+            <button type="button" onclick="nbOpenSubletCal()" style="margin-top:10px;width:100%;padding:10px;
+                background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:9px;
+                font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;
+                box-shadow:0 3px 10px rgba(124,58,237,.28);">
+                &#128197; Apri Calendario Subaffitto
+            </button>`;
+        weatherLabel.parentNode.insertBefore(sec, weatherLabel);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject);
+    else inject();
+})();
+
+// Stato date subaffitto del nuovo cliente
+window._nbSubletDates = [];
+
+window.nbOpenSubletCal = function() {
+    // Usa il calendario V4 già esistente con id temporaneo '__new__'
+    // Le date selezionate vengono salvate in _nbSubletDates invece di Firebase
+    window.__v4cal = window.__v4cal || {};
+    var C = window.__v4cal;
+    var now = new Date();
+    // Imposta id fittizio e sovrascrive il confirm temporaneamente
+    C.id  = '__new__';
+    C.y   = now.getFullYear();
+    C.m   = now.getMonth();
+    C.sel = window._nbSubletDates.slice();
+
+    // Override temporaneo di getEntry per restituire oggetto vuoto (nessuna data già presente)
+    window.__nbCalMode = true;
+
+    // Override confirm: salva in _nbSubletDates invece di Firebase
+    var _origConfirm = C.confirm;
+    C.confirm = function() {
+        if (!C.sel.length) { window.showToast && window.showToast('Seleziona almeno una data','warn'); return; }
+        window._nbSubletDates = C.sel.slice();
+        nbRenderSubletPills();
+        C.close();
+        // Ripristina confirm originale
+        C.confirm = _origConfirm;
+        window.__nbCalMode = false;
+    };
+
+    // Override getEntry per il modal nuova prenotazione
+    var _origGetEntry = window.slbmGetBeachEntry;
+    window.slbmGetBeachEntry = function(id) {
+        if (id === '__new__') return { nome: 'Nuovo stagionale', subletDates: [], subletGuests: [] };
+        return _origGetEntry(id);
+    };
+
+    // Apri il calendario
+    var MI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+              'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+    var DI = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+    function pad2(n){ return ('0'+n).slice(-2); }
+    function fmt(y,m,d){ return pad2(d)+'/'+pad2(m+1)+'/'+y; }
+
+    function drawGrid(){
+        var now2 = new Date(), ty=now2.getFullYear(), tm=now2.getMonth(), td=now2.getDate();
+        var firstWD = new Date(C.y,C.m,1).getDay();
+        var offset  = (firstWD===0)?6:firstWD-1;
+        var maxD    = new Date(C.y,C.m+1,0).getDate();
+        var h = DI.map(function(n){ return '<div class="v4-dn">'+n+'</div>'; }).join('');
+        for(var i=0;i<offset;i++) h+='<div class="v4-d ve"></div>';
+        for(var d=1;d<=maxD;d++){
+            var key=fmt(C.y,C.m,d);
+            var past= C.y<ty||(C.y===ty&&C.m<tm)||(C.y===ty&&C.m===tm&&d<td);
+            var today= C.y===ty&&C.m===tm&&d===td;
+            var sel  = C.sel.indexOf(key)>=0;
+            var cls  = 'v4-d';
+            if(past)  cls+=' vp';
+            if(today) cls+=' vt';
+            if(sel)   cls+=' vs';
+            var click = !past ? ' onclick="window.__v4cal.toggle(\''+key+'\')"' : '';
+            h+='<div class="'+cls+'"'+click+'>'+d+'</div>';
+        }
+        return h;
+    }
+
+    function refresh(){
+        var g=document.getElementById('v4-cal-grid');
+        var p=document.getElementById('v4-cal-prev');
+        var l=document.getElementById('v4-cal-mlbl');
+        if(g) g.innerHTML=drawGrid();
+        if(l) l.textContent=MI[C.m]+' '+C.y;
+        if(p){
+            var n=C.sel.length;
+            p.innerHTML = n===0 ? 'Nessuna data selezionata'
+                : '<b>'+n+'</b> data'+(n>1?'e':'')+' selezionata'+(n>1?'e':'')+': '+C.sel.join(', ');
+        }
+    }
+
+    // Sovrascrive i metodi di navigazione con questa versione locale
+    C.prev = function(){ C.m--; if(C.m<0){C.m=11;C.y--;} refresh(); };
+    C.next = function(){ C.m++; if(C.m>11){C.m=0;C.y++;} refresh(); };
+
+    var ov = document.getElementById('v4-cal-ov');
+    if (ov) ov.remove();
+    var box = document.createElement('div');
+    box.id = 'v4-cal-ov';
+    box.innerHTML =
+        '<div id="v4-cal-box">' +
+          '<div id="v4-cal-hdr">' +
+            '<div class="ch-tag">&#128197; Date Subaffitto — Nuovo Stagionale</div>' +
+            '<div class="ch-name">Seleziona i giorni disponibili</div>' +
+          '</div>' +
+          '<div class="v4-nav">' +
+            '<button class="v4-nav-btn" onclick="window.__v4cal.prev()">&#8249;</button>' +
+            '<span class="v4-mlbl" id="v4-cal-mlbl"></span>' +
+            '<button class="v4-nav-btn" onclick="window.__v4cal.next()">&#8250;</button>' +
+          '</div>' +
+          '<div class="v4-grid" id="v4-cal-grid"></div>' +
+          '<div class="v4-foot">' +
+            '<div class="v4-prev" id="v4-cal-prev"></div>' +
+            '<button class="v4-ok" onclick="window.__v4cal.confirm()">&#10003; Conferma date</button>' +
+            '<button class="v4-cancel" onclick="window.__v4cal.close()">Annulla</button>' +
+          '</div>' +
+        '</div>';
+    box.addEventListener('click', function(e){ if(e.target===box) C.close(); });
+    document.body.appendChild(box);
+    refresh();
+};
+
+function nbRenderSubletPills() {
+    var wrap = document.getElementById('nb-sl-dates-wrap');
+    var empty = document.getElementById('nb-sl-empty');
+    if (!wrap) return;
+    if (!window._nbSubletDates.length) {
+        wrap.innerHTML = '<span id="nb-sl-empty">Nessuna data aggiunta</span>';
+        return;
+    }
+    wrap.innerHTML = window._nbSubletDates.map(function(dt) {
+        return '<span class="nb-sl-date-pill">'+dt+
+            '<button type="button" onclick="nbRemoveSubletDate(\''+dt+'\')">&#215;</button></span>';
+    }).join('');
+}
+
+window.nbRemoveSubletDate = function(dt) {
+    window._nbSubletDates = window._nbSubletDates.filter(function(d){ return d !== dt; });
+    nbRenderSubletPills();
+};
+
+// ── Override nbConfirm: salva tipo + date subaffitto ──────────────────
+window.nbConfirm = function() {
+    var id   = _currentSpotId;
+    var nome = document.getElementById('nb-nome').value.trim();
+    if (!nome) { showToast('Inserisci il nome del cliente', 'warn'); return; }
+    var tel     = document.getElementById('nb-tel').value.trim() || '-';
+    var tipoVal = document.getElementById('nb-tipo-val').value;
+    var isS     = (tipoVal === 'S');
+    var prezzo  = parseFloat(document.getElementById('nb-prezzo').value);
+    if (isNaN(prezzo) || prezzo <= 0) { showToast('Inserisci un prezzo valido', 'warn'); return; }
+    var arrivo   = document.getElementById('nb-arrivo').value;
+    var partenza = document.getElementById('nb-partenza').value;
+    var weather  = document.getElementById('nb-weather').checked;
+    var toIT = function(d) { return d ? d.split('-').reverse().join('/') : new Date().toLocaleDateString('it-IT'); };
+
+    var entry = {
+        nome: nome.toUpperCase(), telefono: tel, email: '-',
+        prezzo: prezzo.toFixed(2), isSeasonal: isS,
+        pagamento: 'nessuno', barTotal: 0, rate: [],
+        dataArrivo: toIT(arrivo), dataPartenza: toIT(partenza),
+        weatherGuarantee: weather, cancellationPolicy: 'nessuna', note: ''
+    };
+
+    // Se stagionale con date subaffitto già selezionate, salvale subito
+    if (isS && window._nbSubletDates && window._nbSubletDates.length) {
+        entry.subletDates  = window._nbSubletDates.slice();
+        entry.subletActive = true;
+    }
+
+    beachData[id] = entry;
+    set(ref(db, 'spiaggia_dati/' + id), entry);
+    closeModals();
+
+    // Reset date subaffitto
+    window._nbSubletDates = [];
+    var wrap = document.getElementById('nb-sl-dates-wrap');
+    if (wrap) wrap.innerHTML = '<span id="nb-sl-empty">Nessuna data aggiunta</span>';
+
+    showToast('✓ #' + id + ' — ' + nome.toUpperCase() + (isS ? ' (Stagionale)' : '') + ' registrato', 'success');
+};
+
+// Resetta anche le date subaffitto quando si apre il modal
+var _origHandleOmbrellone = window.handleOmbrellone;
+window.handleOmbrellone = function(id) {
+    window._nbSubletDates = [];
+    _origHandleOmbrellone(id);
+};
+
+// ════════════════════════════════════════════════════════════════════════
+// FINE PATCH V5
+// ════════════════════════════════════════════════════════════════════════
+
 </script>
 </body>
 </html>
