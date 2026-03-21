@@ -743,6 +743,137 @@
     <button onclick="closeModals()" style="width:100%; padding:11px; border:1.5px solid var(--eb-border); border-radius:var(--radius-sm); font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; margin-top:8px; background:var(--eb-bg); color:var(--eb-muted);">Annulla</button>
 </div>
 
+<!-- ── MODAL SUBAFFITTO: NUOVA PRENOTAZIONE SUBAFFITTUARIO ── -->
+<style>
+    #sublet-booking-modal {
+        width: 500px;
+        padding: 0;
+        overflow: hidden;
+        text-align: left;
+        max-height: 94vh;
+    }
+    .slbm-hero {
+        padding: 22px 28px 18px;
+        background: linear-gradient(135deg, #0891b2, #22d3ee);
+        color: white;
+    }
+    .slbm-hero .slbm-tag {
+        font-size: 11px; font-weight: 600; opacity: 0.85;
+        text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;
+    }
+    .slbm-hero .slbm-title { font-size: 22px; font-weight: 700; }
+    .slbm-hero .slbm-sub  { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+    .slbm-body { padding: 20px 28px 8px; overflow-y: auto; max-height: 62vh; }
+    .slbm-info-box {
+        background: #ecfeff; border: 1.5px solid #a5f3fc; border-radius: 10px;
+        padding: 12px 16px; margin-bottom: 18px;
+        display: flex; align-items: flex-start; gap: 12px;
+    }
+    .slbm-info-box .slbm-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .slbm-info-box p { font-size: 12px; color: #0e7490; line-height: 1.6; }
+    .slbm-info-box strong { color: #0891b2; }
+    .slbm-date-range {
+        display: flex; gap: 10px; margin-bottom: 14px;
+        background: var(--eb-bg); border-radius: 10px;
+        padding: 14px 16px; border: 1.5px solid var(--eb-border);
+    }
+    .slbm-date-range > div { flex: 1; }
+    .slbm-date-range label { font-size: 10px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.8px; color: var(--eb-muted); display: block; margin-bottom: 5px; }
+    .slbm-calc-preview {
+        background: linear-gradient(135deg, #0891b2 0%, #22d3ee 100%);
+        border-radius: 10px; padding: 14px 18px; color: white; margin-bottom: 18px;
+        display: none;
+    }
+    .slbm-calc-preview .calc-row {
+        display: flex; justify-content: space-between; font-size: 13px;
+        padding: 3px 0; opacity: 0.9;
+    }
+    .slbm-calc-preview .calc-row.total {
+        border-top: 1px solid rgba(255,255,255,0.3); margin-top: 6px;
+        padding-top: 8px; font-weight: 700; font-size: 15px; opacity: 1;
+    }
+    .slbm-extras-list { margin-bottom: 14px; }
+    .slbm-extra-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 0; border-bottom: 1px solid var(--eb-bg);
+    }
+    .slbm-extra-item:last-child { border-bottom: none; }
+    .slbm-extra-item label {
+        flex: 1; font-size: 13px; font-weight: 600; color: var(--eb-text);
+        display: flex; align-items: center; gap: 6px; cursor: pointer;
+    }
+    .slbm-extra-item input[type="checkbox"] { accent-color: #0891b2; width: 16px; height: 16px; }
+    .slbm-extra-item .extra-price { font-size: 12px; font-weight: 700; color: #0891b2; }
+    .slbm-footer { padding: 14px 28px 22px; display: flex; flex-direction: column; gap: 8px; }
+</style>
+
+<div id="sublet-booking-modal" class="modal">
+    <div class="slbm-hero">
+        <div class="slbm-tag">🔄 Subaffitto Ombrellone</div>
+        <div class="slbm-title" id="slbm-title">Ombrellone #—</div>
+        <div class="slbm-sub" id="slbm-sub">Registra il nuovo ospite temporaneo</div>
+    </div>
+    <div class="slbm-body">
+        <!-- Info box accredito -->
+        <div class="slbm-info-box">
+            <div class="slbm-icon">💰</div>
+            <p>Il titolare riceverà un <strong>accredito di 5€ per ogni giorno</strong> ceduto. Il nuovo ospite pagherà <strong>20€ di base</strong> più eventuali extra selezionati.</p>
+        </div>
+        <!-- Date subaffitto -->
+        <div style="margin-bottom:14px;">
+            <label class="form-label">Seleziona date disponibili per il subaffitto</label>
+            <div id="slbm-dates-picker" style="display:flex; flex-wrap:wrap; gap:7px; padding:14px; background:var(--eb-bg); border-radius:10px; border:1.5px solid var(--eb-border); min-height:54px;"></div>
+            <div style="font-size:11px; color:var(--eb-muted); margin-top:6px;">Clicca per selezionare/deselezionare le date del subaffitto</div>
+        </div>
+        <!-- Dati ospite -->
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Nome Ospite *</label>
+            <input type="text" id="slbm-nome" class="field" placeholder="Es. MARIO ROSSI" style="text-transform:uppercase;">
+        </div>
+        <div style="margin-bottom:14px;">
+            <label class="form-label">Telefono</label>
+            <input type="tel" id="slbm-tel" class="field" placeholder="Es. 333 1234567">
+        </div>
+        <!-- Extra servizi -->
+        <div style="margin-bottom:6px;">
+            <label class="form-label">Servizi Extra (opzionali)</label>
+            <div class="slbm-extras-list" id="slbm-extras-list">
+                <div class="slbm-extra-item">
+                    <label><input type="checkbox" class="slbm-extra-cb" data-price="7" onchange="slbmCalcPreview()"> 🛌 Lettino Extra <span class="extra-price">+7€/giorno</span></label>
+                </div>
+                <div class="slbm-extra-item">
+                    <label><input type="checkbox" class="slbm-extra-cb" data-price="5" onchange="slbmCalcPreview()"> 🪑 Sdraio Extra <span class="extra-price">+5€/giorno</span></label>
+                </div>
+                <div class="slbm-extra-item">
+                    <label><input type="checkbox" class="slbm-extra-cb" data-price="10" onchange="slbmCalcPreview()"> ☂️ Ombrellone Extra <span class="extra-price">+10€/giorno</span></label>
+                </div>
+                <div class="slbm-extra-item">
+                    <label><input type="checkbox" class="slbm-extra-cb" data-price="0" data-custom="1" onchange="slbmCalcPreview()"> ✏️ Extra personalizzato</label>
+                    <input type="number" id="slbm-custom-extra" placeholder="€" step="0.50" min="0" style="width:70px; padding:7px; border:1.5px solid var(--eb-border); border-radius:7px; font-size:13px; font-family:Poppins,sans-serif; text-align:center;" oninput="slbmCalcPreview()">
+                </div>
+            </div>
+        </div>
+        <!-- Preview calcolo -->
+        <div class="slbm-calc-preview" id="slbm-calc-preview">
+            <div class="calc-row"><span>📅 Giorni subaffitto</span><span id="slbm-prev-days">0 gg</span></div>
+            <div class="calc-row"><span>💰 Accredito titolare (5€/gg)</span><span id="slbm-prev-credit">+0.00€</span></div>
+            <div class="calc-row" style="border-top:1px solid rgba(255,255,255,0.2); margin-top:4px; padding-top:6px; font-size:11px; opacity:0.7;">Costo ospite</div>
+            <div class="calc-row"><span>🏖️ Tariffa base</span><span id="slbm-prev-base">20.00€</span></div>
+            <div class="calc-row" id="slbm-prev-extras-row" style="display:none;"><span>➕ Extra servizi</span><span id="slbm-prev-extras">0.00€</span></div>
+            <div class="calc-row total"><span>Totale ospite</span><span id="slbm-prev-total">20.00€</span></div>
+        </div>
+        <div style="font-size:12px; color:var(--eb-muted); margin-bottom:8px;">
+            <input type="checkbox" id="slbm-pagato" style="width:auto; accent-color:#0891b2; margin-right:6px;">
+            Ospite ha già pagato in cassa
+        </div>
+    </div>
+    <div class="slbm-footer">
+        <button onclick="slbmConfirm()" style="width:100%; padding:14px; background:linear-gradient(135deg,#0891b2,#22d3ee); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(8,145,178,0.35);">🔄 Conferma Subaffitto</button>
+        <button onclick="closeModals()" style="width:100%; padding:11px; border:1.5px solid var(--eb-border); border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; background:white; color:var(--eb-muted);">Annulla</button>
+    </div>
+</div>
+
 <!-- ── LOGIN ── -->
 <div id="screen-login" class="screen">
     <div class="login-wrap">
@@ -988,7 +1119,14 @@
     <div class="page-wrap">
         <div class="nav-bar"><button class="btn-back" onclick="navTo('screen-home')">← Home</button></div>
         <div class="section-header">
-            <div class="section-header-left"><h2>🔄 Subaffitto Stagionali</h2><p>Rendi disponibili i giorni non utilizzati per aumentare l'occupazione</p></div>
+            <div class="section-header-left"><h2>🔄 Subaffitto Stagionali</h2><p>Rendi disponibili i giorni non utilizzati · accrediti automatici al titolare</p></div>
+        </div>
+        <!-- Riepilogo attivi oggi -->
+        <div id="sublet-today-banner" style="display:none; margin-bottom:18px;">
+            <div style="background:linear-gradient(135deg,#0891b2,#22d3ee); border-radius:12px; padding:16px 20px; color:white;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; opacity:0.85; margin-bottom:8px;">🔄 Subaffitti Attivi Oggi</div>
+                <div id="sublet-today-list" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+            </div>
         </div>
         <div class="sublet-container" id="sublet-list">
             <div style="font-size:13px; color:var(--eb-muted); text-align:center; padding:40px;">Nessun ombrellone stagionale con subaffitto attivo</div>
@@ -2084,6 +2222,374 @@ window.sdRemoveConsumazione = (idx) => {
     if (barBtn) barBtn.style.display = nuovoTotal > 0 ? 'flex' : 'none';
     showToast('Consumazione rimossa', 'info');
 };
+
+
+// ════════════════════════════════════════════════════════════════════════
+// ── SISTEMA SUBAFFITTO V2 ─────────────────────────────────────────────
+// Regole:
+//   • Le date libere appaiono come "sublet" sulla mappa spiaggia
+//   • Se una data è occupata da un ospite, lo spot mostra il badge 🔄 + nome ospite
+//   • Accredito automatico al titolare: 5€/gg ceduto (aggiunto a d.subletCredito)
+//   • Ospite paga 20€ base + extra; salvato in d.subletGuests[]
+// ════════════════════════════════════════════════════════════════════════
+
+const SUBLET_BASE_PRICE = 20;
+const SUBLET_CREDIT_PER_DAY = 5;
+
+function slbmTodayStr() {
+    return new Date().toLocaleDateString('it-IT');
+}
+function slbmIsGuestActive(guest, dateStr) {
+    return guest && guest.dates && guest.dates.includes(dateStr);
+}
+function slbmGetTodayGuest(id) {
+    const d = beachData[id];
+    if (!d || !d.subletGuests) return null;
+    const today = slbmTodayStr();
+    return d.subletGuests.find(g => g.active && slbmIsGuestActive(g, today)) || null;
+}
+function slbmDateHasGuest(id, dateStr) {
+    const d = beachData[id];
+    if (!d || !d.subletGuests) return false;
+    return d.subletGuests.some(g => g.active && g.dates && g.dates.includes(dateStr));
+}
+
+// ── Patch mappa spiaggia: sovrascrive spot in subaffitto dopo ogni render ──
+(function() {
+    if (window._subletPatchInstalled) return;
+    window._subletPatchInstalled = true;
+    window._slbmPatchSpots = function() {
+        const today = slbmTodayStr();
+        for (let i = 1; i <= 200; i++) {
+            const d = beachData[i];
+            if (!d || !d.isSeasonal) continue;
+            if (!d.subletDates || !d.subletDates.length) continue;
+            const sector = i <= 100
+                ? document.getElementById('sector-west')
+                : document.getElementById('sector-east');
+            if (!sector) continue;
+            const idx = i <= 100 ? i - 1 : i - 101;
+            const spotEl = sector.children[idx];
+            if (!spotEl) continue;
+            const todayIsSublet = d.subletDates.includes(today);
+            const todayGuest = slbmGetTodayGuest(i);
+            if (todayGuest) {
+                spotEl.className = 'spot sublet status-' + (todayGuest.pagato ? 'saldo' : 'nessuno');
+                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+                spotEl.innerHTML = `${barHtml}<div class="pay-indicator"></div><div style="position:absolute;top:-7px;left:-3px;background:#0891b2;color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;box-shadow:0 2px 4px rgba(8,145,178,0.4);">🔄</div><b>${i}</b><div class="owner">${todayGuest.nome}</div>`;
+                spotEl.onclick = () => slbmOpenSpotGuest(i);
+            } else if (todayIsSublet) {
+                spotEl.className = 'spot sublet';
+                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+                spotEl.innerHTML = `${barHtml}<div style="position:absolute;top:-7px;left:-3px;background:#0891b2;color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;box-shadow:0 2px 4px rgba(8,145,178,0.4);">🔄</div><b>${i}</b><div class="owner" style="color:#0891b2;font-weight:700;">SUB</div>`;
+                spotEl.onclick = () => slbmOpenBookingFromSpot(i);
+            }
+        }
+    };
+    // Hook nel listener Firebase esistente tramite override di renderSpiaggia
+    const _orig = renderSpiaggia;
+    window.renderSpiaggia = function() { _orig(); setTimeout(window._slbmPatchSpots, 10); };
+})();
+
+// ── Variabili di stato ────────────────────────────────────────────────
+let _slbmCurrentId = null;
+let _slbmSelectedDates = [];
+
+// ── Apri modal da pulsante "Subaffitto" nel drawer ────────────────────
+window.smAddSublet = () => { closeSpotDrawer(); slbmOpen(_currentSpotId); };
+
+window.slbmOpen = (id) => {
+    _slbmCurrentId = id;
+    _slbmSelectedDates = [];
+    const d = beachData[id];
+    if (!d) return;
+    document.getElementById('slbm-title').textContent = `Ombrellone #${id} — ${d.nome}`;
+    document.getElementById('slbm-sub').textContent = `Stagionale · ${d.prezzo}€ · Subaffitto`;
+    document.getElementById('slbm-nome').value = '';
+    document.getElementById('slbm-tel').value = '';
+    document.getElementById('slbm-pagato').checked = false;
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb => cb.checked = false);
+    const ci = document.getElementById('slbm-custom-extra'); if (ci) ci.value = '';
+    slbmBuildDatesPicker(id);
+    slbmCalcPreview();
+    document.getElementById('sublet-booking-modal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+};
+
+window.slbmOpenBookingFromSpot = (id) => {
+    _slbmCurrentId = id;
+    _slbmSelectedDates = [slbmTodayStr()];
+    const d = beachData[id];
+    document.getElementById('slbm-title').textContent = `Ombrellone #${id} — ${d.nome}`;
+    document.getElementById('slbm-sub').textContent = `Disponibile oggi · Registra ospite`;
+    document.getElementById('slbm-nome').value = '';
+    document.getElementById('slbm-tel').value = '';
+    document.getElementById('slbm-pagato').checked = false;
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb => cb.checked = false);
+    const ci = document.getElementById('slbm-custom-extra'); if (ci) ci.value = '';
+    slbmBuildDatesPicker(id);
+    slbmCalcPreview();
+    document.getElementById('sublet-booking-modal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+};
+
+window.slbmOpenSpotGuest = (id) => {
+    const guest = slbmGetTodayGuest(id);
+    const d = beachData[id];
+    if (!guest) { handleOmbrellone(id); return; }
+    const info = `🔄 Subaffitto attivo\n👤 Ospite: ${guest.nome}\n📞 ${guest.telefono||'-'}\n📅 Date: ${(guest.dates||[]).join(', ')}\n💰 Pagato: ${guest.pagato?(guest.totalePagato||0).toFixed(2)+'€':'Non ancora'}\n\n🏖️ Titolare: ${d.nome}\n💰 Accredito maturato: ${parseFloat(d.subletCredito||0).toFixed(2)}€\n\nVuoi aprire la scheda del titolare?`;
+    if (confirm(info)) openSpotModal(id);
+};
+
+function slbmBuildDatesPicker(id) {
+    const d = beachData[id];
+    const picker = document.getElementById('slbm-dates-picker');
+    if (!picker) return;
+    const dates = d.subletDates || [];
+    if (!dates.length) {
+        picker.innerHTML = '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data libera. Aggiungile dalla sezione Subaffitto.</span>';
+        return;
+    }
+    picker.innerHTML = dates.map(dt => {
+        const hasGuest = slbmDateHasGuest(id, dt);
+        const sel = _slbmSelectedDates.includes(dt);
+        return `<div onclick="${hasGuest ? '' : `slbmToggleDate('${dt}')`}" id="slbm-dp-${dt.replace(/\//g,'-')}"
+            style="padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:${hasGuest?'not-allowed':'pointer'};
+            border:2px solid ${hasGuest?'#d1d5db':sel?'#0891b2':'var(--eb-border)'};
+            background:${hasGuest?'#f3f4f6':sel?'#ecfeff':'white'};
+            color:${hasGuest?'#9ca3af':sel?'#0891b2':'var(--eb-muted)'};
+            transition:all 0.15s;user-select:none;">
+            ${hasGuest?'🔒':sel?'✓ ':''} ${dt}${hasGuest?' (occupata)':''}
+        </div>`;
+    }).join('');
+}
+
+window.slbmToggleDate = (dt) => {
+    _slbmSelectedDates = _slbmSelectedDates.includes(dt)
+        ? _slbmSelectedDates.filter(x => x !== dt)
+        : [..._slbmSelectedDates, dt];
+    slbmBuildDatesPicker(_slbmCurrentId);
+    slbmCalcPreview();
+};
+
+window.slbmCalcPreview = () => {
+    const preview = document.getElementById('slbm-calc-preview');
+    if (!preview) return;
+    const days = _slbmSelectedDates.length;
+    let extraTotal = 0;
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb => {
+        if (!cb.checked) return;
+        if (cb.dataset.custom === '1') {
+            const v = parseFloat(document.getElementById('slbm-custom-extra')?.value || 0);
+            if (!isNaN(v) && v > 0) extraTotal += v * days;
+        } else {
+            extraTotal += parseFloat(cb.dataset.price || 0) * days;
+        }
+    });
+    const credit = days * SUBLET_CREDIT_PER_DAY;
+    const total = SUBLET_BASE_PRICE + extraTotal;
+    if (days === 0) { preview.style.display = 'none'; return; }
+    preview.style.display = 'block';
+    document.getElementById('slbm-prev-days').textContent = `${days} gg`;
+    document.getElementById('slbm-prev-credit').textContent = `+${credit.toFixed(2)}€`;
+    document.getElementById('slbm-prev-base').textContent = `${SUBLET_BASE_PRICE.toFixed(2)}€`;
+    const extRow = document.getElementById('slbm-prev-extras-row');
+    const extVal = document.getElementById('slbm-prev-extras');
+    if (extRow && extVal) { extRow.style.display = extraTotal > 0 ? 'flex' : 'none'; extVal.textContent = `${extraTotal.toFixed(2)}€`; }
+    document.getElementById('slbm-prev-total').textContent = `${total.toFixed(2)}€`;
+};
+
+window.slbmConfirm = () => {
+    const id = _slbmCurrentId;
+    const nome = document.getElementById('slbm-nome').value.trim().toUpperCase();
+    const tel = document.getElementById('slbm-tel').value.trim() || '-';
+    const pagato = document.getElementById('slbm-pagato').checked;
+    if (!nome) return showToast('Inserisci il nome dell\'ospite', 'warn');
+    if (_slbmSelectedDates.length === 0) return showToast('Seleziona almeno una data', 'warn');
+    const d = beachData[id];
+    if (!d.subletGuests) d.subletGuests = [];
+    let extraTotale = 0, extraDettaglio = [];
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb => {
+        if (!cb.checked) return;
+        if (cb.dataset.custom === '1') {
+            const v = parseFloat(document.getElementById('slbm-custom-extra')?.value || 0);
+            if (!isNaN(v) && v > 0) { extraTotale += v * _slbmSelectedDates.length; extraDettaglio.push({ nome: 'Extra personalizzato', prezzo: v }); }
+        } else {
+            const price = parseFloat(cb.dataset.price || 0);
+            const lbl = cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim() || 'Extra';
+            extraTotale += price * _slbmSelectedDates.length;
+            extraDettaglio.push({ nome: lbl, prezzo: price });
+        }
+    });
+    const days = _slbmSelectedDates.length;
+    const totalePagato = SUBLET_BASE_PRICE + extraTotale;
+    const creditoAggiunto = days * SUBLET_CREDIT_PER_DAY;
+    d.subletGuests.push({ nome, telefono: tel, dates: [..._slbmSelectedDates], totalePagato: pagato ? totalePagato : 0, basePrice: SUBLET_BASE_PRICE, extraDettaglio, extraTotale, pagato, active: true, registratoIl: new Date().toLocaleDateString('it-IT') });
+    d.subletCredito = parseFloat((parseFloat(d.subletCredito || 0) + creditoAggiunto).toFixed(2));
+    d.subletActive = true;
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    closeModals();
+    showToast(`✓ ${nome} registrato · Accredito +${creditoAggiunto.toFixed(2)}€ al titolare`, 'success');
+    if (document.getElementById('spot-drawer').classList.contains('open')) openSpotModal(id);
+};
+
+// ── Render schermata Subaffitto (sovrascrive quella originale) ─────────
+window.renderSubaffitto = function() {
+    const container = document.getElementById('sublet-list');
+    if (!container) return;
+    const stagionali = Object.keys(beachData).filter(id => beachData[id]?.isSeasonal);
+    if (!stagionali.length) {
+        container.innerHTML = '<div style="font-size:13px;color:var(--eb-muted);text-align:center;padding:40px;">Nessun ombrellone stagionale registrato</div>';
+        slbmRenderTodayBanner(); return;
+    }
+    const today = slbmTodayStr();
+    let html = '';
+    stagionali.forEach(id => {
+        const d = beachData[id];
+        const dates = d.subletDates || [];
+        const guests = d.subletGuests || [];
+        const credito = parseFloat(d.subletCredito || 0);
+        const datesHtml = dates.length ? dates.map(dt => {
+            const guest = guests.find(g => g.active && g.dates && g.dates.includes(dt));
+            const isToday = dt === today;
+            if (guest) return `<div onclick="slbmShowGuestDetail('${id}','${dt}')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#ecfeff;border:2px solid #0891b2;font-size:12px;font-weight:700;color:#0891b2;cursor:pointer;">🔄 ${dt} · <b>${guest.nome}</b> <span style="font-size:10px;background:#0891b2;color:white;padding:1px 7px;border-radius:10px;">${guest.pagato?'✓ Pagato':'⏳ Da pagare'}</span></div>`;
+            return `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:${isToday?'#fef3c7':'white'};border:2px solid ${isToday?'#f59e0b':'var(--eb-border)'};font-size:12px;font-weight:600;color:var(--eb-muted);">
+                <span onclick="slbmOpenBookingFromDate('${id}','${dt}')" style="cursor:pointer;">📅 ${dt}${isToday?' ⬅️':''}</span>
+                <button onclick="slbmRemoveDate('${id}','${dt}')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:11px;padding:0;margin-left:2px;" title="Rimuovi">✕</button>
+            </div>`;
+        }).join('') : '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data inserita</span>';
+
+        const pastGuests = guests.filter(g => g.active);
+        const guestsHtml = pastGuests.length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>
+            ${pastGuests.map((g, gi) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);">
+                <div><b style="color:var(--eb-text);">${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}</span><br><span style="color:#0891b2;">${(g.dates||[]).join(', ')}</span></div>
+                <div style="text-align:right;flex-shrink:0;margin-left:10px;">
+                    <div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(g.totalePagato||0).toFixed(2)+'€':'⏳ Da pagare'}</div>
+                    <button onclick="slbmToggleGuestPaid('${id}',${gi})" style="font-size:10px;background:none;border:1px solid ${g.pagato?'var(--eb-muted)':'var(--free)'};color:${g.pagato?'var(--eb-muted)':'var(--free)'};border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Poppins,sans-serif;margin-top:3px;">${g.pagato?'✓ Pagato':'Segna Pagato'}</button>
+                </div>
+            </div>`).join('')}
+        </div>` : '';
+
+        html += `<div class="sublet-card">
+            <div class="sublet-header">
+                <div>
+                    <div class="sublet-name">🏖️ #${id} — ${d.nome}</div>
+                    <div class="sublet-spot" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:4px;">
+                        <span>Stagionale · ${d.prezzo}€</span>
+                        ${credito > 0 ? `<span style="color:var(--free);font-weight:700;background:#dcfce7;padding:2px 10px;border-radius:20px;font-size:11px;">💰 Accredito: +${credito.toFixed(2)}€</span>` : ''}
+                    </div>
+                </div>
+                <button class="btn-sm btn-sea" onclick="slbmOpenAddDate('${id}')">+ Data libera</button>
+            </div>
+            <div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>
+            ${guestsHtml}
+        </div>`;
+    });
+    container.innerHTML = html;
+    slbmRenderTodayBanner();
+};
+
+function slbmRenderTodayBanner() {
+    const today = slbmTodayStr();
+    const banner = document.getElementById('sublet-today-banner');
+    const list = document.getElementById('sublet-today-list');
+    if (!banner || !list) return;
+    const active = [];
+    Object.keys(beachData).forEach(id => {
+        const d = beachData[id];
+        if (!d || !d.subletGuests) return;
+        const g = d.subletGuests.find(x => x.active && x.dates && x.dates.includes(today));
+        if (g) active.push({ id, ospite: g.nome, pagato: g.pagato, totale: g.totalePagato || 0 });
+    });
+    if (!active.length) { banner.style.display = 'none'; return; }
+    banner.style.display = 'block';
+    list.innerHTML = active.map(a => `<div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:7px 13px;font-size:12px;color:white;"><b>#${a.id}</b> · ${a.ospite} <span style="opacity:0.85;">${a.pagato?'✓ '+a.totale.toFixed(2)+'€':'⏳ Da pagare'}</span></div>`).join('');
+}
+
+window.slbmOpenAddDate = (id) => {
+    const dt = prompt('Data da rendere disponibile (gg/mm/aaaa):');
+    if (!dt) return;
+    const d = beachData[id];
+    if (!d.subletDates) d.subletDates = [];
+    if (d.subletDates.includes(dt)) return showToast('Data già presente', 'warn');
+    d.subletDates.push(dt); d.subletActive = true;
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    showToast('📅 Data aggiunta', 'success');
+};
+window.slbmRemoveDate = (id, dt) => {
+    if (!confirm(`Rimuovere il ${dt}?`)) return;
+    if (slbmDateHasGuest(id, dt)) return showToast('Non puoi rimuovere una data con ospite registrato', 'warn');
+    const d = beachData[id];
+    d.subletDates = (d.subletDates || []).filter(x => x !== dt);
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    showToast('Data rimossa', 'info');
+};
+window.slbmOpenBookingFromDate = (id, dt) => {
+    _slbmCurrentId = id; _slbmSelectedDates = [dt];
+    const d = beachData[id];
+    document.getElementById('slbm-title').textContent = `Ombrellone #${id} — ${d.nome}`;
+    document.getElementById('slbm-sub').textContent = `Registra ospite per ${dt}`;
+    document.getElementById('slbm-nome').value = '';
+    document.getElementById('slbm-tel').value = '';
+    document.getElementById('slbm-pagato').checked = false;
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb => cb.checked = false);
+    const ci = document.getElementById('slbm-custom-extra'); if (ci) ci.value = '';
+    slbmBuildDatesPicker(id); slbmCalcPreview();
+    document.getElementById('sublet-booking-modal').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+};
+window.slbmShowGuestDetail = (id, dt) => {
+    const d = beachData[id];
+    const g = (d.subletGuests || []).find(x => x.active && x.dates && x.dates.includes(dt));
+    if (!g) return;
+    alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 Date: ${(g.dates||[]).join(', ')}\n💰 Totale: ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`);
+};
+window.slbmToggleGuestPaid = (id, gi) => {
+    const d = beachData[id];
+    if (!d.subletGuests?.[gi]) return;
+    d.subletGuests[gi].pagato = !d.subletGuests[gi].pagato;
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    showToast(d.subletGuests[gi].pagato ? '✓ Ospite pagato' : 'Pagamento rimosso', 'info');
+};
+
+// ── Sezione credito subaffitto nel drawer ombrellone ──────────────────
+const _origOpenSpotModal2 = openSpotModal;
+window.openSpotModal = function(id) {
+    _origOpenSpotModal2(id);
+    const d = beachData[id];
+    if (!d || !d.isSeasonal) { const s = document.getElementById('sd-sublet-credit-sec'); if(s) s.remove(); return; }
+    const credito = parseFloat(d.subletCredito || 0);
+    const guests = (d.subletGuests || []).filter(g => g.active);
+    let creditSec = document.getElementById('sd-sublet-credit-sec');
+    if (credito > 0 || guests.length > 0) {
+        if (!creditSec) {
+            creditSec = document.createElement('div');
+            creditSec.id = 'sd-sublet-credit-sec';
+            creditSec.className = 'sd-section';
+            const consWrap = document.getElementById('sd-consumazioni-wrap');
+            if (consWrap) consWrap.parentNode.insertBefore(creditSec, consWrap);
+        }
+        creditSec.innerHTML = `
+            <div class="sd-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+                <span>🔄 Subaffitto</span>
+                ${credito > 0 ? `<span style="font-size:11px;font-weight:700;background:var(--free);color:white;padding:2px 10px;border-radius:20px;">+${credito.toFixed(2)}€</span>` : ''}
+            </div>
+            ${credito > 0 ? `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:#166534;">
+                💰 Accredito maturato: <b>${credito.toFixed(2)}€</b> (${Math.round(credito/SUBLET_CREDIT_PER_DAY)} giorni ceduti)
+            </div>` : ''}
+            ${guests.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:7px;">Ospiti</div>
+            ${guests.map(g => `<div style="background:var(--eb-bg);border-radius:8px;padding:9px 12px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);">
+                <b style="color:#0891b2;">${g.nome}</b> · ${(g.dates||[]).join(', ')}<br>
+                <span style="color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?'✓ '+((g.totalePagato||0).toFixed(2))+'€':'⏳ Da pagare'}</span>
+            </div>`).join('')}` : `<div style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessun ospite registrato</div>`}
+        `;
+    } else if (creditSec) { creditSec.remove(); }
+};
+
+// ════════════════════════════════════════════════════════════════════════
+// FINE SISTEMA SUBAFFITTO V2
+// ════════════════════════════════════════════════════════════════════════
 
 </script>
 </body>
