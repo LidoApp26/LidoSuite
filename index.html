@@ -2517,6 +2517,18 @@ window.slbmOpenAddDate = (id) => {
     set(ref(db, 'spiaggia_dati/' + id), d);
     showToast('📅 Data aggiunta', 'success');
 };
+// Esposta su window: il calendario V4 chiama questa per salvare su Firebase
+window.slbmSaveDates = (id, newDates) => {
+    const d = beachData[id]; if (!d) return;
+    if (!d.subletDates) d.subletDates = [];
+    let added = 0;
+    newDates.forEach(dt => { if (!d.subletDates.includes(dt)) { d.subletDates.push(dt); added++; } });
+    d.subletActive = true;
+    set(ref(db, 'spiaggia_dati/' + id), d);
+    showToast('📅 ' + added + ' data' + (added>1?'e':'') + ' aggiunta' + (added>1?'e':''), 'success');
+};
+// Esposta su window: permette al calendario di leggere i dati senza accedere al modulo
+window.slbmGetBeachEntry = (id) => beachData[id];
 window.slbmRemoveDate = (id, dt) => {
     if (!confirm(`Rimuovere il ${dt}?`)) return;
     if (slbmDateHasGuest(id, dt)) return showToast('Non puoi rimuovere una data con ospite registrato', 'warn');
@@ -2751,322 +2763,187 @@ window.openSpotModal = function(id) {
 
 
 // ════════════════════════════════════════════════════════════════════════
-// PATCH V4: CALENDARIO MULTI-DATA + COLORE LILLA + LEGENDA AGGIORNATA
+// PATCH V4: SPOT LILLA + LEGENDA + CALENDARIO MULTI-DATA
 // ════════════════════════════════════════════════════════════════════════
 
-// 1. CSS: colore lilla per tutti gli spot subaffittati + calendario
-(function injectV4CSS() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* Subaffittato (libero o con ospite): lilla */
-        .spot.sublet,
-        .spot.sublet-guest {
-            background: #8b5cf6 !important;
-            border-color: #7c3aed !important;
-        }
-        .spot.sublet b, .spot.sublet-guest b {
-            color: #fff !important;
-            text-shadow: 0 1px 2px rgba(0,0,0,.22) !important;
-        }
-        .spot.sublet .owner, .spot.sublet-guest .owner {
-            color: rgba(255,255,255,.88) !important;
-        }
-        .spot.sublet:hover, .spot.sublet-guest:hover {
-            background: #a78bfa !important;
-        }
-        .spot.sublet .pay-indicator,
-        .spot.sublet-guest .pay-indicator {
-            border-color: rgba(255,255,255,.85) !important;
-        }
-        .spot.sublet .bar-badge,
-        .spot.sublet-guest .bar-badge {
-            background: rgba(0,0,0,.3) !important;
-            box-shadow: none !important;
-        }
-
-        /* ── CALENDARIO SUBAFFITTO ── */
-        #slbm-cal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(13,44,70,.48);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
-            display: flex; align-items: center; justify-content: center;
-            animation: fadeIn .18s ease;
-        }
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-        #slbm-cal-box {
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 24px 64px rgba(13,44,70,.28);
-            width: 360px;
-            max-width: 96vw;
-            overflow: hidden;
-            animation: slideUp .22s cubic-bezier(.4,0,.2,1);
-        }
-        @keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
-        #slbm-cal-header {
-            background: linear-gradient(135deg, #7c3aed, #a78bfa);
-            padding: 18px 22px 14px;
-            color: white;
-        }
-        #slbm-cal-header .cal-title { font-size: 13px; font-weight: 700; opacity: .85; margin-bottom: 2px; }
-        #slbm-cal-header .cal-spot  { font-size: 18px; font-weight: 700; }
-        .cal-nav {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 14px 18px 6px;
-        }
-        .cal-nav-btn {
-            background: var(--eb-bg); border: 1.5px solid var(--eb-border);
-            border-radius: 8px; width: 34px; height: 34px;
-            cursor: pointer; font-size: 16px; font-weight: 700;
-            color: var(--eb-text); display: flex; align-items: center; justify-content: center;
-            transition: background .15s;
-        }
-        .cal-nav-btn:hover { background: #ede9fe; border-color: #a78bfa; color: #7c3aed; }
-        .cal-month-label { font-size: 14px; font-weight: 700; color: var(--eb-text); }
-        .cal-grid {
-            display: grid; grid-template-columns: repeat(7,1fr);
-            gap: 3px; padding: 4px 14px 10px;
-        }
-        .cal-day-name {
-            text-align: center; font-size: 10px; font-weight: 700;
-            color: var(--eb-muted); padding: 4px 0; text-transform: uppercase; letter-spacing: .5px;
-        }
-        .cal-day {
-            text-align: center; padding: 7px 2px; border-radius: 8px;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-            color: var(--eb-text); transition: background .12s, color .12s;
-            position: relative; user-select: none;
-        }
-        .cal-day:hover:not(.cal-empty):not(.cal-past):not(.cal-has-guest) {
-            background: #ede9fe; color: #7c3aed;
-        }
-        .cal-day.cal-empty { visibility: hidden; cursor: default; }
-        .cal-day.cal-past  { color: #d1d5db; cursor: not-allowed; }
-        .cal-day.cal-has-guest { color: #d1d5db; cursor: not-allowed; }
-        .cal-day.cal-has-guest::after {
-            content: ''; position: absolute; bottom: 3px; left: 50%;
-            transform: translateX(-50%);
-            width: 4px; height: 4px; border-radius: 50%; background: #8b5cf6;
-        }
-        .cal-day.cal-already { background: #ede9fe; color: #7c3aed; }
-        .cal-day.cal-already::after {
-            content: ''; position: absolute; bottom: 3px; left: 50%;
-            transform: translateX(-50%);
-            width: 4px; height: 4px; border-radius: 50%; background: #7c3aed;
-        }
-        .cal-day.cal-selected {
-            background: #7c3aed; color: #fff !important;
-            box-shadow: 0 2px 8px rgba(124,58,237,.35);
-        }
-        .cal-day.cal-selected.cal-already {
-            background: #a78bfa;
-        }
-        .cal-day.cal-today { font-weight: 800; }
-        .cal-day.cal-today:not(.cal-selected) { color: #7c3aed; }
-        .cal-footer {
-            padding: 10px 14px 16px;
-            border-top: 1px solid var(--eb-border);
-            display: flex; flex-direction: column; gap: 8px;
-        }
-        .cal-selected-preview {
-            font-size: 11px; color: var(--eb-muted); min-height: 18px;
-            padding: 0 4px; line-height: 1.5;
-        }
-        .cal-selected-preview b { color: #7c3aed; }
-        .cal-btn-confirm {
-            width: 100%; padding: 13px;
-            background: linear-gradient(135deg, #7c3aed, #a78bfa);
-            color: white; border: none; border-radius: 10px;
-            font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(124,58,237,.3);
-            transition: transform .15s;
-        }
-        .cal-btn-confirm:hover { transform: translateY(-1px); }
-        .cal-btn-cancel {
-            width: 100%; padding: 10px;
-            background: white; color: var(--eb-muted);
-            border: 1.5px solid var(--eb-border); border-radius: 10px;
-            font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600;
-            cursor: pointer;
-        }
-    `;
-    document.head.appendChild(style);
+// ── CSS: spot subaffittato lilla + stili calendario ──────────────────
+(function() {
+    const s = document.createElement('style');
+    s.textContent = [
+        '.spot.sublet,.spot.sublet-guest{background:#8b5cf6!important;border-color:#7c3aed!important}',
+        '.spot.sublet b,.spot.sublet-guest b{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.22)!important}',
+        '.spot.sublet .owner,.spot.sublet-guest .owner{color:rgba(255,255,255,.88)!important}',
+        '.spot.sublet:hover,.spot.sublet-guest:hover{background:#a78bfa!important}',
+        '.spot.sublet .pay-indicator,.spot.sublet-guest .pay-indicator{border-color:rgba(255,255,255,.85)!important}',
+        '.spot.sublet .bar-badge,.spot.sublet-guest .bar-badge{background:rgba(0,0,0,.3)!important;box-shadow:none!important}',
+        '#v4-cal-ov{position:fixed;inset:0;background:rgba(13,44,70,.5);backdrop-filter:blur(4px);z-index:3000;display:flex;align-items:center;justify-content:center;}',
+        '#v4-cal-box{background:#fff;border-radius:20px;box-shadow:0 24px 64px rgba(13,44,70,.3);width:360px;max-width:96vw;overflow:hidden;}',
+        '#v4-cal-hdr{background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:18px 22px 14px;color:white;}',
+        '#v4-cal-hdr .ch-tag{font-size:11px;font-weight:700;opacity:.82;margin-bottom:2px;}',
+        '#v4-cal-hdr .ch-name{font-size:18px;font-weight:700;}',
+        '.v4-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px;}',
+        '.v4-nav-btn{background:#f3f0ff;border:1.5px solid #ddd6fe;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:18px;font-weight:700;color:#7c3aed;display:flex;align-items:center;justify-content:center;transition:background .15s;}',
+        '.v4-nav-btn:hover{background:#ede9fe;}',
+        '.v4-mlbl{font-size:14px;font-weight:700;color:#1e293b;}',
+        '.v4-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:4px 14px 10px;}',
+        '.v4-dn{text-align:center;font-size:10px;font-weight:700;color:#94a3b8;padding:4px 0;text-transform:uppercase;}',
+        '.v4-d{text-align:center;padding:7px 2px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#1e293b;transition:background .1s,color .1s;position:relative;user-select:none;}',
+        '.v4-d:hover:not(.vp):not(.ve):not(.vg){background:#ede9fe;color:#7c3aed;}',
+        '.v4-d.ve{visibility:hidden;}',
+        '.v4-d.vp{color:#cbd5e1;cursor:not-allowed;}',
+        '.v4-d.vg{color:#cbd5e1;cursor:not-allowed;}',
+        '.v4-d.vg::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#8b5cf6;}',
+        '.v4-d.va{background:#ede9fe;color:#7c3aed;}',
+        '.v4-d.vs{background:#7c3aed!important;color:#fff!important;box-shadow:0 2px 8px rgba(124,58,237,.35);}',
+        '.v4-d.vt:not(.vs){font-weight:800;color:#7c3aed;}',
+        '.v4-foot{padding:10px 14px 16px;border-top:1px solid #e2e8f0;display:flex;flex-direction:column;gap:8px;}',
+        '.v4-prev{font-size:11px;color:#64748b;min-height:18px;padding:0 4px;line-height:1.5;}',
+        '.v4-prev b{color:#7c3aed;}',
+        '.v4-ok{width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:10px;font-family:"Poppins",sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(124,58,237,.3);}',
+        '.v4-ok:hover{opacity:.92;}',
+        '.v4-cancel{width:100%;padding:10px;background:white;color:#94a3b8;border:1.5px solid #e2e8f0;border-radius:10px;font-family:"Poppins",sans-serif;font-size:13px;font-weight:600;cursor:pointer;}',
+    ].join('');
+    document.head.appendChild(s);
 })();
 
-// 2. Override legenda: solo "Subaffittato" lilla (unificato)
-(function patchLegendV4() {
-    function doUpdate() {
-        const legend = document.querySelector('.beach-legend');
-        if (!legend) return;
-        legend.innerHTML = `
-            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f1f5f9;border:2px solid #cbd5e1;"></div>Libero</div>
-            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f97316;"></div>Giornaliero</div>
-            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#0d5c8c;"></div>Stagionale</div>
-            <div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#8b5cf6;"></div>Subaffittato</div>
-            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
-            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>`;
+// ── Legenda spiaggia: rimuove sub-ospite, rinomina in Subaffittato ────
+(function() {
+    function fixLegend() {
+        const leg = document.querySelector('.beach-legend');
+        if (!leg) return;
+        leg.innerHTML = [
+            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f1f5f9;border:2px solid #cbd5e1;flex-shrink:0;"></div>Libero</div>',
+            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f97316;flex-shrink:0;"></div>Giornaliero</div>',
+            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#0d5c8c;flex-shrink:0;"></div>Stagionale</div>',
+            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#8b5cf6;flex-shrink:0;"></div>Subaffittato</div>',
+            '<div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>',
+            '<div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>',
+        ].join('');
     }
-    // Aspetta che la V3 finisca di caricare, poi sovrascriviamo
-    const _prevNavTo = window.navTo;
-    window.navTo = function(id) {
-        _prevNavTo(id);
-        if (id === 'screen-spiaggia') setTimeout(doUpdate, 80);
-    };
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', doUpdate);
-    else setTimeout(doUpdate, 80);
+    // Esegui subito e ad ogni navigazione alla spiaggia
+    if (document.readyState !== 'loading') fixLegend();
+    else document.addEventListener('DOMContentLoaded', fixLegend);
+    const _orig = window.navTo;
+    window.navTo = function(id) { _orig(id); if (id === 'screen-spiaggia') setTimeout(fixLegend, 60); };
 })();
 
-// 3. Calendario multi-selezione per slbmOpenAddDate
-(function overrideSlbmOpenAddDate() {
+// ── Calendario multi-selezione ─────────────────────────────────────────
+(function() {
+    var MI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+              'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+    var DI = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
 
-    // Stato interno del calendario
-    let _calId = null;
-    let _calYear = null;
-    let _calMonth = null;
-    let _calSelected = [];   // date nuove selezionate (dd/mm/yyyy)
+    function pad2(n){ return ('0'+n).slice(-2); }
+    function fmt(y,m,d){ return pad2(d)+'/'+pad2(m+1)+'/'+y; }
 
-    const MONTHS_IT = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-                       'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-    const DAYS_IT   = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+    // Stato globale accessibile dagli onclick inline
+    var C = window.__v4cal = { id:null, y:0, m:0, sel:[] };
 
-    function pad(n) { return String(n).padStart(2, '0'); }
-    function toKey(y, m, d) { return `${pad(d)}/${pad(m+1)}/${y}`; }
-    function todayYMD() {
-        const n = new Date();
-        return { y: n.getFullYear(), m: n.getMonth(), d: n.getDate() };
-    }
+    function getEntry(){ return (window.slbmGetBeachEntry && window.slbmGetBeachEntry(C.id)) || {}; }
 
-    function buildCalHTML() {
-        const d = beachData[_calId];
-        const alreadyDates = new Set(d.subletDates || []);
-        const guestDates   = new Set();
-        (d.subletGuests || []).filter(g => g.active).forEach(g => (g.dates||[]).forEach(dt => guestDates.add(dt)));
+    function drawGrid(){
+        var entry = getEntry();
+        var already = {};
+        (entry.subletDates||[]).forEach(function(d){ already[d]=1; });
+        var guests = {};
+        (entry.subletGuests||[]).filter(function(g){ return g.active; })
+            .forEach(function(g){ (g.dates||[]).forEach(function(d){ guests[d]=1; }); });
 
-        const t = todayYMD();
-        const firstDay = new Date(_calYear, _calMonth, 1).getDay(); // 0=dom
-        const daysInMonth = new Date(_calYear, _calMonth + 1, 0).getDate();
-        // Converti domenica da 0 → 6 (settimana lun-dom)
-        const startOffset = (firstDay === 0 ? 6 : firstDay - 1);
+        var now = new Date(), ty=now.getFullYear(), tm=now.getMonth(), td=now.getDate();
+        var firstWD = new Date(C.y, C.m, 1).getDay(); // 0=sun
+        var offset  = (firstWD===0) ? 6 : firstWD-1;
+        var maxD    = new Date(C.y, C.m+1, 0).getDate();
 
-        let cells = '';
-        // Nomi giorni
-        DAYS_IT.forEach(d => { cells += `<div class="cal-day-name">${d}</div>`; });
-        // Celle vuote iniziali
-        for (let i = 0; i < startOffset; i++) cells += `<div class="cal-day cal-empty"></div>`;
-        // Giorni
-        for (let day = 1; day <= daysInMonth; day++) {
-            const key = toKey(_calYear, _calMonth, day);
-            const isPast = _calYear < t.y || (_calYear === t.y && _calMonth < t.m) || (_calYear === t.y && _calMonth === t.m && day < t.d);
-            const isToday = _calYear === t.y && _calMonth === t.m && day === t.d;
-            const hasGuest = guestDates.has(key);
-            const already  = alreadyDates.has(key);
-            const selected = _calSelected.includes(key);
-            let cls = 'cal-day';
-            if (isPast)    cls += ' cal-past';
-            if (isToday)   cls += ' cal-today';
-            if (hasGuest)  cls += ' cal-has-guest';
-            if (already && !selected) cls += ' cal-already';
-            if (selected)  cls += ' cal-selected';
-            const clickable = !isPast && !hasGuest;
-            const onclick = clickable ? `_calToggleDay('${key}')` : '';
-            cells += `<div class="${cls}" onclick="${onclick}">${day}</div>`;
+        var h = DI.map(function(n){ return '<div class="v4-dn">'+n+'</div>'; }).join('');
+        for(var i=0;i<offset;i++) h+='<div class="v4-d ve"></div>';
+        for(var d=1;d<=maxD;d++){
+            var key = fmt(C.y,C.m,d);
+            var past = C.y<ty||(C.y===ty&&C.m<tm)||(C.y===ty&&C.m===tm&&d<td);
+            var today= C.y===ty&&C.m===tm&&d===td;
+            var hg   = !!guests[key];
+            var al   = !!already[key];
+            var sel  = C.sel.indexOf(key)>=0;
+            var cls  = 'v4-d';
+            if(past)  cls+=' vp';
+            if(today) cls+=' vt';
+            if(hg)    cls+=' vg';
+            if(al&&!sel) cls+=' va';
+            if(sel)   cls+=' vs';
+            var click = (!past&&!hg) ? ' onclick="window.__v4cal.toggle(\''+key+'\')"' : '';
+            h += '<div class="'+cls+'"'+click+'>'+d+'</div>';
         }
-        return cells;
+        return h;
     }
 
-    function buildPreview() {
-        if (!_calSelected.length) return 'Nessuna data selezionata';
-        return `<b>${_calSelected.length}</b> data${_calSelected.length > 1 ? 'e' : ''} selezionata${_calSelected.length > 1 ? 'e' : ''}: ${_calSelected.join(', ')}`;
+    function refresh(){
+        var g=document.getElementById('v4-cal-grid');
+        var p=document.getElementById('v4-cal-prev');
+        var l=document.getElementById('v4-cal-mlbl');
+        if(g) g.innerHTML=drawGrid();
+        if(l) l.textContent=MI[C.m]+' '+C.y;
+        if(p){
+            var n=C.sel.length;
+            p.innerHTML = n===0
+                ? 'Nessuna data selezionata'
+                : '<b>'+n+'</b> data'+(n>1?'e':'')+' selezionata'+(n>1?'e':'')+': '+C.sel.join(', ');
+        }
     }
 
-    function renderCalendar() {
-        const grid = document.getElementById('slbm-cal-grid');
-        const preview = document.getElementById('slbm-cal-preview');
-        const label = document.getElementById('slbm-cal-month-label');
-        if (grid)    grid.innerHTML = buildCalHTML();
-        if (preview) preview.innerHTML = buildPreview();
-        if (label)   label.textContent = `${MONTHS_IT[_calMonth]} ${_calYear}`;
-    }
-
-    window._calToggleDay = function(key) {
-        const idx = _calSelected.indexOf(key);
-        if (idx >= 0) _calSelected.splice(idx, 1);
-        else _calSelected.push(key);
-        renderCalendar();
+    // Metodi su window.__v4cal così gli onclick inline li trovano sempre
+    C.toggle = function(key){
+        var i = C.sel.indexOf(key);
+        if(i>=0) C.sel.splice(i,1); else C.sel.push(key);
+        refresh();
+    };
+    C.prev = function(){ C.m--; if(C.m<0){C.m=11;C.y--;} refresh(); };
+    C.next = function(){ C.m++; if(C.m>11){C.m=0;C.y++;} refresh(); };
+    C.close = function(){ var ov=document.getElementById('v4-cal-ov'); if(ov) ov.remove(); };
+    C.confirm = function(){
+        if(!C.sel.length){ window.showToast && window.showToast('Seleziona almeno una data','warn'); return; }
+        if(window.slbmSaveDates) window.slbmSaveDates(C.id, C.sel.slice());
+        C.close();
     };
 
-    window._calPrevMonth = function() {
-        _calMonth--;
-        if (_calMonth < 0) { _calMonth = 11; _calYear--; }
-        renderCalendar();
-    };
-    window._calNextMonth = function() {
-        _calMonth++;
-        if (_calMonth > 11) { _calMonth = 0; _calYear++; }
-        renderCalendar();
-    };
+    // Sostituisce slbmOpenAddDate — usa solo API window.* già esposte
+    window.slbmOpenAddDate = function(id){
+        // Chiudi eventuale calendario già aperto
+        C.close();
+        var now = new Date();
+        C.id  = id;
+        C.y   = now.getFullYear();
+        C.m   = now.getMonth();
+        C.sel = [];
 
-    window._calClose = function() {
-        const ov = document.getElementById('slbm-cal-overlay');
-        if (ov) ov.remove();
-    };
-
-    window._calConfirm = function() {
-        if (!_calSelected.length) { showToast('Seleziona almeno una data', 'warn'); return; }
-        const d = beachData[_calId];
-        if (!d.subletDates) d.subletDates = [];
-        let added = 0;
-        _calSelected.forEach(dt => {
-            if (!d.subletDates.includes(dt)) { d.subletDates.push(dt); added++; }
-        });
-        d.subletActive = true;
-        set(ref(db, 'spiaggia_dati/' + _calId), d);
-        _calClose();
-        showToast(`📅 ${added} data${added > 1 ? 'e' : ''} aggiunta${added > 1 ? 'e' : ''}`, 'success');
-    };
-
-    // Override di slbmOpenAddDate
-    window.slbmOpenAddDate = function(id) {
-        _calId = id;
-        const t = todayYMD();
-        _calYear  = t.y;
-        _calMonth = t.m;
-        _calSelected = [];
-        const d = beachData[id];
-
-        // Crea overlay
-        const ov = document.createElement('div');
-        ov.id = 'slbm-cal-overlay';
-        ov.innerHTML = `
-            <div id="slbm-cal-box">
-                <div id="slbm-cal-header">
-                    <div class="cal-title">📅 Date Subaffitto</div>
-                    <div class="cal-spot">Ombrellone #${id} — ${d.nome}</div>
-                </div>
-                <div class="cal-nav">
-                    <button class="cal-nav-btn" onclick="_calPrevMonth()">‹</button>
-                    <span class="cal-month-label" id="slbm-cal-month-label"></span>
-                    <button class="cal-nav-btn" onclick="_calNextMonth()">›</button>
-                </div>
-                <div class="cal-grid" id="slbm-cal-grid"></div>
-                <div class="cal-footer">
-                    <div class="cal-selected-preview" id="slbm-cal-preview"></div>
-                    <button class="cal-btn-confirm" onclick="_calConfirm()">✓ Aggiungi date selezionate</button>
-                    <button class="cal-btn-cancel"  onclick="_calClose()">Annulla</button>
-                </div>
-            </div>`;
-        // Chiudi cliccando fuori dal box
-        ov.addEventListener('click', e => { if (e.target === ov) _calClose(); });
-        document.body.appendChild(ov);
-        renderCalendar();
+        var entry = getEntry();
+        var box = document.createElement('div');
+        box.id = 'v4-cal-ov';
+        box.innerHTML =
+            '<div id="v4-cal-box">' +
+              '<div id="v4-cal-hdr">' +
+                '<div class="ch-tag">&#128197; Date Subaffitto</div>' +
+                '<div class="ch-name">Ombrellone #'+id+' \u2014 '+(entry.nome||'')+'</div>' +
+              '</div>' +
+              '<div class="v4-nav">' +
+                '<button class="v4-nav-btn" onclick="window.__v4cal.prev()">&#8249;</button>' +
+                '<span class="v4-mlbl" id="v4-cal-mlbl"></span>' +
+                '<button class="v4-nav-btn" onclick="window.__v4cal.next()">&#8250;</button>' +
+              '</div>' +
+              '<div class="v4-grid" id="v4-cal-grid"></div>' +
+              '<div class="v4-foot">' +
+                '<div class="v4-prev" id="v4-cal-prev"></div>' +
+                '<button class="v4-ok" onclick="window.__v4cal.confirm()">&#10003; Aggiungi date selezionate</button>' +
+                '<button class="v4-cancel" onclick="window.__v4cal.close()">Annulla</button>' +
+              '</div>' +
+            '</div>';
+        box.addEventListener('click', function(e){ if(e.target===box) C.close(); });
+        document.body.appendChild(box);
+        refresh();
     };
 })();
 
 // ════════════════════════════════════════════════════════════════════════
 // FINE PATCH V4
-// ════════════════════════════════════════════════════════════════════════
-
+-e 
 </script>
 </body>
 </html>
