@@ -806,7 +806,76 @@
     .slbm-extra-item input[type="checkbox"] { accent-color: #0891b2; width: 16px; height: 16px; }
     .slbm-extra-item .extra-price { font-size: 12px; font-weight: 700; color: #0891b2; }
     .slbm-footer { padding: 14px 28px 22px; display: flex; flex-direction: column; gap: 8px; }
-</style>
+
+        /* ── SPOT COLORI PIENI ── */
+        .spot.free       { background:#f1f5f9; border-color:#cbd5e1; }
+        .spot.free b     { color:#94a3b8; }
+        .spot.free .owner{ color:#94a3b8; }
+        .spot.booked     { background:#f97316; border-color:#ea6b0a; }
+        .spot.booked b, .spot.booked .owner { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.booked:hover { background:#fb923c; }
+        .spot.seasonal   { background:#0d5c8c; border-color:#0a4a72; }
+        .spot.seasonal b, .spot.seasonal .owner { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.seasonal:hover { background:#1a7db8; }
+        .spot.sublet, .spot.sublet-guest { background:#8b5cf6; border-color:#7c3aed; }
+        .spot.sublet b, .spot.sublet-guest b,
+        .spot.sublet .owner, .spot.sublet-guest .owner { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+        .spot.sublet:hover, .spot.sublet-guest:hover { background:#a78bfa; }
+        .spot.booked .pay-indicator, .spot.seasonal .pay-indicator,
+        .spot.sublet .pay-indicator, .spot.sublet-guest .pay-indicator { border-color:rgba(255,255,255,.85); }
+        .spot.booked .bar-badge, .spot.seasonal .bar-badge,
+        .spot.sublet .bar-badge, .spot.sublet-guest .bar-badge { background:rgba(0,0,0,.3); box-shadow:none; }
+
+        /* ── LEGENDA AGGIORNATA ── */
+        .beach-legend .ld { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+
+        /* ── CALENDARIO SUBAFFITTO ── */
+        #v4-cal-ov { position:fixed;inset:0;background:rgba(13,44,70,.5);backdrop-filter:blur(4px);z-index:3000;display:flex;align-items:center;justify-content:center; }
+        #v4-cal-box { background:#fff;border-radius:20px;box-shadow:0 24px 64px rgba(13,44,70,.3);width:360px;max-width:96vw;overflow:hidden; }
+        #v4-cal-hdr { background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:18px 22px 14px;color:white; }
+        #v4-cal-hdr .ch-tag  { font-size:11px;font-weight:700;opacity:.82;margin-bottom:2px; }
+        #v4-cal-hdr .ch-name { font-size:18px;font-weight:700; }
+        .v4-nav { display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px; }
+        .v4-nav-btn { background:#f3f0ff;border:1.5px solid #ddd6fe;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:18px;font-weight:700;color:#7c3aed;display:flex;align-items:center;justify-content:center; }
+        .v4-nav-btn:hover { background:#ede9fe; }
+        .v4-mlbl { font-size:14px;font-weight:700;color:#1e293b; }
+        .v4-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:4px 14px 10px; }
+        .v4-dn { text-align:center;font-size:10px;font-weight:700;color:#94a3b8;padding:4px 0;text-transform:uppercase; }
+        .v4-d  { text-align:center;padding:7px 2px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#1e293b;transition:background .1s;position:relative;user-select:none; }
+        .v4-d:hover:not(.vp):not(.ve):not(.vg) { background:#ede9fe;color:#7c3aed; }
+        .v4-d.ve { visibility:hidden; }
+        .v4-d.vp { color:#cbd5e1;cursor:not-allowed; }
+        .v4-d.vg { color:#cbd5e1;cursor:not-allowed; }
+        .v4-d.vg::after { content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#8b5cf6; }
+        .v4-d.va { background:#ede9fe;color:#7c3aed; }
+        .v4-d.vs { background:#7c3aed!important;color:#fff!important;box-shadow:0 2px 8px rgba(124,58,237,.35); }
+        .v4-d.vt:not(.vs) { font-weight:800;color:#7c3aed; }
+        .v4-foot { padding:10px 14px 16px;border-top:1px solid #e2e8f0;display:flex;flex-direction:column;gap:8px; }
+        .v4-prev { font-size:11px;color:#64748b;min-height:18px;padding:0 4px;line-height:1.5; }
+        .v4-prev b { color:#7c3aed; }
+        .v4-ok     { width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;cursor:pointer; }
+        .v4-cancel { width:100%;padding:10px;background:white;color:#94a3b8;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer; }
+
+        /* ── MODAL SUBAFFITTO OSPITE ── */
+        #sublet-booking-modal { width:500px;padding:0;overflow:hidden;text-align:left;max-height:94vh; }
+        .slbm-hero { padding:22px 28px 18px;background:linear-gradient(135deg,#0891b2,#22d3ee);color:white; }
+        .slbm-hero .slbm-tag  { font-size:11px;font-weight:600;opacity:.85;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px; }
+        .slbm-hero .slbm-title{ font-size:22px;font-weight:700; }
+        .slbm-hero .slbm-sub  { font-size:12px;opacity:.8;margin-top:3px; }
+        .slbm-body { padding:20px 28px 8px;overflow-y:auto;max-height:62vh; }
+        .slbm-info-box { background:#ecfeff;border:1.5px solid #a5f3fc;border-radius:10px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px; }
+        .slbm-info-box p { font-size:12px;color:#0e7490;line-height:1.6; }
+        .slbm-info-box strong { color:#0891b2; }
+        .slbm-calc-preview { background:linear-gradient(135deg,#0891b2,#22d3ee);border-radius:10px;padding:14px 18px;color:white;margin-bottom:18px;display:none; }
+        .slbm-calc-preview .calc-row { display:flex;justify-content:space-between;font-size:13px;padding:3px 0;opacity:.9; }
+        .slbm-calc-preview .calc-row.total { border-top:1px solid rgba(255,255,255,.3);margin-top:6px;padding-top:8px;font-weight:700;font-size:15px;opacity:1; }
+        .slbm-extra-item { display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--eb-bg); }
+        .slbm-extra-item label { flex:1;font-size:13px;font-weight:600;color:var(--eb-text);display:flex;align-items:center;gap:6px;cursor:pointer; }
+        .slbm-extra-item input[type=checkbox] { accent-color:#0891b2;width:16px;height:16px; }
+        .slbm-extra-item .extra-price { font-size:12px;font-weight:700;color:#0891b2; }
+        .slbm-footer { padding:14px 28px 22px;display:flex;flex-direction:column;gap:8px; }
+
+    </style>
 
 <div id="sublet-booking-modal" class="modal">
     <div class="slbm-hero">
@@ -1021,10 +1090,10 @@
         </div>
         <!-- Legend -->
         <div class="beach-legend">
-            <div class="legend-item"><div class="legend-dot" style="background:var(--eb-border);"></div>Libero</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--booked);"></div>Giornaliero</div>
-            <div class="legend-item"><div class="legend-dot" style="background:var(--eb-blue);"></div>Stagionale</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#0891b2;"></div>Subaffitto</div>
+            <div class="legend-item"><div class="ld" style="background:#f1f5f9;border:2px solid #cbd5e1;"></div>Libero</div>
+            <div class="legend-item"><div class="ld" style="background:#f97316;"></div>Giornaliero</div>
+            <div class="legend-item"><div class="ld" style="background:#0d5c8c;"></div>Stagionale</div>
+            <div class="legend-item"><div class="ld" style="background:#8b5cf6;"></div>Subaffittato</div>
             <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
             <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>
         </div>
@@ -1210,10 +1279,12 @@
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
+// ── CONFIG ───────────────────────────────────────────────────────────────
 const firebaseConfig = {
     apiKey: "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
     authDomain: "lido-d7fdf.firebaseapp.com",
@@ -1222,1990 +1293,807 @@ const firebaseConfig = {
     appId: "1:830446694284:web:284451a591ec296d2ef0a9"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
-
-// App secondaria per creare utenti senza disconnettere l'admin dalla sessione principale
-const secondaryApp = initializeApp(firebaseConfig, 'secondary');
+const app           = initializeApp(firebaseConfig);
+const db            = getDatabase(app);
+const auth          = getAuth(app);
+const secondaryApp  = initializeApp(firebaseConfig, 'secondary');
 const secondaryAuth = getAuth(secondaryApp);
 
-const dbRef = ref(db, 'spiaggia_dati');
-const prodRef = ref(db, 'prodotti_bar_dinamici');
-const prezzoLettiniRef = ref(db, 'prezzo_lettino');
-const warehouseRef = ref(db, 'magazzino');
-const qrOrdersRef = ref(db, 'qr_orders');
+const dbRef           = ref(db, 'spiaggia_dati');
+const prodRef         = ref(db, 'prodotti_bar_dinamici');
+const prezzoLettiniRef= ref(db, 'prezzo_lettino');
+const warehouseRef    = ref(db, 'magazzino');
+const qrOrdersRef     = ref(db, 'qr_orders');
+const usersRef        = ref(db, 'utenti_suite');
 
-let beachData = {};
+// ── STATO ────────────────────────────────────────────────────────────────
+let beachData       = {};
 let dynamicProducts = {};
-let usersData = {};
-let warehouseData = { lettini: { totale: 50, nome: 'Lettini', icon: '🛌' }, sdraio: { totale: 80, nome: 'Sdraio', icon: '🪑' }, ombrelloni_extra: { totale: 20, nome: 'Ombrelloni Extra', icon: '☂️' }, tavoli: { totale: 12, nome: 'Tavoli', icon: '🪵' } };
-let qrOrders = {};
-let currentEditingId = null;
-let currentUser = null;
+let usersData       = {};
+let warehouseData   = { lettini:{totale:50,nome:'Lettini',icon:'🛌'}, sdraio:{totale:80,nome:'Sdraio',icon:'🪑'}, ombrelloni_extra:{totale:20,nome:'Ombrelloni Extra',icon:'☂️'}, tavoli:{totale:12,nome:'Tavoli',icon:'🪵'} };
+let qrOrders        = {};
+let currentEditingId= null;
+let currentUser     = null;
 let selectedCancelOption = null;
-let prezzoLettino = 7.00;
+let prezzoLettino   = 7.00;
 let archivioAllRows = [];
+let cart = [], cartTotal = 0;
+let _currentSpotId  = null;
 
-const STAFF_SCREENS = ['screen-home','screen-spiaggia','screen-extra','screen-bar','screen-subaffitto'];
-const usersRef = ref(db, 'utenti_suite');
+const STAFF_SCREENS     = ['screen-home','screen-spiaggia','screen-extra','screen-bar','screen-subaffitto'];
+const SUBLET_BASE       = 20;
+const SUBLET_CREDIT_DAY = 5;
 
-// ── TOAST ──
-window.showToast = (msg, type='success') => {
-    const t = document.getElementById('toast');
+// ── HELPERS GENERICI ─────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const todayIT = () => new Date().toLocaleDateString('it-IT');
+const toIT    = d  => d ? d.split('-').reverse().join('/') : todayIT();
+const fdb     = (id, data) => set(ref(db, 'spiaggia_dati/' + id), data);
+
+window.showToast = (msg, type = 'success') => {
+    const t = $('toast');
     t.textContent = msg;
-    t.className = `toast ${type}`;
-    t.classList.add('show');
+    t.className = `toast ${type} show`;
     setTimeout(() => t.classList.remove('show'), 2800);
 };
 
-// ── GREETING & DATE ──
-function updateHomeDate() {
-    const now = new Date();
-    const days = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-    const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
-    const h = now.getHours();
-    const greeting = h < 12 ? '🌅 Buongiorno' : h < 18 ? '☀️ Buon pomeriggio' : '🌙 Buonasera';
-    const el = document.getElementById('home-greeting');
-    const el2 = document.getElementById('home-date');
-    if(el) el.textContent = greeting + (currentUser ? ', ' + currentUser.username.split('@')[0] + '!' : '!');
-    if(el2) el2.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
-}
-
-// ── TODAY ARRIVALS/DEPARTURES ──
-function renderToday() {
-    const todayStr = new Date().toLocaleDateString('it-IT');
-    let arrivalsHtml = '', departuresHtml = '';
-    Object.keys(beachData).forEach(id => {
-        const d = beachData[id];
-        if (!d) return;
-        const payClass = d.pagamento === 'saldo' ? 'badge-saldo' : d.pagamento === 'acconto' ? 'badge-acconto' : 'badge-none';
-        const payLabel = d.pagamento === 'saldo' ? 'Saldo' : d.pagamento === 'acconto' ? 'Acconto' : 'Da pagare';
-        if (d.dataArrivo === todayStr) {
-            arrivalsHtml += `<div class="today-item"><span class="spot-num">#${id}</span><span class="client-name">${d.nome}</span><span class="pay-pill badge ${payClass}">${payLabel}</span></div>`;
-        }
-        if (d.dataPartenza === todayStr) {
-            departuresHtml += `<div class="today-item"><span class="spot-num">#${id}</span><span class="client-name">${d.nome}</span><span class="pay-pill badge ${payClass}">${payLabel}</span></div>`;
-        }
-    });
-    const arrEl = document.getElementById('today-arrivals');
-    const depEl = document.getElementById('today-departures');
-    if(arrEl) arrEl.innerHTML = arrivalsHtml || '<p class="today-empty">Nessun arrivo previsto</p>';
-    if(depEl) depEl.innerHTML = departuresHtml || '<p class="today-empty">Nessuna partenza prevista</p>';
-}
-
-// ── WAREHOUSE ──
-function renderWarehouse() {
-    const grid = document.getElementById('warehouse-grid');
-    const editGrid = document.getElementById('warehouse-edit-grid');
-    if (!grid) return;
-
-    // Count used items from beach data
-    let usedLettini = 0;
-    Object.values(beachData).forEach(d => {
-        if (d && d.lettiniExtra) usedLettini += parseInt(d.lettiniExtra || 0);
-    });
-    // simulate usage
-    const usage = { lettini: usedLettini, sdraio: 0, ombrelloni_extra: 0, tavoli: 0 };
-
-    let gridHtml = '', editHtml = '';
-    Object.keys(warehouseData).forEach(key => {
-        const item = warehouseData[key];
-        const tot = item.totale || 0;
-        const used = usage[key] || 0;
-        const avail = Math.max(0, tot - used);
-        const pct = tot > 0 ? (avail / tot) * 100 : 100;
-        const fillClass = pct < 20 ? 'danger' : pct < 50 ? 'warn' : '';
-        gridHtml += `<div class="warehouse-item">
-            <div class="wh-icon">${item.icon}</div>
-            <div class="wh-name">${item.nome}</div>
-            <div class="wh-avail" style="color:${pct<20?'var(--expired)':pct<50?'var(--acconto)':'var(--free)'}">${avail}</div>
-            <div class="wh-total">disponibili su ${tot}</div>
-            <div class="wh-bar"><div class="wh-bar-fill ${fillClass}" style="width:${pct}%"></div></div>
-        </div>`;
-        editHtml += `<div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:18px;">${item.icon}</span>
-            <div style="flex:1">
-                <div style="font-size:12px; font-weight:600; margin-bottom:4px;">${item.nome} — totale</div>
-                <input type="number" class="field" style="padding:8px; font-size:13px;" value="${tot}" min="0" onchange="updateWarehouseTotal('${key}', this.value)">
-            </div>
-        </div>`;
-    });
-    grid.innerHTML = gridHtml;
-    if(editGrid) editGrid.innerHTML = editHtml;
-
-    // Update extra hint
-    const avLettini = Math.max(0, (warehouseData.lettini?.totale||50) - usedLettini);
-    const hint = document.getElementById('extra-warehouse-hint');
-    if(hint) hint.innerHTML = `<span style="color:${avLettini<5?'var(--expired)':'var(--eb-muted)'}">📦 Lettini disponibili in magazzino: <b>${avLettini}</b></span>`;
-}
-
-window.updateWarehouseTotal = (key, val) => {
-    if (!warehouseData[key]) return;
-    warehouseData[key].totale = parseInt(val) || 0;
-    set(warehouseRef, warehouseData);
-    renderWarehouse();
-};
-
-// ── SUBAFFITTO ──
-function renderSubaffitto() {
-    const container = document.getElementById('sublet-list');
-    if(!container) return;
-    const stagionali = Object.keys(beachData).filter(id => beachData[id]?.isSeasonal);
-    if(!stagionali.length) {
-        container.innerHTML = '<div style="font-size:13px; color:var(--eb-muted); text-align:center; padding:40px;">Nessun ombrellone stagionale registrato</div>';
-        return;
-    }
-    let html = '';
-    stagionali.forEach(id => {
-        const d = beachData[id];
-        const dates = d.subletDates || [];
-        const datesHtml = dates.length
-            ? dates.map(dt => `<span class="sublet-date-pill available" onclick="removeSubletDate('${id}','${dt}')" title="Clicca per rimuovere">${dt}</span>`).join('')
-            : '<span style="font-size:12px; color:var(--eb-muted); font-style:italic;">Nessuna data inserita</span>';
-        html += `<div class="sublet-card">
-            <div class="sublet-header">
-                <div><div class="sublet-name">🏖️ #${id} — ${d.nome}</div><div class="sublet-spot">Stagionale · ${d.prezzo}€</div></div>
-                <button class="btn-sm btn-sea" onclick="addSubletDate('${id}')">+ Aggiungi data libera</button>
-            </div>
-            <div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-window.addSubletDate = (id) => {
-    const dt = prompt('Inserisci la data disponibile (gg/mm/aaaa):');
-    if (!dt) return;
-    const d = beachData[id];
-    if (!d.subletDates) d.subletDates = [];
-    if (d.subletDates.includes(dt)) return showToast('Data già presente', 'warn');
-    d.subletDates.push(dt);
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast('📅 Data aggiunta al subaffitto', 'success');
-};
-window.removeSubletDate = (id, dt) => {
-    if (!confirm(`Rimuovere il ${dt} dal subaffitto?`)) return;
-    const d = beachData[id];
-    d.subletDates = (d.subletDates || []).filter(x => x !== dt);
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast('Data rimossa', 'info');
-};
-
-// ── QR ORDERS ──
-function renderQrOrders() {
-    const list = document.getElementById('qr-orders-list');
-    const badge = document.getElementById('qr-orders-badge');
-    const wrap = document.getElementById('qr-orders-wrap');
-    if(!list) return;
-    const pending = Object.keys(qrOrders).filter(k => qrOrders[k] && !qrOrders[k].done);
-    if(badge) { badge.textContent = pending.length; badge.style.display = pending.length ? 'inline' : 'none'; }
-    if(wrap) wrap.style.display = Object.keys(qrOrders).length ? 'block' : 'none';
-    if(!Object.keys(qrOrders).length) { list.innerHTML = '<div style="font-size:12px; color:var(--eb-muted); text-align:center; padding:12px;">Nessun ordine QR</div>'; return; }
-    list.innerHTML = Object.keys(qrOrders).sort().reverse().map(k => {
-        const o = qrOrders[k];
-        const cls = o.done ? 'qr-order-item qr-order-done' : 'qr-order-item';
-        const action = o.done ? '' : `<button onclick="markQrDone('${k}')" style="background:var(--free); color:white; border:none; border-radius:6px; padding:3px 8px; font-size:10px; font-family:'Poppins',sans-serif; font-weight:600; cursor:pointer;">✓</button>`;
-        return `<div class="${cls}"><span class="qr-badge">#${o.spot||'?'}</span><span style="flex:1; margin:0 8px;">${o.items||''}</span><span style="font-weight:700;">${(o.total||0).toFixed(2)}€</span>${action}</div>`;
-    }).join('');
-}
-window.markQrDone = (k) => { if(qrOrders[k]) { qrOrders[k].done = true; set(qrOrdersRef, qrOrders); showToast('✓ Ordine completato', 'success'); } };
-window.showQrOrdersModal = () => { document.getElementById('qr-orders-wrap').style.display = 'block'; };
-
-// ── QR CODE MODAL ──
-window.openQrModal = (id) => {
-    const d = beachData[id];
-    document.getElementById('qr-modal-label').textContent = `Ombrellone #${id}${d ? ' · ' + d.nome : ''}`;
-    const container = document.getElementById('qr-code-container');
-    container.innerHTML = '';
-    const url = `${location.origin}${location.pathname}?order=1&spot=${id}`;
-    new QRCode(container, { text: url, width: 160, height: 160, colorDark: '#0d5c8c', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-    document.getElementById('qr-modal').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-};
-
-// ── ARCHIVIO FILTER & EXPORT ──
-function buildArchivioRows() {
-    archivioAllRows = [];
-    Object.keys(beachData).forEach(id => {
-        const d = beachData[id];
-        if (!d) return;
-        const paid = (d.rate||[]).reduce((a,b)=>a+b.importo,0);
-        const totaleDovuto = parseFloat(d.prezzo||0) + parseFloat(d.lettiniCosto||0);
-        const pct = totaleDovuto > 0 ? Math.min(100, Math.round((paid/totaleDovuto)*100)) : 0;
-        archivioAllRows.push({ id, ...d, paid, pct });
-    });
-}
-window.filterArchivio = () => {
-    const q = (document.getElementById('archivio-search')?.value||'').toUpperCase();
-    const tipo = document.getElementById('archivio-filter-tipo')?.value||'';
-    const stato = document.getElementById('archivio-filter-stato')?.value||'';
-    const tbody = document.getElementById('db-body');
-    if(!tbody) return;
-    const filtered = archivioAllRows.filter(r => {
-        if(q && !r.nome?.includes(q) && !String(r.id).includes(q) && !(r.telefono||'').includes(q)) return false;
-        if(tipo === 'G' && r.isSeasonal) return false;
-        if(tipo === 'S' && !r.isSeasonal) return false;
-        if(stato && r.pagamento !== stato) return false;
-        return true;
-    });
-    renderArchivioRows(filtered, tbody);
-};
-function renderArchivioRows(rows, tbody) {
-    if(!tbody) return;
-    tbody.innerHTML = rows.map(d => {
-        const bCls = d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';
-        return `<tr>
-            <td><b>#${d.id}</b></td>
-            <td>
-                <div style="font-weight:600;">${d.nome}</div>
-                ${d.weatherGuarantee ? '<span style="font-size:10px;">☀️ Garanzia Meteo</span>' : ''}
-            </td>
-            <td>${d.telefono||'-'}</td>
-            <td><span style="font-size:11px; font-weight:700; color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span></td>
-            <td>
-                <div style="font-weight:600;">${d.prezzo}€</div>
-                <div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div>
-                <div style="font-size:10px; color:var(--eb-muted);">${d.pct}% versato</div>
-            </td>
-            <td style="color:var(--bar); font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td>
-            <td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td>
-            <td style="font-size:11px; color:var(--eb-muted); max-width:120px; word-break:break-word;">${d.note||'-'}</td>
-            <td>
-                <button onclick="openPaymentModal(${d.id})" style="background:none; color:var(--eb-blue); border:1px solid var(--eb-blue); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:10px; font-family:'Poppins',sans-serif; font-weight:600; white-space:nowrap;">💳 Pagam.</button>
-                <button onclick="openQrModal(${d.id})" style="background:none; color:var(--eb-muted); border:1px solid var(--eb-border); border-radius:6px; padding:4px 8px; cursor:pointer; font-size:10px; font-family:'Poppins',sans-serif; margin-top:4px; white-space:nowrap;">📱 QR</button>
-            </td>
-        </tr>`;
-    }).join('') || '<tr><td colspan="9" style="text-align:center; color:var(--eb-muted); padding:24px;">Nessun risultato</td></tr>';
-}
-
-window.exportCSV = () => {
-    buildArchivioRows();
-    const header = ['#','Nome','Telefono','Tipo','Prezzo','Bar','Pagamento','Note'];
-    const rows = archivioAllRows.map(d => [d.id, d.nome, d.telefono||'', d.isSeasonal?'Stagionale':'Giornaliero', d.prezzo, parseFloat(d.barTotal||0).toFixed(2), d.pagamento||'nessuno', (d.note||'').replace(/,/g,' ')]);
-    const csv = [header, ...rows].map(r => r.join(',')).join('\n');
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-    a.download = `lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;
-    a.click();
-    showToast('📥 CSV esportato!', 'success');
-};
-
-// ── FIREBASE LISTENERS ──
-onValue(qrOrdersRef, s => { qrOrders = s.val()||{}; renderQrOrders(); });
-onValue(warehouseRef, s => { const v = s.val(); if(v) Object.assign(warehouseData, v); renderWarehouse(); });
-
-onAuthStateChanged(auth, async (firebaseUser) => {
-    if (firebaseUser) {
-        const snap = await new Promise(r => onValue(usersRef, r, { onlyOnce:true }));
-        const allUsers = snap.val()||{};
-        let role = 'staff';
-        if(allUsers[firebaseUser.uid]) role = allUsers[firebaseUser.uid].role||'staff';
-        else {
-            const match = Object.values(allUsers).find(u => u.email===firebaseUser.email||u.username===firebaseUser.email);
-            if(match) role = match.role||'staff';
-            else await set(ref(db,'utenti_suite/'+firebaseUser.uid), { email:firebaseUser.email, role:'staff' });
-        }
-        currentUser = { username:firebaseUser.email, role };
-        applyRoleUI();
-        updateHomeDate();
-        if(!window._dataStarted) {
-            window._dataStarted = true;
-            if(role === 'admin') {
-                onValue(usersRef, s => { usersData = s.val()||{}; renderUtenti(); });
-            }
-            onValue(dbRef, s => { beachData=s.val()||{}; renderSpiaggia(); renderToday(); renderSubaffitto(); buildArchivioRows(); filterArchivio(); });
-            onValue(prodRef, s => { dynamicProducts=s.val()||{}; renderDynamicProducts(); });
-            onValue(prezzoLettiniRef, s => {
-                const v=s.val(); if(v&&v>0) prezzoLettino=parseFloat(v);
-                const d=document.getElementById('extra-price-display');
-                const i=document.getElementById('extra-price-input');
-                if(d) d.innerHTML=prezzoLettino.toFixed(2)+'€ <small>/ cad.</small>';
-                if(i) i.value=prezzoLettino.toFixed(2);
-                renderWarehouse();
-            });
-        }
-        const ls=document.getElementById('screen-login');
-        if(!ls.classList.contains('hidden')) navTo('screen-home');
-    } else {
-        currentUser=null;
-        document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
-        document.getElementById('screen-login').classList.remove('hidden');
-        document.getElementById('main-topbar').classList.add('hidden');
-    }
-});
-
-window.savePrezzoLettino = () => {
-    const v=parseFloat(document.getElementById('extra-price-input').value);
-    if(isNaN(v)||v<=0) return alert('Prezzo non valido');
-    set(prezzoLettiniRef,v); showToast('✓ Prezzo aggiornato', 'success');
-};
-
-window.checkLogin = async () => {
-    const email=document.getElementById('userInput').value.trim();
-    const pass=document.getElementById('passInput').value;
-    const errEl=document.getElementById('login-error');
-    const btn=document.querySelector('#screen-login .btn-login');
-    errEl.innerText='';
-    if(!email||!pass){ errEl.innerText='Compila tutti i campi.'; return; }
-    btn.innerText='Accesso…'; btn.disabled=true;
-    try { await signInWithEmailAndPassword(auth,email,pass); }
-    catch(err) {
-        let m='Credenziali non valide.';
-        if(err.code==='auth/too-many-requests') m='Troppi tentativi.';
-        if(err.code==='auth/invalid-email') m='Email non valida.';
-        errEl.innerText=m;
-        document.getElementById('userInput').style.borderColor='var(--expired)';
-        document.getElementById('passInput').style.borderColor='var(--expired)';
-    } finally { btn.innerText='Accedi alla Suite'; btn.disabled=false; }
-};
-
-function applyRoleUI() {
-    const isAdmin=currentUser&&currentUser.role==='admin';
-    document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
-    document.querySelectorAll('.staff-hidden').forEach(el=>el.style.display=isAdmin?'':'none');
-    const pe=document.getElementById('admin-price-editor');
-    if(pe) pe.style.display=isAdmin?'block':'none';
-    document.getElementById('main-topbar').classList.remove('hidden');
-    const disp=currentUser.username.includes('@')?currentUser.username.split('@')[0]:currentUser.username;
-    document.getElementById('logged-user-label').innerText=disp+(isAdmin?' · Admin':' · Staff');
-}
-
-window.navTo = (id) => {
-    if(currentUser&&currentUser.role==='staff'&&!STAFF_SCREENS.includes(id)){ showToast('⛔ Accesso non autorizzato','warn'); return; }
-    document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
-    if(id==='screen-home'){ updateHomeDate(); renderToday(); }
-    if(id==='screen-subaffitto') renderSubaffitto();
-    if(id==='screen-magazzino') renderWarehouse();
-    if(id==='screen-archivio'){ buildArchivioRows(); filterArchivio(); }
-    if(id==='screen-admin-utenti') renderUtenti();
-};
-
-window.logout = async () => {
-    await signOut(auth);
-    document.getElementById('userInput').value='';
-    document.getElementById('passInput').value='';
-    document.getElementById('login-error').innerText='';
-};
-
-window.addUser = async () => {
-    const email=document.getElementById('new-username').value.trim();
-    const pass=document.getElementById('new-password').value.trim();
-    const role=document.getElementById('new-role').value;
-    if(!email||!pass) return showToast('Compila email e password.','warn');
-    if(pass.length<6) return showToast('Password troppo corta (min. 6 caratteri).','warn');
-    const btn=document.querySelector('#screen-admin-utenti .btn-sea');
-    btn.innerText='Creazione…'; btn.disabled=true;
-    try {
-        // Usa l'app secondaria: non disconnette l'admin dalla sessione principale
-        const c = await createUserWithEmailAndPassword(secondaryAuth, email, pass);
-        const uid = c.user.uid;
-        // Salva ruolo nel DB
-        await set(ref(db, 'utenti_suite/' + uid), { email, role });
-        // Disconnetti subito la sessione secondaria
-        await signOut(secondaryAuth);
-        document.getElementById('new-username').value='';
-        document.getElementById('new-password').value='';
-        document.getElementById('new-role').value='staff';
-        showToast('✓ Utente creato: ' + email, 'success');
-    } catch(err) {
-        let m='Errore nella creazione.';
-        if(err.code==='auth/email-already-in-use') m='Email già in uso.';
-        if(err.code==='auth/invalid-email') m='Formato email non valido.';
-        if(err.code==='auth/weak-password') m='Password troppo debole (min. 6 caratteri).';
-        showToast(m, 'warn');
-    } finally { btn.innerText='➕ Aggiungi Utente'; btn.disabled=false; }
-};
-
-window.deleteUser = (uid) => {
-    if(confirm('Eliminare?')){ delete usersData[uid]; set(usersRef,usersData); }
-};
-window.toggleUserRole = (uid) => {
-    const u=usersData[uid]; u.role=u.role==='admin'?'staff':'admin';
-    set(ref(db,'utenti_suite/'+uid+'/role'),u.role);
-    showToast('Ruolo aggiornato', 'info');
-};
-
-function renderUtenti() {
-    const list=document.getElementById('lista-utenti'); if(!list) return;
-    const keys=Object.keys(usersData);
-    if(!keys.length){ list.innerHTML='<div style="color:#bbb;font-size:13px;text-align:center;padding:16px 0;">Nessun utente</div>'; return; }
-    list.innerHTML=keys.map(uid=>{
-        const u=usersData[uid];
-        const isA=(u.role||'staff')==='admin';
-        const rc=isA?'var(--expired)':'var(--eb-blue)';
-        const rl=isA?'Admin':'Staff';
-        const tl=isA?'→ Staff':'→ Admin';
-        const dn=u.email||u.username||uid;
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);gap:8px;">
-            <span style="font-size:13px;display:flex;align-items:center;gap:8px;flex:1;overflow:hidden;">
-                <span>👤</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b>${dn}</b></span>
-                <span style="font-size:10px;font-weight:700;text-transform:uppercase;background:${rc}20;color:${rc};padding:2px 8px;border-radius:20px;">${rl}</span>
-            </span>
-            <div style="display:flex;gap:6px;flex-shrink:0;">
-                <button onclick="toggleUserRole('${uid}')" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap;">${tl}</button>
-                <button onclick="deleteUser('${uid}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button>
-            </div>
-        </div>`;
-    }).join('');
-}
-
-// ── BEACH RENDER ──
-function renderSpiaggia() {
-    const west=document.getElementById('sector-west');
-    const east=document.getElementById('sector-east');
-    if(!west) return;
-    west.innerHTML=''; east.innerHTML='';
-    let mD=0,mS=0,booked=0,totalReal=0,barTotal=0,free=0;
-
-    for(let i=1;i<=200;i++) {
-        const d=beachData[i];
-        const div=document.createElement('div');
-        let cls='spot';
-        if(d){ cls+=d.isSeasonal?' seasonal':' booked'; if(d.subletActive) cls+=' sublet'; }
-        else { cls+=' free'; free++; }
-        if(d?.pagamento) cls+=` status-${d.pagamento}`;
-        div.className=cls;
-
-        const barHtml=(d?.barTotal>0)?`<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>`:'';
-        const weatherHtml=d?.weatherGuarantee?`<div class="weather-badge">☀️</div>`:'';
-        div.innerHTML=`${barHtml}${weatherHtml}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${d?d.nome:'LIBERO'}</div>`;
-        div.onclick=()=>handleOmbrellone(i);
-        if(i<=100) west.appendChild(div); else east.appendChild(div);
-
-        if(d){
-            booked++;
-            const p=parseFloat(d.prezzo||0)+parseFloat(d.lettiniCosto||0);
-            if(d.isSeasonal) mS+=p; else mD+=p;
-            totalReal+=(d.rate||[]).reduce((a,b)=>a+b.importo,0);
-            barTotal+=parseFloat(d.barTotal||0);
-        }
-    }
-    const els = { 'db-money-daily': mD.toFixed(2)+'€', 'db-money-seasonal': mS.toFixed(2)+'€', 'db-total-money': totalReal.toFixed(2)+'€', 'db-count-booked': booked, 'db-count-free': free, 'db-bar-total': barTotal.toFixed(2)+'€' };
-    Object.keys(els).forEach(k=>{ const e=document.getElementById(k); if(e) e.innerText=els[k]; });
-}
-
-// ── HANDLE OMBRELLONE ──
-let _currentSpotId = null;
-
-window.handleOmbrellone = (id) => {
-    _currentSpotId = id;
-    const d = beachData[id];
-    if (!d) {
-        // Ombrellone libero → form nuova prenotazione
-        document.getElementById('nb-title').textContent = 'Ombrellone #' + id;
-        document.getElementById('nb-nome').value = '';
-        document.getElementById('nb-tel').value = '';
-        document.getElementById('nb-prezzo').value = '';
-        document.getElementById('nb-weather').checked = false;
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('nb-arrivo').value = today;
-        document.getElementById('nb-partenza').value = today;
-        nbSetTipo('G');
-        document.getElementById('new-booking-modal').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-        setTimeout(() => document.getElementById('nb-nome').focus(), 100);
-    } else {
-        // Ombrellone occupato → scheda cliente
-        openSpotModal(id);
-    }
-};
-
-window.openSpotModal = (id) => {
-    _currentSpotId = id;
-    const d = beachData[id];
-    const prezzoBase = parseFloat(d.prezzo || 0);
-    const costoLettini = parseFloat(d.lettiniCosto || 0);
-    const total = prezzoBase + costoLettini;   // totale reale dovuto
-    const paid = (d.rate || []).reduce((s, r) => s + r.importo, 0);
-    const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;
-    const rem = total - paid;
-
-    document.getElementById('sm-num').textContent = 'Ombrellone #' + id;
-    document.getElementById('sm-nome').textContent = d.nome;
-    document.getElementById('sm-tel').textContent = d.telefono && d.telefono !== '-' ? '📞 ' + d.telefono : '';
-    document.getElementById('sm-tipo-pill').textContent = d.isSeasonal ? '📅 Stagionale' : '🌊 Giornaliero';
-    document.getElementById('sm-arrivo').textContent = d.dataArrivo || '—';
-    document.getElementById('sm-partenza').textContent = d.dataPartenza || '—';
-    document.getElementById('sm-bar').textContent = parseFloat(d.barTotal || 0).toFixed(2) + '€';
-    document.getElementById('sm-paid-label').textContent = 'Versato: ' + paid.toFixed(2) + '€';
-    document.getElementById('sm-pct-label').textContent = pct + '%';
-    // Mostra totale con dettaglio lettini se presenti
-    const lettinoLabel = costoLettini > 0 ? ' (' + prezzoBase.toFixed(2) + '€ + 🛌' + costoLettini.toFixed(2) + '€)' : '';
-    document.getElementById('sm-total-label').textContent = 'Totale: ' + total.toFixed(2) + '€' + lettinoLabel;
-    document.getElementById('sm-rem-label').textContent = rem > 0 ? 'Da saldare: ' + rem.toFixed(2) + '€' : '✓ Saldato';
-    document.getElementById('sm-progress').style.width = pct + '%';
-
-    // Colore barra: verde se saldato, giallo se acconto, bianco se nessuno
-    const bar = document.getElementById('sm-progress');
-    bar.style.background = pct >= 100 ? '#4ade80' : pct > 0 ? '#fde68a' : 'rgba(255,255,255,0.5)';
-
-    document.getElementById('sm-weather-pill').style.display = d.weatherGuarantee ? 'flex' : 'none';
-
-    const nw = document.getElementById('sm-note-wrap');
-    if (d.note && d.note.trim()) {
-        nw.style.display = 'block';
-        document.getElementById('sm-note-text').textContent = d.note;
-    } else { nw.style.display = 'none'; }
-
-    document.getElementById('sm-bar-btn').style.display = parseFloat(d.barTotal || 0) > 0 ? 'flex' : 'none';
-
-    // Lettini extra: aggiorna contatori nella scheda
-    const lettinoAssegnati = parseInt(d.lettiniExtra || 0);
-    const lettinoDisponibili = getLettinoDisponibili();
-    document.getElementById('sm-lettini-assegnati').textContent = lettinoAssegnati;
-    document.getElementById('sm-lettini-disponibili').textContent = lettinoDisponibili;
-    document.getElementById('sm-lettini-disponibili').style.color = lettinoDisponibili === 0 ? 'var(--expired)' : lettinoDisponibili <= 3 ? 'var(--acconto)' : 'var(--free)';
-    document.getElementById('sm-lettino-qty').value = 1;
-    document.getElementById('sm-sublet-btn').style.display = d.isSeasonal ? 'flex' : 'none';
-
-    const rl = document.getElementById('sm-rate-list');
-    if (d.rate && d.rate.length) {
-        rl.innerHTML = d.rate.map(r =>
-            `<div class="sd-rate-item">
-                <span class="rate-date">📅 ${r.data}</span>
-                <span class="rate-amt">+${r.importo.toFixed(2)}€</span>
-            </div>`
-        ).join('');
-    } else {
-        rl.innerHTML = '<div class="sd-rate-empty">Nessun versamento registrato</div>';
-    }
-
-    // Renderizza consumazioni
-    sdRenderConsumazioni(id);
-
-    // Apri drawer + overlay
-    document.getElementById('spot-drawer').classList.add('open');
-    document.getElementById('overlay').style.display = 'block';
-};
-
-window.closeSpotDrawer = () => {
-    document.getElementById('spot-drawer').classList.remove('open');
-    document.getElementById('overlay').style.display = 'none';
-};
-
-// Azioni dalla scheda ombrellone
-window.smOpenPayments = () => {
-    closeSpotDrawer();
-    openPaymentModal(_currentSpotId);
-};
-window.smOpenQr = () => {
-    closeSpotDrawer();
-    openQrModal(_currentSpotId);
-};
-window.smAddSublet = () => {
-    closeSpotDrawer();
-    addSubletDate(_currentSpotId);
-};
-window.smResetBar = () => {
-    beachData[_currentSpotId].barTotal = 0;
-    beachData[_currentSpotId].consumazioni = [];
-    set(ref(db, 'spiaggia_dati/' + _currentSpotId), beachData[_currentSpotId]);
-    showToast('🍹 Bar azzerato', 'info');
-    openSpotModal(_currentSpotId); // refresh scheda
-};
-window.smFreeSpot = () => {
-    if (!confirm('Liberare la postazione #' + _currentSpotId + '?')) return;
-    delete beachData[_currentSpotId];
-    set(ref(db, 'spiaggia_dati/' + _currentSpotId), null);
-    closeSpotDrawer();
-    showToast('Postazione #' + _currentSpotId + ' liberata', 'info');
-};
-window.smChangeLettinoQty = (delta) => {
-    const e = document.getElementById('sm-lettino-qty');
-    const disponibili = getLettinoDisponibili();
-    const nuovoVal = Math.max(1, parseInt(e.value) + delta);
-    if (disponibili === 0) {
-        e.value = 1;
-        showToast('Nessun lettino disponibile in magazzino!', 'warn');
-    } else if (nuovoVal > disponibili) {
-        e.value = disponibili;
-        showToast('Massimo ' + disponibili + ' lettino' + (disponibili > 1 ? 'i' : '') + ' disponibile' + (disponibili > 1 ? 'i' : ''), 'warn');
-    } else {
-        e.value = nuovoVal;
-    }
-};
-window.smAddLettini = () => {
-    const id = _currentSpotId;
-    const qty = parseInt(document.getElementById('sm-lettino-qty').value);
-    const disponibili = getLettinoDisponibili();
-    if (disponibili === 0) {
-        showToast('Nessun lettino disponibile in magazzino!', 'warn');
-        return;
-    }
-    if (qty > disponibili) {
-        showToast('Solo ' + disponibili + ' lettino' + (disponibili > 1 ? 'i' : '') + ' disponibile' + (disponibili > 1 ? 'i' : '') + ' in magazzino', 'warn');
-        document.getElementById('sm-lettino-qty').value = disponibili;
-        return;
-    }
-    const d = beachData[id];
-    const costoAggiunto = qty * prezzoLettino;
-    // Accumula il costo lettini in un campo dedicato, senza alterare il prezzo base
-    d.lettiniCosto = parseFloat((parseFloat(d.lettiniCosto || 0) + costoAggiunto).toFixed(2));
-    d.lettiniExtra = (parseInt(d.lettiniExtra || 0) + qty);
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast('Addebitati ' + qty + ' lettino' + (qty > 1 ? 'i' : '') + ' (' + costoAggiunto.toFixed(2) + '\u20ac) su #' + id, 'success');
-    openSpotModal(id);
-};
-
-// Nuova prenotazione
-window.nbSetTipo = (tipo) => {
-    document.getElementById('nb-tipo-val').value = tipo;
-    const gEl = document.getElementById('nb-tipo-g');
-    const sEl = document.getElementById('nb-tipo-s');
-    if (tipo === 'G') {
-        gEl.style.border = '2px solid var(--free)';
-        gEl.style.background = '#f0fdf4';
-        sEl.style.border = '2px solid var(--eb-border)';
-        sEl.style.background = 'white';
-        document.getElementById('nb-prezzo').placeholder = 'Es. 25.00';
-    } else {
-        sEl.style.border = '2px solid var(--eb-blue)';
-        sEl.style.background = 'var(--eb-blue-pale)';
-        gEl.style.border = '2px solid var(--eb-border)';
-        gEl.style.background = 'white';
-        document.getElementById('nb-prezzo').placeholder = 'Es. 500.00';
-    }
-};
-window.nbConfirm = () => {
-    const id = _currentSpotId;
-    const nome = document.getElementById('nb-nome').value.trim();
-    if (!nome) { showToast('Inserisci il nome del cliente', 'warn'); return; }
-    const tel = document.getElementById('nb-tel').value.trim() || '-';
-    const tipo = document.getElementById('nb-tipo-val').value;
-    const isS = tipo === 'S';
-    const prezzo = parseFloat(document.getElementById('nb-prezzo').value);
-    if (isNaN(prezzo) || prezzo <= 0) { showToast('Inserisci un prezzo valido', 'warn'); return; }
-    const arrivo = document.getElementById('nb-arrivo').value;
-    const partenza = document.getElementById('nb-partenza').value;
-    const weather = document.getElementById('nb-weather').checked;
-
-    // Converti date da yyyy-mm-dd a dd/mm/yyyy per consistenza
-    const toIT = d => d ? d.split('-').reverse().join('/') : new Date().toLocaleDateString('it-IT');
-
-    beachData[id] = {
-        nome: nome.toUpperCase(), telefono: tel, email: '-',
-        prezzo: prezzo.toFixed(2), isSeasonal: isS,
-        pagamento: 'nessuno', barTotal: 0, rate: [],
-        dataArrivo: toIT(arrivo), dataPartenza: toIT(partenza),
-        weatherGuarantee: weather, cancellationPolicy: 'nessuna', note: ''
-    };
-    set(ref(db, 'spiaggia_dati/' + id), beachData[id]);
-    closeModals();
-    showToast('✓ #' + id + ' — ' + nome.toUpperCase() + ' registrato', 'success');
-};
-
-// ── PAYMENT MODAL ──
-window.openPaymentModal = (id) => {
-    currentEditingId=id;
-    const d=beachData[id];
-    if(!d.rate) d.rate=[];
-    document.getElementById('pm-title').innerText=`#${id} · ${d.nome} · Pagamenti`;
-    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
-    const paid=(d.rate||[]).reduce((s,r)=>s+r.importo,0);
-    const pct=total>0?Math.min(100,Math.round((paid/total)*100)):0;
-    const lettinoNote=parseFloat(d.lettiniCosto||0)>0?' (inc. 🛌'+parseFloat(d.lettiniCosto).toFixed(2)+'€)':'';
-    document.getElementById('pm-total').innerText=total.toFixed(2)+'€'+lettinoNote;
-    document.getElementById('pm-paid').innerText=paid.toFixed(2)+'€';
-    document.getElementById('pm-rem').innerText=(total-paid).toFixed(2)+'€';
-    document.getElementById('pm-progress').style.width=pct+'%';
-    document.getElementById('pm-weather').checked=d.weatherGuarantee||false;
-    document.getElementById('pm-cancellation').value=d.cancellationPolicy||'nessuna';
-    document.getElementById('pm-note').value=d.note||'';
-    document.getElementById('pm-history').innerHTML=d.rate.length
-        ? d.rate.map(r=>`<div style="padding:4px 0;border-bottom:1px solid var(--eb-bg);">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join('')
-        : '<div style="color:#aaa;text-align:center;padding:8px;">Nessun versamento</div>';
-    document.getElementById('payment-modal').style.display='block';
-    document.getElementById('overlay').style.display='block';
-};
-
-window.saveRata = () => {
-    const amt=parseFloat(document.getElementById('pm-new-amount').value);
-    if(isNaN(amt)||amt<=0) return showToast('Importo non valido','warn');
-    const d=beachData[currentEditingId];
-    d.rate.push({ importo:amt, data:new Date().toLocaleDateString('it-IT') });
-    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
-    const paid=d.rate.reduce((s,r)=>s+r.importo,0);
-    d.pagamento=paid>=total?'saldo':paid>0?'acconto':'nessuno';
-    set(ref(db, 'spiaggia_dati/' + currentEditingId), d);
-    document.getElementById('pm-new-amount').value='';
-    openPaymentModal(currentEditingId);
-    showToast(`✓ ${amt.toFixed(2)}€ registrati`, 'success');
-};
-
-window.saveModalExtras = () => {
-    const d=beachData[currentEditingId]; if(!d) return;
-    d.weatherGuarantee=document.getElementById('pm-weather').checked;
-    d.cancellationPolicy=document.getElementById('pm-cancellation').value;
-    d.note=document.getElementById('pm-note').value;
-    set(ref(db, 'spiaggia_dati/' + currentEditingId), d);
-    showToast('✓ Opzioni salvate', 'success');
-};
-
-// ── CANCEL MODAL ──
-window.openCancelModal = () => {
-    selectedCancelOption=null;
-    document.querySelectorAll('.cancel-option').forEach(el=>el.classList.remove('selected'));
-    document.getElementById('btn-confirm-cancel').disabled=true;
-    document.getElementById('cancel-modal').style.display='block';
-    document.getElementById('payment-modal').style.display='none';
-};
-window.selectCancelOption = (el, val) => {
-    document.querySelectorAll('.cancel-option').forEach(e=>e.classList.remove('selected'));
-    el.classList.add('selected'); selectedCancelOption=val;
-    document.getElementById('btn-confirm-cancel').disabled=false;
-};
-window.confirmCancel = () => {
-    if(!selectedCancelOption||!currentEditingId) return;
-    const d=beachData[currentEditingId];
-    const msgs = { rimborso:`✓ Prenotazione cancellata · Rimborso emesso per ${d.nome}`, voucher:`🎫 Voucher emesso per ${d.nome}`, trattieni:`🔒 Importo trattenuto · No-show ${d.nome}` };
-    delete beachData[currentEditingId];
-    set(ref(db, 'spiaggia_dati/' + currentEditingId), null);
-    closeModals();
-    showToast(msgs[selectedCancelOption]||'Cancellata', 'info');
-};
-
-window.closeModals = () => {
-    document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
-    document.getElementById('overlay').style.display='none';
-};
-
-// ── PRODOTTI ──
-window.addProdotto = () => {
-    const nome=document.getElementById('prod-nome').value.trim();
-    const prezzo=parseFloat(document.getElementById('prod-prezzo').value);
-    const colore=document.getElementById('prod-colore').value;
-    if(!nome||isNaN(prezzo)) return showToast('Dati non validi','warn');
-    dynamicProducts['p_'+Date.now()]={nome,prezzo,colore};
-    set(prodRef,dynamicProducts);
-    document.getElementById('prod-nome').value='';
-    document.getElementById('prod-prezzo').value='';
-    showToast('✓ Prodotto aggiunto', 'success');
-};
-window.deleteProdotto = (id) => { if(confirm('Eliminare?')){ delete dynamicProducts[id]; set(prodRef,dynamicProducts); } };
-
-function renderDynamicProducts() {
-    const admin=document.getElementById('lista-prodotti-admin');
-    const pos=document.getElementById('dynamic-pos-items');
-    let ah='', ph='';
-    Object.keys(dynamicProducts).forEach(id=>{
-        const p=dynamicProducts[id]; const c=p.colore||'#95a5a6';
-        ah+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);">
-            <span style="font-size:13px;display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block;"></span>${p.nome} · <b>${p.prezzo.toFixed(2)}€</b></span>
-            <button onclick="deleteProdotto('${id}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button>
-        </div>`;
-        ph+=`<button class="pos-btn" style="border-bottom-color:${c}" onclick="addToCart('${p.nome.replace(/'/g,"\\'")}',${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
-    });
-    if(admin) admin.innerHTML=ah||'<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">Nessun prodotto</div>';
-    if(pos) pos.innerHTML=ph;
-}
-
-// ── EXTRA ──
-window.changeQty = (d) => {
-    const e = document.getElementById('extra-qty');
-    const disponibili = getLettinoDisponibili();
-    const nuovoVal = Math.max(1, parseInt(e.value) + d);
-    if(nuovoVal > disponibili && disponibili > 0) {
-        e.value = disponibili;
-        showToast(`⚠️ Massimo ${disponibili} lettino${disponibili > 1 ? 'i' : ''} disponibile${disponibili > 1 ? 'i' : ''}`, 'warn');
-    } else if(disponibili === 0) {
-        e.value = 1;
-        showToast('⚠️ Nessun lettino disponibile in magazzino!', 'warn');
-    } else {
-        e.value = nuovoVal;
-    }
-};
-window.filterClientsExtra = () => {
-    const v=document.getElementById('extraSearch').value.toUpperCase();
-    const r=document.getElementById('extra-results');
-    if(v.length<1){ r.classList.add('hidden'); return; }
-    let h='';
-    Object.keys(beachData).forEach(id=>{ if(id.includes(v)||beachData[id].nome.includes(v)) h+=`<div class="search-item" onclick="selectExtra('${id}','${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
-    r.innerHTML=h; r.classList.remove('hidden');
-};
-window.selectExtra = (id,nome) => {
-    document.getElementById('extra-selected-id').value=id;
-    document.getElementById('extraSearch').value=`#${id} ${nome}`;
-    document.getElementById('extra-results').classList.add('hidden');
-};
-// Calcola lettini disponibili in magazzino sottraendo quelli già assegnati
-function getLettinoDisponibili() {
-    const totale = parseInt(warehouseData.lettini?.totale || 0);
-    const usati = Object.values(beachData).reduce((sum, d) => sum + parseInt(d?.lettiniExtra || 0), 0);
-    return Math.max(0, totale - usati);
-}
-
-window.chargeExtraToBeach = () => {
-    const id=document.getElementById('extra-selected-id').value;
-    const qty=parseInt(document.getElementById('extra-qty').value);
-    if(!id) return showToast('Seleziona un ombrellone','warn');
-    const disponibili = getLettinoDisponibili();
-    if(qty > disponibili) {
-        if(disponibili === 0) {
-            showToast('⚠️ Nessun lettino disponibile in magazzino!', 'warn');
-        } else {
-            showToast(`⚠️ Solo ${disponibili} lettino${disponibili > 1 ? 'i' : ''} disponibile${disponibili > 1 ? 'i' : ''} in magazzino`, 'warn');
-        }
-        // Correggi la quantità al massimo disponibile
-        document.getElementById('extra-qty').value = disponibili || 1;
-        return;
-    }
-    const d=beachData[id];
-    d.prezzo=(parseFloat(d.prezzo)+(qty*prezzoLettino)).toFixed(2);
-    d.lettiniExtra=(parseInt(d.lettiniExtra||0)+qty);
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast(`✓ ${qty}x lettino addebitato su #${id}`, 'success');
-};
-window.directPayExtra = () => {
-    const qty=parseInt(document.getElementById('extra-qty').value);
-    const disponibili = getLettinoDisponibili();
-    if(qty > disponibili) {
-        if(disponibili === 0) {
-            showToast('⚠️ Nessun lettino disponibile in magazzino!', 'warn');
-        } else {
-            showToast(`⚠️ Solo ${disponibili} lettino${disponibili > 1 ? 'i' : ''} disponibile${disponibili > 1 ? 'i' : ''} in magazzino`, 'warn');
-        }
-        document.getElementById('extra-qty').value = disponibili || 1;
-        return;
-    }
-    showToast('✓ Pagato in cassa!', 'success');
-};
-
-// ── BAR / CART ──
-let cart=[]; let cartTotal=0;
-window.addToCart = (n,p) => { cart.push({n,p}); updateCartUI(); };
-window.removeFromCart = (i) => { cart.splice(i,1); updateCartUI(); };
-function updateCartUI() {
-    cartTotal=cart.reduce((a,b)=>a+b.p,0);
-    document.getElementById('cart-list').innerHTML=cart.map((i,idx)=>
-        `<div class="cart-item"><span>${i.n}</span><div style="display:flex;align-items:center;gap:6px;"><b>${i.p.toFixed(2)}€</b><span class="remove-btn" onclick="removeFromCart(${idx})">🗑️</span></div></div>`
-    ).join('');
-    document.getElementById('cart-total').innerText=cartTotal.toFixed(2);
-}
-window.openBeerMenu = () => { document.getElementById('beer-menu').style.display='block'; document.getElementById('overlay').style.display='block'; };
-window.closeBeerMenu = () => { document.getElementById('beer-menu').style.display='none'; document.getElementById('overlay').style.display='none'; };
-window.filterClients = () => {
-    const v=document.getElementById('clientSearch').value.toUpperCase();
-    const r=document.getElementById('search-results');
-    if(v.length<1){ r.classList.add('hidden'); return; }
-    let h='';
-    Object.keys(beachData).forEach(id=>{ if(id.includes(v)||beachData[id].nome.includes(v)) h+=`<div class="search-item" onclick="selectClient('${id}','${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`; });
-    r.innerHTML=h; r.classList.remove('hidden');
-};
-window.selectClient = (id,nome) => {
-    document.getElementById('selected-id').value=id;
-    document.getElementById('clientSearch').value=`#${id} ${nome}`;
-    document.getElementById('search-results').classList.add('hidden');
-};
-window.chargeToSelected = () => {
-    const id=document.getElementById('selected-id').value;
-    if(!id||cartTotal===0) return showToast('Seleziona un cliente e aggiungi prodotti','warn');
-    beachData[id].barTotal=(parseFloat(beachData[id].barTotal||0)+cartTotal).toFixed(2);
-    set(ref(db, 'spiaggia_dati/' + id), beachData[id]);
-    showToast(`✓ ${cartTotal.toFixed(2)}€ addebitati su #${id}`, 'success');
-    cart=[]; updateCartUI();
-    document.getElementById('selected-id').value='';
-    document.getElementById('clientSearch').value='';
-};
-
-// ── CONSUMAZIONI OMBRELLONE ──
-// Ogni consumazione: { nome, prezzo, ora }
-// Salvate in beachData[id].consumazioni = []
-
-function sdRenderConsumazioni(id) {
-    const d = beachData[id];
-    const cons = d?.consumazioni || [];
-    const total = cons.reduce((s, c) => s + parseFloat(c.prezzo || 0), 0);
-
-    // Badge totale
-    const badge = document.getElementById('sd-cons-total-badge');
-    if (badge) {
-        badge.textContent = total.toFixed(2) + '€';
-        badge.style.background = total > 0 ? 'var(--bar)' : 'var(--eb-muted)';
-    }
-
-    // Lista
-    const list = document.getElementById('sd-cons-list');
-    if (!list) return;
-    if (!cons.length) {
-        list.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna consumazione registrata</div>';
-    } else {
-        list.innerHTML = cons.map((c, idx) => `
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--eb-bg);font-size:13px;">
-                <div style="display:flex;align-items:center;gap:8px;flex:1;">
-                    <span style="font-size:16px;">🥤</span>
-                    <div>
-                        <div style="font-weight:600;color:var(--eb-text);">${c.nome}</div>
-                        <div style="font-size:10px;color:var(--eb-muted);">🕐 ${c.ora}</div>
-                    </div>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-weight:700;color:var(--bar);">+${parseFloat(c.prezzo).toFixed(2)}€</span>
-                    <button onclick="sdRemoveConsumazione(${idx})" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-family:Poppins,sans-serif;">✕</button>
-                </div>
-            </div>`).join('');
-        // Riga totale
-        list.innerHTML += `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--eb-bg);font-size:13px;font-weight:700;">
-            <span>Totale consumazioni</span>
-            <span style="color:var(--bar);font-size:15px;">${total.toFixed(2)}€</span>
-        </div>`;
-    }
-
-    // Prodotti rapidi dal menu dinamico
-    const quick = document.getElementById('sd-cons-quick');
-    if (quick) {
-        const prods = Object.values(dynamicProducts);
-        if (prods.length) {
-            quick.innerHTML = prods.map(p =>
-                `<button onclick="sdQuickAdd('${p.nome.replace(/'/g,"\\'")}',${p.prezzo})" style="padding:5px 12px;border:1.5px solid ${p.colore||'#f97316'}33;background:${p.colore||'#f97316'}18;color:${p.colore||'#f97316'};border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif;transition:all 0.15s;">${p.nome} ${p.prezzo.toFixed(2)}€</button>`
-            ).join('');
-        } else {
-            quick.innerHTML = '<span style="font-size:11px;color:var(--eb-muted);">Nessun prodotto nel menu</span>';
-        }
-    }
-}
-
-window.sdQuickAdd = (nome, prezzo) => {
-    document.getElementById('sd-cons-nome').value = nome;
-    document.getElementById('sd-cons-prezzo').value = prezzo.toFixed(2);
-};
-
-window.sdAddConsumazione = () => {
-    const id = _currentSpotId;
-    if (!id) return;
-    const nomeEl = document.getElementById('sd-cons-nome');
-    const prezzoEl = document.getElementById('sd-cons-prezzo');
-    const nome = nomeEl.value.trim();
-    const prezzo = parseFloat(prezzoEl.value);
-    if (!nome) return showToast('Inserisci il nome della consumazione', 'warn');
-    if (isNaN(prezzo) || prezzo <= 0) return showToast('Inserisci un prezzo valido', 'warn');
-
-    const d = beachData[id];
-    if (!d.consumazioni) d.consumazioni = [];
-    const now = new Date();
-    const ora = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-    d.consumazioni.push({ nome, prezzo, ora });
-
-    // Aggiorna anche il barTotal per compatibilità con il sistema esistente
-    d.barTotal = parseFloat((parseFloat(d.barTotal || 0) + prezzo).toFixed(2));
-
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    nomeEl.value = '';
-    prezzoEl.value = '';
-    sdRenderConsumazioni(id);
-    // Aggiorna tile bar nel drawer
-    const barTile = document.getElementById('sm-bar');
-    if (barTile) barTile.textContent = parseFloat(d.barTotal).toFixed(2) + '€';
-    // Mostra pulsante "Azzera Bar"
-    const barBtn = document.getElementById('sm-bar-btn');
-    if (barBtn) barBtn.style.display = 'flex';
-    showToast(`✓ ${nome} (+${prezzo.toFixed(2)}€) addebitato su #${id}`, 'success');
-};
-
-window.sdRemoveConsumazione = (idx) => {
-    const id = _currentSpotId;
-    if (!id) return;
-    const d = beachData[id];
-    if (!d.consumazioni || !d.consumazioni[idx]) return;
-    const rimossa = d.consumazioni[idx];
-    if (!confirm(`Rimuovere "${rimossa.nome}" (${parseFloat(rimossa.prezzo).toFixed(2)}€)?`)) return;
-    d.consumazioni.splice(idx, 1);
-    // Ricalcola barTotal dal totale delle consumazioni rimaste
-    const nuovoTotal = d.consumazioni.reduce((s, c) => s + parseFloat(c.prezzo || 0), 0);
-    d.barTotal = parseFloat(nuovoTotal.toFixed(2));
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    sdRenderConsumazioni(id);
-    const barTile = document.getElementById('sm-bar');
-    if (barTile) barTile.textContent = nuovoTotal.toFixed(2) + '€';
-    const barBtn = document.getElementById('sm-bar-btn');
-    if (barBtn) barBtn.style.display = nuovoTotal > 0 ? 'flex' : 'none';
-    showToast('Consumazione rimossa', 'info');
-};
-
-
-// ════════════════════════════════════════════════════════════════════════
-// ── SISTEMA SUBAFFITTO V2 ─────────────────────────────────────────────
-// Regole:
-//   • Le date libere appaiono come "sublet" sulla mappa spiaggia
-//   • Se una data è occupata da un ospite, lo spot mostra il badge 🔄 + nome ospite
-//   • Accredito automatico al titolare: 5€/gg ceduto (aggiunto a d.subletCredito)
-//   • Ospite paga 20€ base + extra; salvato in d.subletGuests[]
-// ════════════════════════════════════════════════════════════════════════
-
-const SUBLET_BASE_PRICE = 20;
-const SUBLET_CREDIT_PER_DAY = 5;
-
-function slbmTodayStr() {
-    return new Date().toLocaleDateString('it-IT');
-}
-function slbmIsGuestActive(guest, dateStr) {
-    return guest && guest.dates && guest.dates.includes(dateStr);
-}
-function slbmGetTodayGuest(id) {
-    const d = beachData[id];
-    if (!d || !d.subletGuests) return null;
-    const today = slbmTodayStr();
-    return d.subletGuests.find(g => g.active && slbmIsGuestActive(g, today)) || null;
-}
-function slbmDateHasGuest(id, dateStr) {
-    const d = beachData[id];
-    if (!d || !d.subletGuests) return false;
-    return d.subletGuests.some(g => g.active && g.dates && g.dates.includes(dateStr));
-}
-
-// ── Patch mappa spiaggia: sovrascrive spot in subaffitto dopo ogni render ──
-(function() {
-    if (window._subletPatchInstalled) return;
-    window._subletPatchInstalled = true;
-    window._slbmPatchSpots = function() {
-        const today = slbmTodayStr();
-        for (let i = 1; i <= 200; i++) {
-            const d = beachData[i];
-            if (!d || !d.isSeasonal) continue;
-            if (!d.subletDates || !d.subletDates.length) continue;
-            const sector = i <= 100
-                ? document.getElementById('sector-west')
-                : document.getElementById('sector-east');
-            if (!sector) continue;
-            const idx = i <= 100 ? i - 1 : i - 101;
-            const spotEl = sector.children[idx];
-            if (!spotEl) continue;
-            const todayIsSublet = d.subletDates.includes(today);
-            const todayGuest = slbmGetTodayGuest(i);
-            if (todayGuest) {
-                spotEl.className = 'spot sublet status-' + (todayGuest.pagato ? 'saldo' : 'nessuno');
-                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
-                spotEl.innerHTML = `${barHtml}<div class="pay-indicator"></div><div style="position:absolute;top:-7px;left:-3px;background:#0891b2;color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;box-shadow:0 2px 4px rgba(8,145,178,0.4);">🔄</div><b>${i}</b><div class="owner">${todayGuest.nome}</div>`;
-                spotEl.onclick = () => slbmOpenSpotGuest(i);
-            } else if (todayIsSublet) {
-                spotEl.className = 'spot sublet';
-                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
-                spotEl.innerHTML = `${barHtml}<div style="position:absolute;top:-7px;left:-3px;background:#0891b2;color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;box-shadow:0 2px 4px rgba(8,145,178,0.4);">🔄</div><b>${i}</b><div class="owner" style="color:#0891b2;font-weight:700;">SUB</div>`;
-                spotEl.onclick = () => slbmOpenBookingFromSpot(i);
-            }
-        }
-    };
-    // Hook nel listener Firebase esistente tramite override di renderSpiaggia
-    const _orig = renderSpiaggia;
-    window.renderSpiaggia = function() { _orig(); setTimeout(window._slbmPatchSpots, 10); };
-})();
-
-// ── Variabili di stato ────────────────────────────────────────────────
-let _slbmCurrentId = null;
-let _slbmSelectedDates = [];
-
-// ── Apri modal da pulsante "Subaffitto" nel drawer ────────────────────
-window.smAddSublet = () => { closeSpotDrawer(); slbmOpen(_currentSpotId); };
-
-window.slbmOpen = (id) => {
-    _slbmCurrentId = id;
-    _slbmSelectedDates = [];
-    const d = beachData[id];
-    if (!d) return;
-    document.getElementById('slbm-title').textContent = `Ombrellone #${id} — ${d.nome}`;
-    document.getElementById('slbm-sub').textContent = `Stagionale · ${d.prezzo}€ · Subaffitto`;
-    document.getElementById('slbm-nome').value = '';
-    document.getElementById('slbm-tel').value = '';
-    document.getElementById('slbm-pagato').checked = false;
-    document.querySelectorAll('.slbm-extra-cb').forEach(cb => cb.checked = false);
-    const ci = document.getElementById('slbm-custom-extra'); if (ci) ci.value = '';
-    slbmBuildDatesPicker(id);
-    slbmCalcPreview();
-    document.getElementById('sublet-booking-modal').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-};
-
-window.slbmOpenBookingFromSpot = (id) => {
-    _slbmCurrentId = id;
-    _slbmSelectedDates = [slbmTodayStr()];
-    const d = beachData[id];
-    document.getElementById('slbm-title').textContent = `Ombrellone #${id} — ${d.nome}`;
-    document.getElementById('slbm-sub').textContent = `Disponibile oggi · Registra ospite`;
-    document.getElementById('slbm-nome').value = '';
-    document.getElementById('slbm-tel').value = '';
-    document.getElementById('slbm-pagato').checked = false;
-    document.querySelectorAll('.slbm-extra-cb').forEach(cb => cb.checked = false);
-    const ci = document.getElementById('slbm-custom-extra'); if (ci) ci.value = '';
-    slbmBuildDatesPicker(id);
-    slbmCalcPreview();
-    document.getElementById('sublet-booking-modal').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-};
-
-window.slbmOpenSpotGuest = (id) => {
-    const guest = slbmGetTodayGuest(id);
-    const d = beachData[id];
-    if (!guest) { handleOmbrellone(id); return; }
-    const info = `🔄 Subaffitto attivo\n👤 Ospite: ${guest.nome}\n📞 ${guest.telefono||'-'}\n📅 Date: ${(guest.dates||[]).join(', ')}\n💰 Pagato: ${guest.pagato?(guest.totalePagato||0).toFixed(2)+'€':'Non ancora'}\n\n🏖️ Titolare: ${d.nome}\n💰 Accredito maturato: ${parseFloat(d.subletCredito||0).toFixed(2)}€\n\nVuoi aprire la scheda del titolare?`;
-    if (confirm(info)) openSpotModal(id);
-};
-
-function slbmBuildDatesPicker(id) {
-    const d = beachData[id];
-    const picker = document.getElementById('slbm-dates-picker');
-    if (!picker) return;
-    const dates = d.subletDates || [];
-    if (!dates.length) {
-        picker.innerHTML = '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data libera. Aggiungile dalla sezione Subaffitto.</span>';
-        return;
-    }
-    picker.innerHTML = dates.map(dt => {
-        const hasGuest = slbmDateHasGuest(id, dt);
-        const sel = _slbmSelectedDates.includes(dt);
-        return `<div onclick="${hasGuest ? '' : `slbmToggleDate('${dt}')`}" id="slbm-dp-${dt.replace(/\//g,'-')}"
-            style="padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:${hasGuest?'not-allowed':'pointer'};
-            border:2px solid ${hasGuest?'#d1d5db':sel?'#0891b2':'var(--eb-border)'};
-            background:${hasGuest?'#f3f4f6':sel?'#ecfeff':'white'};
-            color:${hasGuest?'#9ca3af':sel?'#0891b2':'var(--eb-muted)'};
-            transition:all 0.15s;user-select:none;">
-            ${hasGuest?'🔒':sel?'✓ ':''} ${dt}${hasGuest?' (occupata)':''}
-        </div>`;
-    }).join('');
-}
-
-window.slbmToggleDate = (dt) => {
-    _slbmSelectedDates = _slbmSelectedDates.includes(dt)
-        ? _slbmSelectedDates.filter(x => x !== dt)
-        : [..._slbmSelectedDates, dt];
-    slbmBuildDatesPicker(_slbmCurrentId);
-    slbmCalcPreview();
-};
-
-window.slbmCalcPreview = () => {
-    const preview = document.getElementById('slbm-calc-preview');
-    if (!preview) return;
-    const days = _slbmSelectedDates.length;
-    let extraTotal = 0;
-    document.querySelectorAll('.slbm-extra-cb').forEach(cb => {
-        if (!cb.checked) return;
-        if (cb.dataset.custom === '1') {
-            const v = parseFloat(document.getElementById('slbm-custom-extra')?.value || 0);
-            if (!isNaN(v) && v > 0) extraTotal += v * days;
-        } else {
-            extraTotal += parseFloat(cb.dataset.price || 0) * days;
-        }
-    });
-    const credit = days * SUBLET_CREDIT_PER_DAY;
-    const total = SUBLET_BASE_PRICE + extraTotal;
-    if (days === 0) { preview.style.display = 'none'; return; }
-    preview.style.display = 'block';
-    document.getElementById('slbm-prev-days').textContent = `${days} gg`;
-    document.getElementById('slbm-prev-credit').textContent = `+${credit.toFixed(2)}€`;
-    document.getElementById('slbm-prev-base').textContent = `${SUBLET_BASE_PRICE.toFixed(2)}€`;
-    const extRow = document.getElementById('slbm-prev-extras-row');
-    const extVal = document.getElementById('slbm-prev-extras');
-    if (extRow && extVal) { extRow.style.display = extraTotal > 0 ? 'flex' : 'none'; extVal.textContent = `${extraTotal.toFixed(2)}€`; }
-    document.getElementById('slbm-prev-total').textContent = `${total.toFixed(2)}€`;
-};
-
-window.slbmConfirm = () => {
-    const id = _slbmCurrentId;
-    const nome = document.getElementById('slbm-nome').value.trim().toUpperCase();
-    const tel = document.getElementById('slbm-tel').value.trim() || '-';
-    const pagato = document.getElementById('slbm-pagato').checked;
-    if (!nome) return showToast('Inserisci il nome dell\'ospite', 'warn');
-    if (_slbmSelectedDates.length === 0) return showToast('Seleziona almeno una data', 'warn');
-    const d = beachData[id];
-    if (!d.subletGuests) d.subletGuests = [];
-    let extraTotale = 0, extraDettaglio = [];
-    document.querySelectorAll('.slbm-extra-cb').forEach(cb => {
-        if (!cb.checked) return;
-        if (cb.dataset.custom === '1') {
-            const v = parseFloat(document.getElementById('slbm-custom-extra')?.value || 0);
-            if (!isNaN(v) && v > 0) { extraTotale += v * _slbmSelectedDates.length; extraDettaglio.push({ nome: 'Extra personalizzato', prezzo: v }); }
-        } else {
-            const price = parseFloat(cb.dataset.price || 0);
-            const lbl = cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim() || 'Extra';
-            extraTotale += price * _slbmSelectedDates.length;
-            extraDettaglio.push({ nome: lbl, prezzo: price });
-        }
-    });
-    const days = _slbmSelectedDates.length;
-    const totalePagato = SUBLET_BASE_PRICE + extraTotale;
-    const creditoAggiunto = days * SUBLET_CREDIT_PER_DAY;
-    d.subletGuests.push({ nome, telefono: tel, dates: [..._slbmSelectedDates], totalePagato: pagato ? totalePagato : 0, basePrice: SUBLET_BASE_PRICE, extraDettaglio, extraTotale, pagato, active: true, registratoIl: new Date().toLocaleDateString('it-IT') });
-    d.subletCredito = parseFloat((parseFloat(d.subletCredito || 0) + creditoAggiunto).toFixed(2));
-    d.subletActive = true;
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    closeModals();
-    showToast(`✓ ${nome} registrato · Accredito +${creditoAggiunto.toFixed(2)}€ al titolare`, 'success');
-    if (document.getElementById('spot-drawer').classList.contains('open')) openSpotModal(id);
-};
-
-// ── Render schermata Subaffitto (sovrascrive quella originale) ─────────
-window.renderSubaffitto = function() {
-    const container = document.getElementById('sublet-list');
-    if (!container) return;
-    const stagionali = Object.keys(beachData).filter(id => beachData[id]?.isSeasonal);
-    if (!stagionali.length) {
-        container.innerHTML = '<div style="font-size:13px;color:var(--eb-muted);text-align:center;padding:40px;">Nessun ombrellone stagionale registrato</div>';
-        slbmRenderTodayBanner(); return;
-    }
-    const today = slbmTodayStr();
-    let html = '';
-    stagionali.forEach(id => {
-        const d = beachData[id];
-        const dates = d.subletDates || [];
-        const guests = d.subletGuests || [];
-        const credito = parseFloat(d.subletCredito || 0);
-        const datesHtml = dates.length ? dates.map(dt => {
-            const guest = guests.find(g => g.active && g.dates && g.dates.includes(dt));
-            const isToday = dt === today;
-            if (guest) return `<div onclick="slbmShowGuestDetail('${id}','${dt}')" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#ecfeff;border:2px solid #0891b2;font-size:12px;font-weight:700;color:#0891b2;cursor:pointer;">🔄 ${dt} · <b>${guest.nome}</b> <span style="font-size:10px;background:#0891b2;color:white;padding:1px 7px;border-radius:10px;">${guest.pagato?'✓ Pagato':'⏳ Da pagare'}</span></div>`;
-            return `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:${isToday?'#fef3c7':'white'};border:2px solid ${isToday?'#f59e0b':'var(--eb-border)'};font-size:12px;font-weight:600;color:var(--eb-muted);">
-                <span onclick="slbmOpenBookingFromDate('${id}','${dt}')" style="cursor:pointer;">📅 ${dt}${isToday?' ⬅️':''}</span>
-                <button onclick="slbmRemoveDate('${id}','${dt}')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:11px;padding:0;margin-left:2px;" title="Rimuovi">✕</button>
-            </div>`;
-        }).join('') : '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data inserita</span>';
-
-        const pastGuests = guests.filter(g => g.active);
-        const guestsHtml = pastGuests.length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>
-            ${pastGuests.map((g, gi) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);">
-                <div><b style="color:var(--eb-text);">${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}</span><br><span style="color:#0891b2;">${(g.dates||[]).join(', ')}</span></div>
-                <div style="text-align:right;flex-shrink:0;margin-left:10px;">
-                    <div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(g.totalePagato||0).toFixed(2)+'€':'⏳ Da pagare'}</div>
-                    <button onclick="slbmToggleGuestPaid('${id}',${gi})" style="font-size:10px;background:none;border:1px solid ${g.pagato?'var(--eb-muted)':'var(--free)'};color:${g.pagato?'var(--eb-muted)':'var(--free)'};border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Poppins,sans-serif;margin-top:3px;">${g.pagato?'✓ Pagato':'Segna Pagato'}</button>
-                </div>
-            </div>`).join('')}
-        </div>` : '';
-
-        html += `<div class="sublet-card">
-            <div class="sublet-header">
-                <div>
-                    <div class="sublet-name">🏖️ #${id} — ${d.nome}</div>
-                    <div class="sublet-spot" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:4px;">
-                        <span>Stagionale · ${d.prezzo}€</span>
-                        ${credito > 0 ? `<span style="color:var(--free);font-weight:700;background:#dcfce7;padding:2px 10px;border-radius:20px;font-size:11px;">💰 Accredito: +${credito.toFixed(2)}€</span>` : ''}
-                    </div>
-                </div>
-                <button class="btn-sm btn-sea" onclick="slbmOpenAddDate('${id}')">+ Data libera</button>
-            </div>
-            <div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>
-            ${guestsHtml}
-        </div>`;
-    });
-    container.innerHTML = html;
-    slbmRenderTodayBanner();
-};
-
-function slbmRenderTodayBanner() {
-    const today = slbmTodayStr();
-    const banner = document.getElementById('sublet-today-banner');
-    const list = document.getElementById('sublet-today-list');
-    if (!banner || !list) return;
-    const active = [];
-    Object.keys(beachData).forEach(id => {
-        const d = beachData[id];
-        if (!d || !d.subletGuests) return;
-        const g = d.subletGuests.find(x => x.active && x.dates && x.dates.includes(today));
-        if (g) active.push({ id, ospite: g.nome, pagato: g.pagato, totale: g.totalePagato || 0 });
-    });
-    if (!active.length) { banner.style.display = 'none'; return; }
-    banner.style.display = 'block';
-    list.innerHTML = active.map(a => `<div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:7px 13px;font-size:12px;color:white;"><b>#${a.id}</b> · ${a.ospite} <span style="opacity:0.85;">${a.pagato?'✓ '+a.totale.toFixed(2)+'€':'⏳ Da pagare'}</span></div>`).join('');
-}
-
-window.slbmOpenAddDate = (id) => {
-    const dt = prompt('Data da rendere disponibile (gg/mm/aaaa):');
-    if (!dt) return;
-    const d = beachData[id];
-    if (!d.subletDates) d.subletDates = [];
-    if (d.subletDates.includes(dt)) return showToast('Data già presente', 'warn');
-    d.subletDates.push(dt); d.subletActive = true;
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast('📅 Data aggiunta', 'success');
-};
-// Esposta su window: il calendario V4 chiama questa per salvare su Firebase
+// ── SUBAFFITTO HELPERS ────────────────────────────────────────────────────
+const slbmTodayGuest  = id => (beachData[id]?.subletGuests||[]).find(g => g.active && (g.dates||[]).includes(todayIT())) || null;
+const slbmDateHasGuest= (id, dt) => (beachData[id]?.subletGuests||[]).some(g => g.active && (g.dates||[]).includes(dt));
+
+// Esposte su window per accesso dal calendario (fuori dal modulo ES)
+window.slbmGetBeachEntry = id => beachData[id];
 window.slbmSaveDates = (id, newDates) => {
     const d = beachData[id]; if (!d) return;
     if (!d.subletDates) d.subletDates = [];
     let added = 0;
     newDates.forEach(dt => { if (!d.subletDates.includes(dt)) { d.subletDates.push(dt); added++; } });
     d.subletActive = true;
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast('📅 ' + added + ' data' + (added>1?'e':'') + ' aggiunta' + (added>1?'e':''), 'success');
-};
-// Esposta su window: permette al calendario di leggere i dati senza accedere al modulo
-window.slbmGetBeachEntry = (id) => beachData[id];
-window.slbmRemoveDate = (id, dt) => {
-    if (!confirm(`Rimuovere il ${dt}?`)) return;
-    if (slbmDateHasGuest(id, dt)) return showToast('Non puoi rimuovere una data con ospite registrato', 'warn');
-    const d = beachData[id];
-    d.subletDates = (d.subletDates || []).filter(x => x !== dt);
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast('Data rimossa', 'info');
-};
-window.slbmOpenBookingFromDate = (id, dt) => {
-    _slbmCurrentId = id; _slbmSelectedDates = [dt];
-    const d = beachData[id];
-    document.getElementById('slbm-title').textContent = `Ombrellone #${id} — ${d.nome}`;
-    document.getElementById('slbm-sub').textContent = `Registra ospite per ${dt}`;
-    document.getElementById('slbm-nome').value = '';
-    document.getElementById('slbm-tel').value = '';
-    document.getElementById('slbm-pagato').checked = false;
-    document.querySelectorAll('.slbm-extra-cb').forEach(cb => cb.checked = false);
-    const ci = document.getElementById('slbm-custom-extra'); if (ci) ci.value = '';
-    slbmBuildDatesPicker(id); slbmCalcPreview();
-    document.getElementById('sublet-booking-modal').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
-};
-window.slbmShowGuestDetail = (id, dt) => {
-    const d = beachData[id];
-    const g = (d.subletGuests || []).find(x => x.active && x.dates && x.dates.includes(dt));
-    if (!g) return;
-    alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 Date: ${(g.dates||[]).join(', ')}\n💰 Totale: ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`);
-};
-window.slbmToggleGuestPaid = (id, gi) => {
-    const d = beachData[id];
-    if (!d.subletGuests?.[gi]) return;
-    d.subletGuests[gi].pagato = !d.subletGuests[gi].pagato;
-    set(ref(db, 'spiaggia_dati/' + id), d);
-    showToast(d.subletGuests[gi].pagato ? '✓ Ospite pagato' : 'Pagamento rimosso', 'info');
+    fdb(id, d);
+    showToast(`📅 ${added} data${added>1?'e':''} aggiunta${added>1?'e':''}`, 'success');
 };
 
-// ── Sezione credito subaffitto nel drawer ombrellone ──────────────────
-const _origOpenSpotModal2 = openSpotModal;
-window.openSpotModal = function(id) {
-    _origOpenSpotModal2(id);
-    const d = beachData[id];
-    if (!d || !d.isSeasonal) { const s = document.getElementById('sd-sublet-credit-sec'); if(s) s.remove(); return; }
-    const credito = parseFloat(d.subletCredito || 0);
-    const guests = (d.subletGuests || []).filter(g => g.active);
-    let creditSec = document.getElementById('sd-sublet-credit-sec');
-    if (credito > 0 || guests.length > 0) {
-        if (!creditSec) {
-            creditSec = document.createElement('div');
-            creditSec.id = 'sd-sublet-credit-sec';
-            creditSec.className = 'sd-section';
-            const consWrap = document.getElementById('sd-consumazioni-wrap');
-            if (consWrap) consWrap.parentNode.insertBefore(creditSec, consWrap);
-        }
-        creditSec.innerHTML = `
-            <div class="sd-section-title" style="display:flex;justify-content:space-between;align-items:center;">
-                <span>🔄 Subaffitto</span>
-                ${credito > 0 ? `<span style="font-size:11px;font-weight:700;background:var(--free);color:white;padding:2px 10px;border-radius:20px;">+${credito.toFixed(2)}€</span>` : ''}
-            </div>
-            ${credito > 0 ? `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px;color:#166534;">
-                💰 Accredito maturato: <b>${credito.toFixed(2)}€</b> (${Math.round(credito/SUBLET_CREDIT_PER_DAY)} giorni ceduti)
-            </div>` : ''}
-            ${guests.length ? `<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:7px;">Ospiti</div>
-            ${guests.map(g => `<div style="background:var(--eb-bg);border-radius:8px;padding:9px 12px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);">
-                <b style="color:#0891b2;">${g.nome}</b> · ${(g.dates||[]).join(', ')}<br>
-                <span style="color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?'✓ '+((g.totalePagato||0).toFixed(2))+'€':'⏳ Da pagare'}</span>
-            </div>`).join('')}` : `<div style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessun ospite registrato</div>`}
-        `;
-    } else if (creditSec) { creditSec.remove(); }
+// ── NAV ──────────────────────────────────────────────────────────────────
+window.navTo = id => {
+    if (currentUser?.role === 'staff' && !STAFF_SCREENS.includes(id)) { showToast('⛔ Accesso non autorizzato','warn'); return; }
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+    $(id).classList.remove('hidden');
+    if (id === 'screen-home')       { updateHomeDate(); renderToday(); }
+    if (id === 'screen-subaffitto') renderSubaffitto();
+    if (id === 'screen-magazzino')  renderWarehouse();
+    if (id === 'screen-archivio')   { buildArchivioRows(); filterArchivio(); }
+    if (id === 'screen-admin-utenti') renderUtenti();
+    if (id === 'screen-spiaggia')   setTimeout(patchSubletSpots, 60);
 };
 
-// ════════════════════════════════════════════════════════════════════════
-// FINE SISTEMA SUBAFFITTO V2
-// ════════════════════════════════════════════════════════════════════════
-
-
-// ════════════════════════════════════════════════════════════════════════
-// PATCH V3: SPOT COLORATI PIENI + INFO SUBAFFITTO NEL DRAWER TITOLARE
-// ════════════════════════════════════════════════════════════════════════
-
-// 1. CSS spot colorati pieni
-(function injectSpotColorCSS() {
-    const style = document.createElement('style');
-    style.textContent = `
-        .spot.free { background:#f1f5f9; border-color:#cbd5e1; }
-        .spot.free b { color:#94a3b8; }
-        .spot.free .owner { color:#94a3b8; }
-        .spot.booked { background:#f97316; border-color:#ea6b0a; }
-        .spot.booked b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
-        .spot.booked .owner { color:rgba(255,255,255,.88); }
-        .spot.booked:hover { background:#fb923c; }
-        .spot.seasonal { background:#0d5c8c; border-color:#0a4a72; }
-        .spot.seasonal b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
-        .spot.seasonal .owner { color:rgba(255,255,255,.82); }
-        .spot.seasonal:hover { background:#1a7db8; }
-        .spot.sublet { background:#0891b2; border-color:#0779a0; }
-        .spot.sublet b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
-        .spot.sublet .owner { color:rgba(255,255,255,.88); }
-        .spot.sublet:hover { background:#22a8c8; }
-        .spot.sublet-guest { background:#0e7490; border-color:#0c6278; }
-        .spot.sublet-guest b { color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.2); }
-        .spot.sublet-guest .owner { color:rgba(255,255,255,.88); }
-        .spot.sublet-guest:hover { background:#1590b0; }
-        .spot.booked .pay-indicator,
-        .spot.seasonal .pay-indicator,
-        .spot.sublet .pay-indicator,
-        .spot.sublet-guest .pay-indicator { border-color:rgba(255,255,255,.85); }
-        .spot.booked .bar-badge,
-        .spot.seasonal .bar-badge,
-        .spot.sublet .bar-badge,
-        .spot.sublet-guest .bar-badge { background:rgba(0,0,0,.3); box-shadow:none; }
-        .spot.booked .weather-badge,
-        .spot.seasonal .weather-badge,
-        .spot.sublet .weather-badge,
-        .spot.sublet-guest .weather-badge { background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.3); }
-        .sd-sublet-guest-banner { background:linear-gradient(135deg,#0891b2,#22d3ee); border-radius:12px; padding:14px 16px; color:white; margin-bottom:10px; }
-        .sd-sublet-guest-banner .sgb-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; opacity:.8; margin-bottom:6px; }
-        .sd-sublet-guest-banner .sgb-name { font-size:16px; font-weight:700; margin-bottom:3px; }
-        .sd-sublet-guest-banner .sgb-dates { font-size:11px; opacity:.85; }
-        .sd-sublet-guest-banner .sgb-pay { display:inline-block; margin-top:7px; background:rgba(255,255,255,.22); border-radius:20px; padding:3px 12px; font-size:11px; font-weight:700; }
-    `;
-    document.head.appendChild(style);
-})();
-
-// 2. Aggiorna legenda mappa
-(function patchBeachLegend() {
-    function doUpdate() {
-        const legend = document.querySelector('.beach-legend');
-        if (!legend) return;
-        legend.innerHTML = `
-            <div class="legend-item"><div class="legend-dot" style="background:#f1f5f9;border:2px solid #cbd5e1;border-radius:3px;width:12px;height:12px;"></div>Libero</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#f97316;border-radius:3px;width:12px;height:12px;"></div>Giornaliero</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#0d5c8c;border-radius:3px;width:12px;height:12px;"></div>Stagionale</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#0891b2;border-radius:3px;width:12px;height:12px;"></div>Sub libero</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#0e7490;border-radius:3px;width:12px;height:12px;"></div>Sub ospite</div>
-            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
-            <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>`;
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', doUpdate);
-    else doUpdate();
-    // Re-patch ogni volta che si naviga alla spiaggia
-    const _origNavTo = window.navTo;
-    window.navTo = function(id) {
-        _origNavTo(id);
-        if (id === 'screen-spiaggia') setTimeout(doUpdate, 50);
-    };
-})();
-
-// 3. Upgrade _slbmPatchSpots: usa classe sublet-guest distinta
-(function upgradeSlbmPatchSpots() {
-    window._slbmPatchSpots = function() {
-        const today = slbmTodayStr();
-        for (let i = 1; i <= 200; i++) {
-            const d = beachData[i];
-            if (!d || !d.isSeasonal) continue;
-            if (!d.subletDates || !d.subletDates.length) continue;
-            const sector = document.getElementById(i <= 100 ? 'sector-west' : 'sector-east');
-            if (!sector) continue;
-            const spotEl = sector.children[i <= 100 ? i - 1 : i - 101];
-            if (!spotEl) continue;
-            const todayGuest = slbmGetTodayGuest(i);
-            const todayIsSublet = d.subletDates.includes(today);
-            if (todayGuest) {
-                spotEl.className = 'spot sublet-guest status-' + (todayGuest.pagato ? 'saldo' : 'nessuno');
-                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
-                spotEl.innerHTML = `${barHtml}<div class="pay-indicator"></div><div style="position:absolute;top:-7px;left:-3px;background:rgba(0,0,0,.32);color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;">🔄</div><b>${i}</b><div class="owner">${todayGuest.nome}</div>`;
-                spotEl.onclick = () => slbmOpenSpotGuest(i);
-            } else if (todayIsSublet) {
-                spotEl.className = 'spot sublet';
-                const barHtml = d.barTotal > 0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
-                spotEl.innerHTML = `${barHtml}<div style="position:absolute;top:-7px;left:-3px;background:rgba(0,0,0,.25);color:white;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:700;z-index:10;">🔄</div><b>${i}</b><div class="owner">SUB</div>`;
-                spotEl.onclick = () => slbmOpenBookingFromSpot(i);
-            }
-        }
-    };
-})();
-
-// 4. Info ospite subaffitto nel drawer del TITOLARE
-(function hookDrawerSubletInfo() {
-    const _prev = window.openSpotModal;
-    window.openSpotModal = function(id) {
-        _prev(id);
-        // Rimuovi banner precedente
-        const old = document.getElementById('v3-slb-info');
-        if (old) old.remove();
-        const d = beachData[id];
-        if (!d || !d.isSeasonal) return;
-        const today = slbmTodayStr();
-        const todayGuest = slbmGetTodayGuest(id);
-        const allDates = d.subletDates || [];
-        const allGuests = (d.subletGuests || []).filter(g => g.active);
-        const freeFuture = allDates.filter(dt => dt !== today && !slbmDateHasGuest(id, dt));
-        const upcomingGuests = allGuests.filter(g => g.dates && g.dates.some(dt => dt !== today));
-        // Non mostrare se non c'è nulla di rilevante
-        if (!todayGuest && !freeFuture.length && !upcomingGuests.length) return;
-        let html = '';
-        if (todayGuest) {
-            html += `<div class="sd-sublet-guest-banner">
-                <div class="sgb-label">🔄 Subaffitto attivo oggi</div>
-                <div class="sgb-name">👤 ${todayGuest.nome}</div>
-                <div class="sgb-dates">📅 ${(todayGuest.dates||[]).join(', ')} &nbsp;·&nbsp; 📞 ${todayGuest.telefono||'-'}</div>
-                <div class="sgb-pay">${todayGuest.pagato ? '✓ Pagato ' + (todayGuest.totalePagato||0).toFixed(2) + '€' : '⏳ Da pagare ' + (todayGuest.totalePagato||0).toFixed(2) + '€'}</div>
-            </div>`;
-        }
-        if (freeFuture.length || upcomingGuests.length) {
-            html += `<div style="background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:12px 14px;">
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#0891b2;margin-bottom:8px;">🔄 Prossimi Subaffitti</div>`;
-            if (freeFuture.length) {
-                html += `<div style="font-size:12px;color:var(--eb-muted);margin-bottom:6px;">📅 Date libere: ${freeFuture.map(dt => `<span style="background:#ecfeff;color:#0891b2;font-weight:700;padding:2px 8px;border-radius:20px;font-size:11px;">${dt}</span>`).join(' ')}</div>`;
-            }
-            upcomingGuests.forEach(g => {
-                const futureDatesOfGuest = (g.dates||[]).filter(dt => dt !== today);
-                if (!futureDatesOfGuest.length) return;
-                html += `<div style="font-size:12px;background:white;border-radius:8px;padding:8px 10px;margin-top:5px;border:1.5px solid var(--eb-border);">
-                    <b style="color:#0891b2;">👤 ${g.nome}</b> · ${futureDatesOfGuest.join(', ')}<br>
-                    <span style="color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?'✓ '+((g.totalePagato||0).toFixed(2))+'€':'⏳ Da pagare'}</span>
-                </div>`;
-            });
-            html += `</div>`;
-        }
-        const wrapper = document.createElement('div');
-        wrapper.id = 'v3-slb-info';
-        wrapper.className = 'sd-section';
-        wrapper.innerHTML = html;
-        const noteWrap = document.getElementById('sm-note-wrap');
-        if (noteWrap) noteWrap.parentNode.insertBefore(wrapper, noteWrap);
-    };
-})();
-
-// ════════════════════════════════════════════════════════════════════════
-// FINE PATCH V3
-// ════════════════════════════════════════════════════════════════════════
-
-
-// ════════════════════════════════════════════════════════════════════════
-// PATCH V4: SPOT LILLA + LEGENDA + CALENDARIO MULTI-DATA
-// ════════════════════════════════════════════════════════════════════════
-
-// ── CSS: spot subaffittato lilla + stili calendario ──────────────────
-(function() {
-    const s = document.createElement('style');
-    s.textContent = [
-        '.spot.sublet,.spot.sublet-guest{background:#8b5cf6!important;border-color:#7c3aed!important}',
-        '.spot.sublet b,.spot.sublet-guest b{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.22)!important}',
-        '.spot.sublet .owner,.spot.sublet-guest .owner{color:rgba(255,255,255,.88)!important}',
-        '.spot.sublet:hover,.spot.sublet-guest:hover{background:#a78bfa!important}',
-        '.spot.sublet .pay-indicator,.spot.sublet-guest .pay-indicator{border-color:rgba(255,255,255,.85)!important}',
-        '.spot.sublet .bar-badge,.spot.sublet-guest .bar-badge{background:rgba(0,0,0,.3)!important;box-shadow:none!important}',
-        '#v4-cal-ov{position:fixed;inset:0;background:rgba(13,44,70,.5);backdrop-filter:blur(4px);z-index:3000;display:flex;align-items:center;justify-content:center;}',
-        '#v4-cal-box{background:#fff;border-radius:20px;box-shadow:0 24px 64px rgba(13,44,70,.3);width:360px;max-width:96vw;overflow:hidden;}',
-        '#v4-cal-hdr{background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:18px 22px 14px;color:white;}',
-        '#v4-cal-hdr .ch-tag{font-size:11px;font-weight:700;opacity:.82;margin-bottom:2px;}',
-        '#v4-cal-hdr .ch-name{font-size:18px;font-weight:700;}',
-        '.v4-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px;}',
-        '.v4-nav-btn{background:#f3f0ff;border:1.5px solid #ddd6fe;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:18px;font-weight:700;color:#7c3aed;display:flex;align-items:center;justify-content:center;transition:background .15s;}',
-        '.v4-nav-btn:hover{background:#ede9fe;}',
-        '.v4-mlbl{font-size:14px;font-weight:700;color:#1e293b;}',
-        '.v4-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;padding:4px 14px 10px;}',
-        '.v4-dn{text-align:center;font-size:10px;font-weight:700;color:#94a3b8;padding:4px 0;text-transform:uppercase;}',
-        '.v4-d{text-align:center;padding:7px 2px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#1e293b;transition:background .1s,color .1s;position:relative;user-select:none;}',
-        '.v4-d:hover:not(.vp):not(.ve):not(.vg){background:#ede9fe;color:#7c3aed;}',
-        '.v4-d.ve{visibility:hidden;}',
-        '.v4-d.vp{color:#cbd5e1;cursor:not-allowed;}',
-        '.v4-d.vg{color:#cbd5e1;cursor:not-allowed;}',
-        '.v4-d.vg::after{content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#8b5cf6;}',
-        '.v4-d.va{background:#ede9fe;color:#7c3aed;}',
-        '.v4-d.vs{background:#7c3aed!important;color:#fff!important;box-shadow:0 2px 8px rgba(124,58,237,.35);}',
-        '.v4-d.vt:not(.vs){font-weight:800;color:#7c3aed;}',
-        '.v4-foot{padding:10px 14px 16px;border-top:1px solid #e2e8f0;display:flex;flex-direction:column;gap:8px;}',
-        '.v4-prev{font-size:11px;color:#64748b;min-height:18px;padding:0 4px;line-height:1.5;}',
-        '.v4-prev b{color:#7c3aed;}',
-        '.v4-ok{width:100%;padding:13px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:10px;font-family:"Poppins",sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(124,58,237,.3);}',
-        '.v4-ok:hover{opacity:.92;}',
-        '.v4-cancel{width:100%;padding:10px;background:white;color:#94a3b8;border:1.5px solid #e2e8f0;border-radius:10px;font-family:"Poppins",sans-serif;font-size:13px;font-weight:600;cursor:pointer;}',
-    ].join('');
-    document.head.appendChild(s);
-})();
-
-// ── Legenda spiaggia: rimuove sub-ospite, rinomina in Subaffittato ────
-(function() {
-    function fixLegend() {
-        const leg = document.querySelector('.beach-legend');
-        if (!leg) return;
-        leg.innerHTML = [
-            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f1f5f9;border:2px solid #cbd5e1;flex-shrink:0;"></div>Libero</div>',
-            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#f97316;flex-shrink:0;"></div>Giornaliero</div>',
-            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#0d5c8c;flex-shrink:0;"></div>Stagionale</div>',
-            '<div class="legend-item"><div style="width:12px;height:12px;border-radius:3px;background:#8b5cf6;flex-shrink:0;"></div>Subaffittato</div>',
-            '<div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>',
-            '<div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>',
-        ].join('');
-    }
-    // Esegui subito e ad ogni navigazione alla spiaggia
-    if (document.readyState !== 'loading') fixLegend();
-    else document.addEventListener('DOMContentLoaded', fixLegend);
-    const _orig = window.navTo;
-    window.navTo = function(id) { _orig(id); if (id === 'screen-spiaggia') setTimeout(fixLegend, 60); };
-})();
-
-// ── Calendario multi-selezione ─────────────────────────────────────────
-(function() {
-    var MI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-              'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-    var DI = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
-
-    function pad2(n){ return ('0'+n).slice(-2); }
-    function fmt(y,m,d){ return pad2(d)+'/'+pad2(m+1)+'/'+y; }
-
-    // Stato globale accessibile dagli onclick inline
-    var C = window.__v4cal = { id:null, y:0, m:0, sel:[] };
-
-    function getEntry(){ return (window.slbmGetBeachEntry && window.slbmGetBeachEntry(C.id)) || {}; }
-
-    function drawGrid(){
-        var entry = getEntry();
-        var already = {};
-        (entry.subletDates||[]).forEach(function(d){ already[d]=1; });
-        var guests = {};
-        (entry.subletGuests||[]).filter(function(g){ return g.active; })
-            .forEach(function(g){ (g.dates||[]).forEach(function(d){ guests[d]=1; }); });
-
-        var now = new Date(), ty=now.getFullYear(), tm=now.getMonth(), td=now.getDate();
-        var firstWD = new Date(C.y, C.m, 1).getDay(); // 0=sun
-        var offset  = (firstWD===0) ? 6 : firstWD-1;
-        var maxD    = new Date(C.y, C.m+1, 0).getDate();
-
-        var h = DI.map(function(n){ return '<div class="v4-dn">'+n+'</div>'; }).join('');
-        for(var i=0;i<offset;i++) h+='<div class="v4-d ve"></div>';
-        for(var d=1;d<=maxD;d++){
-            var key = fmt(C.y,C.m,d);
-            var past = C.y<ty||(C.y===ty&&C.m<tm)||(C.y===ty&&C.m===tm&&d<td);
-            var today= C.y===ty&&C.m===tm&&d===td;
-            var hg   = !!guests[key];
-            var al   = !!already[key];
-            var sel  = C.sel.indexOf(key)>=0;
-            var cls  = 'v4-d';
-            if(past)  cls+=' vp';
-            if(today) cls+=' vt';
-            if(hg)    cls+=' vg';
-            if(al&&!sel) cls+=' va';
-            if(sel)   cls+=' vs';
-            var click = (!past&&!hg) ? ' onclick="window.__v4cal.toggle(\''+key+'\')"' : '';
-            h += '<div class="'+cls+'"'+click+'>'+d+'</div>';
-        }
-        return h;
-    }
-
-    function refresh(){
-        var g=document.getElementById('v4-cal-grid');
-        var p=document.getElementById('v4-cal-prev');
-        var l=document.getElementById('v4-cal-mlbl');
-        if(g) g.innerHTML=drawGrid();
-        if(l) l.textContent=MI[C.m]+' '+C.y;
-        if(p){
-            var n=C.sel.length;
-            p.innerHTML = n===0
-                ? 'Nessuna data selezionata'
-                : '<b>'+n+'</b> data'+(n>1?'e':'')+' selezionata'+(n>1?'e':'')+': '+C.sel.join(', ');
-        }
-    }
-
-    // Metodi su window.__v4cal così gli onclick inline li trovano sempre
-    C.toggle = function(key){
-        var i = C.sel.indexOf(key);
-        if(i>=0) C.sel.splice(i,1); else C.sel.push(key);
-        refresh();
-    };
-    C.prev = function(){ C.m--; if(C.m<0){C.m=11;C.y--;} refresh(); };
-    C.next = function(){ C.m++; if(C.m>11){C.m=0;C.y++;} refresh(); };
-    C.close = function(){ var ov=document.getElementById('v4-cal-ov'); if(ov) ov.remove(); };
-    C.confirm = function(){
-        if(!C.sel.length){ window.showToast && window.showToast('Seleziona almeno una data','warn'); return; }
-        if(window.slbmSaveDates) window.slbmSaveDates(C.id, C.sel.slice());
-        C.close();
-    };
-
-    // Sostituisce slbmOpenAddDate — usa solo API window.* già esposte
-    window.slbmOpenAddDate = function(id){
-        // Chiudi eventuale calendario già aperto
-        C.close();
-        var now = new Date();
-        C.id  = id;
-        C.y   = now.getFullYear();
-        C.m   = now.getMonth();
-        C.sel = [];
-
-        var entry = getEntry();
-        var box = document.createElement('div');
-        box.id = 'v4-cal-ov';
-        box.innerHTML =
-            '<div id="v4-cal-box">' +
-              '<div id="v4-cal-hdr">' +
-                '<div class="ch-tag">&#128197; Date Subaffitto</div>' +
-                '<div class="ch-name">Ombrellone #'+id+' \u2014 '+(entry.nome||'')+'</div>' +
-              '</div>' +
-              '<div class="v4-nav">' +
-                '<button class="v4-nav-btn" onclick="window.__v4cal.prev()">&#8249;</button>' +
-                '<span class="v4-mlbl" id="v4-cal-mlbl"></span>' +
-                '<button class="v4-nav-btn" onclick="window.__v4cal.next()">&#8250;</button>' +
-              '</div>' +
-              '<div class="v4-grid" id="v4-cal-grid"></div>' +
-              '<div class="v4-foot">' +
-                '<div class="v4-prev" id="v4-cal-prev"></div>' +
-                '<button class="v4-ok" onclick="window.__v4cal.confirm()">&#10003; Aggiungi date selezionate</button>' +
-                '<button class="v4-cancel" onclick="window.__v4cal.close()">Annulla</button>' +
-              '</div>' +
-            '</div>';
-        box.addEventListener('click', function(e){ if(e.target===box) C.close(); });
-        document.body.appendChild(box);
-        refresh();
-    };
-})();
-
-// ════════════════════════════════════════════════════════════════════════
-// FINE PATCH V4
--e 
-
-// ════════════════════════════════════════════════════════════════════════
-// PATCH V5: FIX TIPO STAGIONALE + CALENDARIO IN NUOVA PRENOTAZIONE
-// ════════════════════════════════════════════════════════════════════════
-
-// ── CSS aggiuntivo per il modal nuova prenotazione ────────────────────
-(function(){
-    const s = document.createElement('style');
-    s.textContent = `
-        .nb-tipo-card { border:2.5px solid var(--eb-border)!important; border-radius:10px; padding:13px;
-            text-align:center; cursor:pointer; background:white; transition:all .18s; }
-        .nb-tipo-card:hover { border-color:#94a3b8!important; }
-        .nb-tipo-card.nb-active-g { border-color:var(--free)!important; background:#f0fdf4!important; }
-        .nb-tipo-card.nb-active-s { border-color:var(--eb-blue)!important; background:var(--eb-blue-pale)!important; }
-        #nb-sublet-section { display:none; margin-top:14px; padding:14px; background:#f5f3ff;
-            border:1.5px solid #ddd6fe; border-radius:12px; }
-        #nb-sublet-section .nb-sl-title { font-size:10px; font-weight:700; text-transform:uppercase;
-            letter-spacing:1px; color:#7c3aed; margin-bottom:10px; }
-        .nb-sl-dates-wrap { display:flex; flex-wrap:wrap; gap:6px; min-height:32px;
-            padding:8px; background:white; border-radius:8px; border:1.5px solid #ddd6fe; }
-        .nb-sl-date-pill { display:inline-flex; align-items:center; gap:4px; padding:4px 10px;
-            background:#ede9fe; color:#7c3aed; border-radius:20px; font-size:11px; font-weight:700; }
-        .nb-sl-date-pill button { background:none; border:none; color:#7c3aed; cursor:pointer;
-            font-size:12px; padding:0; line-height:1; }
-        #nb-sl-empty { font-size:11px; color:#a78bfa; font-style:italic; }
-    `;
-    document.head.appendChild(s);
-})();
-
-// ── Override nbSetTipo: gestisce anche la sezione subaffitto ──────────
-window.nbSetTipo = function(tipo) {
-    document.getElementById('nb-tipo-val').value = tipo;
-    const gEl = document.getElementById('nb-tipo-g');
-    const sEl = document.getElementById('nb-tipo-s');
-    // Usa le nuove classi invece di stili inline (che potrebbero non sovrascrivere)
-    if (tipo === 'G') {
-        gEl.className = 'nb-tipo-card nb-active-g';
-        sEl.className = 'nb-tipo-card';
-        document.getElementById('nb-prezzo').placeholder = 'Es. 25.00';
-        const slSec = document.getElementById('nb-sublet-section');
-        if (slSec) slSec.style.display = 'none';
-    } else {
-        sEl.className = 'nb-tipo-card nb-active-s';
-        gEl.className = 'nb-tipo-card';
-        document.getElementById('nb-prezzo').placeholder = 'Es. 500.00';
-        const slSec = document.getElementById('nb-sublet-section');
-        if (slSec) slSec.style.display = 'block';
-    }
-};
-
-// ── Inject sezione subaffitto nel modal nuova prenotazione ────────────
-(function(){
-    function inject() {
-        // Aggiorna le classi dei bottoni tipo (rimuove stili inline precedenti)
-        const gEl = document.getElementById('nb-tipo-g');
-        const sEl = document.getElementById('nb-tipo-s');
-        if (gEl) { gEl.className = 'nb-tipo-card nb-active-g'; gEl.removeAttribute('style'); gEl.setAttribute('style',''); }
-        if (sEl) { sEl.className = 'nb-tipo-card'; sEl.removeAttribute('style'); sEl.setAttribute('style',''); }
-
-        // Aggiunge sezione subaffitto dopo il blocco date se non esiste già
-        if (document.getElementById('nb-sublet-section')) return;
-        const weatherLabel = document.querySelector('#new-booking-modal label');
-        if (!weatherLabel) return;
-        const sec = document.createElement('div');
-        sec.id = 'nb-sublet-section';
-        sec.innerHTML = `
-            <div class="nb-sl-title">&#128197; Date disponibili per subaffitto (opzionale)</div>
-            <div class="nb-sl-dates-wrap" id="nb-sl-dates-wrap">
-                <span id="nb-sl-empty">Nessuna data aggiunta</span>
-            </div>
-            <button type="button" onclick="nbOpenSubletCal()" style="margin-top:10px;width:100%;padding:10px;
-                background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:9px;
-                font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;
-                box-shadow:0 3px 10px rgba(124,58,237,.28);">
-                &#128197; Apri Calendario Subaffitto
-            </button>`;
-        weatherLabel.parentNode.insertBefore(sec, weatherLabel);
-    }
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inject);
-    else inject();
-})();
-
-// Stato date subaffitto del nuovo cliente
-window._nbSubletDates = [];
-
-window.nbOpenSubletCal = function() {
-    // Usa il calendario V4 già esistente con id temporaneo '__new__'
-    // Le date selezionate vengono salvate in _nbSubletDates invece di Firebase
-    window.__v4cal = window.__v4cal || {};
-    var C = window.__v4cal;
-    var now = new Date();
-    // Imposta id fittizio e sovrascrive il confirm temporaneamente
-    C.id  = '__new__';
-    C.y   = now.getFullYear();
-    C.m   = now.getMonth();
-    C.sel = window._nbSubletDates.slice();
-
-    // Override temporaneo di getEntry per restituire oggetto vuoto (nessuna data già presente)
-    window.__nbCalMode = true;
-
-    // Override confirm: salva in _nbSubletDates invece di Firebase
-    var _origConfirm = C.confirm;
-    C.confirm = function() {
-        if (!C.sel.length) { window.showToast && window.showToast('Seleziona almeno una data','warn'); return; }
-        window._nbSubletDates = C.sel.slice();
-        nbRenderSubletPills();
-        C.close();
-        // Ripristina confirm originale
-        C.confirm = _origConfirm;
-        window.__nbCalMode = false;
-    };
-
-    // Override getEntry per il modal nuova prenotazione
-    var _origGetEntry = window.slbmGetBeachEntry;
-    window.slbmGetBeachEntry = function(id) {
-        if (id === '__new__') return { nome: 'Nuovo stagionale', subletDates: [], subletGuests: [] };
-        return _origGetEntry(id);
-    };
-
-    // Apri il calendario
-    var MI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-              'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-    var DI = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
-    function pad2(n){ return ('0'+n).slice(-2); }
-    function fmt(y,m,d){ return pad2(d)+'/'+pad2(m+1)+'/'+y; }
-
-    function drawGrid(){
-        var now2 = new Date(), ty=now2.getFullYear(), tm=now2.getMonth(), td=now2.getDate();
-        var firstWD = new Date(C.y,C.m,1).getDay();
-        var offset  = (firstWD===0)?6:firstWD-1;
-        var maxD    = new Date(C.y,C.m+1,0).getDate();
-        var h = DI.map(function(n){ return '<div class="v4-dn">'+n+'</div>'; }).join('');
-        for(var i=0;i<offset;i++) h+='<div class="v4-d ve"></div>';
-        for(var d=1;d<=maxD;d++){
-            var key=fmt(C.y,C.m,d);
-            var past= C.y<ty||(C.y===ty&&C.m<tm)||(C.y===ty&&C.m===tm&&d<td);
-            var today= C.y===ty&&C.m===tm&&d===td;
-            var sel  = C.sel.indexOf(key)>=0;
-            var cls  = 'v4-d';
-            if(past)  cls+=' vp';
-            if(today) cls+=' vt';
-            if(sel)   cls+=' vs';
-            var click = !past ? ' onclick="window.__v4cal.toggle(\''+key+'\')"' : '';
-            h+='<div class="'+cls+'"'+click+'>'+d+'</div>';
-        }
-        return h;
-    }
-
-    function refresh(){
-        var g=document.getElementById('v4-cal-grid');
-        var p=document.getElementById('v4-cal-prev');
-        var l=document.getElementById('v4-cal-mlbl');
-        if(g) g.innerHTML=drawGrid();
-        if(l) l.textContent=MI[C.m]+' '+C.y;
-        if(p){
-            var n=C.sel.length;
-            p.innerHTML = n===0 ? 'Nessuna data selezionata'
-                : '<b>'+n+'</b> data'+(n>1?'e':'')+' selezionata'+(n>1?'e':'')+': '+C.sel.join(', ');
-        }
-    }
-
-    // Sovrascrive i metodi di navigazione con questa versione locale
-    C.prev = function(){ C.m--; if(C.m<0){C.m=11;C.y--;} refresh(); };
-    C.next = function(){ C.m++; if(C.m>11){C.m=0;C.y++;} refresh(); };
-
-    var ov = document.getElementById('v4-cal-ov');
-    if (ov) ov.remove();
-    var box = document.createElement('div');
-    box.id = 'v4-cal-ov';
-    box.innerHTML =
-        '<div id="v4-cal-box">' +
-          '<div id="v4-cal-hdr">' +
-            '<div class="ch-tag">&#128197; Date Subaffitto — Nuovo Stagionale</div>' +
-            '<div class="ch-name">Seleziona i giorni disponibili</div>' +
-          '</div>' +
-          '<div class="v4-nav">' +
-            '<button class="v4-nav-btn" onclick="window.__v4cal.prev()">&#8249;</button>' +
-            '<span class="v4-mlbl" id="v4-cal-mlbl"></span>' +
-            '<button class="v4-nav-btn" onclick="window.__v4cal.next()">&#8250;</button>' +
-          '</div>' +
-          '<div class="v4-grid" id="v4-cal-grid"></div>' +
-          '<div class="v4-foot">' +
-            '<div class="v4-prev" id="v4-cal-prev"></div>' +
-            '<button class="v4-ok" onclick="window.__v4cal.confirm()">&#10003; Conferma date</button>' +
-            '<button class="v4-cancel" onclick="window.__v4cal.close()">Annulla</button>' +
-          '</div>' +
-        '</div>';
-    box.addEventListener('click', function(e){ if(e.target===box) C.close(); });
-    document.body.appendChild(box);
-    refresh();
-};
-
-function nbRenderSubletPills() {
-    var wrap = document.getElementById('nb-sl-dates-wrap');
-    var empty = document.getElementById('nb-sl-empty');
-    if (!wrap) return;
-    if (!window._nbSubletDates.length) {
-        wrap.innerHTML = '<span id="nb-sl-empty">Nessuna data aggiunta</span>';
-        return;
-    }
-    wrap.innerHTML = window._nbSubletDates.map(function(dt) {
-        return '<span class="nb-sl-date-pill">'+dt+
-            '<button type="button" onclick="nbRemoveSubletDate(\''+dt+'\')">&#215;</button></span>';
-    }).join('');
+// ── HOME & DATE ──────────────────────────────────────────────────────────
+function updateHomeDate() {
+    const now = new Date();
+    const days   = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+    const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+    const h = now.getHours();
+    const gr = h<12?'🌅 Buongiorno':h<18?'☀️ Buon pomeriggio':'🌙 Buonasera';
+    const el = $('home-greeting'); const el2 = $('home-date');
+    if (el)  el.textContent  = gr + (currentUser ? ', ' + currentUser.username.split('@')[0] + '!' : '!');
+    if (el2) el2.textContent = days[now.getDay()] + ' ' + now.getDate() + ' ' + months[now.getMonth()] + ' ' + now.getFullYear();
 }
 
-window.nbRemoveSubletDate = function(dt) {
-    window._nbSubletDates = window._nbSubletDates.filter(function(d){ return d !== dt; });
-    nbRenderSubletPills();
+function renderToday() {
+    const today = todayIT();
+    let arr = '', dep = '';
+    Object.keys(beachData).forEach(id => {
+        const d = beachData[id]; if (!d) return;
+        const pc = d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';
+        const pl = d.pagamento==='saldo'?'Saldo':d.pagamento==='acconto'?'Acconto':'Da pagare';
+        const row = `<div class="today-item"><span class="spot-num">#${id}</span><span class="client-name">${d.nome}</span><span class="pay-pill badge ${pc}">${pl}</span></div>`;
+        if (d.dataArrivo   === today) arr += row;
+        if (d.dataPartenza === today) dep += row;
+    });
+    const ae = $('today-arrivals');   const de = $('today-departures');
+    if (ae) ae.innerHTML = arr || '<p class="today-empty">Nessun arrivo previsto</p>';
+    if (de) de.innerHTML = dep || '<p class="today-empty">Nessuna partenza prevista</p>';
+}
+
+// ── WAREHOUSE ────────────────────────────────────────────────────────────
+function renderWarehouse() {
+    const grid = $('warehouse-grid'); const editGrid = $('warehouse-edit-grid');
+    if (!grid) return;
+    const usedLettini = Object.values(beachData).reduce((s,d) => s + parseInt(d?.lettiniExtra||0), 0);
+    const usage = { lettini: usedLettini, sdraio:0, ombrelloni_extra:0, tavoli:0 };
+    let g='', e='';
+    Object.keys(warehouseData).forEach(key => {
+        const item = warehouseData[key];
+        const tot  = item.totale||0, used = usage[key]||0, avail = Math.max(0,tot-used);
+        const pct  = tot>0?(avail/tot)*100:100;
+        const fc   = pct<20?'danger':pct<50?'warn':'';
+        const col  = pct<20?'var(--expired)':pct<50?'var(--acconto)':'var(--free)';
+        g += `<div class="warehouse-item"><div class="wh-icon">${item.icon}</div><div class="wh-name">${item.nome}</div><div class="wh-avail" style="color:${col}">${avail}</div><div class="wh-total">su ${tot}</div><div class="wh-bar"><div class="wh-bar-fill ${fc}" style="width:${pct}%"></div></div></div>`;
+        e += `<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:18px;">${item.icon}</span><div style="flex:1"><div style="font-size:12px;font-weight:600;margin-bottom:4px;">${item.nome}</div><input type="number" class="field" style="padding:8px;font-size:13px;" value="${tot}" min="0" onchange="updateWarehouseTotal('${key}',this.value)"></div></div>`;
+    });
+    grid.innerHTML = g;
+    if (editGrid) editGrid.innerHTML = e;
+    const avL = Math.max(0,(warehouseData.lettini?.totale||50)-usedLettini);
+    const hint = $('extra-warehouse-hint');
+    if (hint) hint.innerHTML = `<span style="color:${avL<5?'var(--expired)':'var(--eb-muted)'}">📦 Lettini disponibili: <b>${avL}</b></span>`;
+}
+window.updateWarehouseTotal = (key, val) => {
+    if (!warehouseData[key]) return;
+    warehouseData[key].totale = parseInt(val)||0;
+    set(warehouseRef, warehouseData); renderWarehouse();
 };
 
-// ── Override nbConfirm: salva tipo + date subaffitto ──────────────────
-window.nbConfirm = function() {
-    var id   = _currentSpotId;
-    var nome = document.getElementById('nb-nome').value.trim();
-    if (!nome) { showToast('Inserisci il nome del cliente', 'warn'); return; }
-    var tel     = document.getElementById('nb-tel').value.trim() || '-';
-    var tipoVal = document.getElementById('nb-tipo-val').value;
-    var isS     = (tipoVal === 'S');
-    var prezzo  = parseFloat(document.getElementById('nb-prezzo').value);
-    if (isNaN(prezzo) || prezzo <= 0) { showToast('Inserisci un prezzo valido', 'warn'); return; }
-    var arrivo   = document.getElementById('nb-arrivo').value;
-    var partenza = document.getElementById('nb-partenza').value;
-    var weather  = document.getElementById('nb-weather').checked;
-    var toIT = function(d) { return d ? d.split('-').reverse().join('/') : new Date().toLocaleDateString('it-IT'); };
+// ── SPIAGGIA ─────────────────────────────────────────────────────────────
+function renderSpiaggia() {
+    const west = $('sector-west'), east = $('sector-east');
+    if (!west) return;
+    west.innerHTML = ''; east.innerHTML = '';
+    let mD=0, mS=0, booked=0, totalReal=0, barTotal=0, free=0;
+    const today = todayIT();
 
-    var entry = {
+    for (let i = 1; i <= 200; i++) {
+        const d   = beachData[i];
+        const div = document.createElement('div');
+        const todayGuest   = d?.isSeasonal ? slbmTodayGuest(i) : null;
+        const todayIsSublet= d?.isSeasonal && (d.subletDates||[]).includes(today);
+
+        let cls = 'spot';
+        if (!d) {
+            cls += ' free'; free++;
+        } else if (todayGuest) {
+            cls += ' sublet-guest';
+        } else if (todayIsSublet) {
+            cls += ' sublet';
+        } else {
+            cls += d.isSeasonal ? ' seasonal' : ' booked';
+        }
+        if (d?.pagamento) cls += ` status-${d.pagamento}`;
+        div.className = cls;
+
+        const barBadge     = d?.barTotal>0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+        const weatherBadge = d?.weatherGuarantee ? `<div class="weather-badge">☀️</div>` : '';
+        const subletBadge  = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:rgba(0,0,0,.3);">🔄</div>` : '';
+        const ownerLabel   = todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
+
+        div.innerHTML = `${barBadge}${weatherBadge}${subletBadge}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${ownerLabel}</div>`;
+
+        if (!d)               div.onclick = () => handleOmbrellone(i);
+        else if (todayGuest)  div.onclick = () => slbmOpenSpotGuest(i);
+        else if (todayIsSublet) div.onclick = () => slbmOpenBookingFromSpot(i);
+        else                  div.onclick = () => handleOmbrellone(i);
+
+        (i <= 100 ? west : east).appendChild(div);
+
+        if (d) {
+            booked++;
+            const p = parseFloat(d.prezzo||0) + parseFloat(d.lettiniCosto||0);
+            d.isSeasonal ? mS+=p : mD+=p;
+            totalReal += (d.rate||[]).reduce((a,b)=>a+b.importo, 0);
+            barTotal  += parseFloat(d.barTotal||0);
+        }
+    }
+    const els = { 'db-money-daily':mD.toFixed(2)+'€', 'db-money-seasonal':mS.toFixed(2)+'€', 'db-total-money':totalReal.toFixed(2)+'€', 'db-count-booked':booked, 'db-count-free':free, 'db-bar-total':barTotal.toFixed(2)+'€' };
+    Object.keys(els).forEach(k => { const e=$(k); if(e) e.innerText=els[k]; });
+}
+
+// patchSubletSpots non serve più: la logica è già dentro renderSpiaggia
+function patchSubletSpots() {} // no-op, tenuta per compatibilità
+
+// ── HANDLE OMBRELLONE ────────────────────────────────────────────────────
+window.handleOmbrellone = id => {
+    _currentSpotId = id;
+    if (!beachData[id]) {
+        $('nb-title').textContent = 'Ombrellone #' + id;
+        $('nb-nome').value = ''; $('nb-tel').value = ''; $('nb-prezzo').value = '';
+        $('nb-weather').checked = false;
+        const today = new Date().toISOString().split('T')[0];
+        $('nb-arrivo').value = today; $('nb-partenza').value = today;
+        window._nbSubletDates = [];
+        nbRefreshSubletPills();
+        nbSetTipo('G');
+        $('new-booking-modal').style.display = 'block';
+        $('overlay').style.display = 'block';
+        setTimeout(() => $('nb-nome').focus(), 100);
+    } else {
+        openSpotModal(id);
+    }
+};
+
+// ── DRAWER OMBRELLONE ────────────────────────────────────────────────────
+window.openSpotModal = id => {
+    _currentSpotId = id;
+    const d = beachData[id];
+    const prezzoBase   = parseFloat(d.prezzo||0);
+    const costoLettini = parseFloat(d.lettiniCosto||0);
+    const total = prezzoBase + costoLettini;
+    const paid  = (d.rate||[]).reduce((s,r) => s+r.importo, 0);
+    const pct   = total>0 ? Math.min(100, Math.round((paid/total)*100)) : 0;
+    const rem   = total - paid;
+
+    $('sm-num').textContent  = 'Ombrellone #' + id;
+    $('sm-nome').textContent = d.nome;
+    $('sm-tel').textContent  = d.telefono && d.telefono!=='-' ? '📞 '+d.telefono : '';
+    $('sm-tipo-pill').textContent = d.isSeasonal ? '📅 Stagionale' : '🌊 Giornaliero';
+    $('sm-arrivo').textContent   = d.dataArrivo   || '—';
+    $('sm-partenza').textContent = d.dataPartenza  || '—';
+    $('sm-bar').textContent      = parseFloat(d.barTotal||0).toFixed(2) + '€';
+    $('sm-paid-label').textContent = 'Versato: ' + paid.toFixed(2) + '€';
+    $('sm-pct-label').textContent  = pct + '%';
+    const letLabel = costoLettini>0 ? ' ('+prezzoBase.toFixed(2)+'€ + 🛌'+costoLettini.toFixed(2)+'€)' : '';
+    $('sm-total-label').textContent = 'Totale: ' + total.toFixed(2) + '€' + letLabel;
+    $('sm-rem-label').textContent   = rem>0 ? 'Da saldare: '+rem.toFixed(2)+'€' : '✓ Saldato';
+    const bar = $('sm-progress');
+    bar.style.width      = pct + '%';
+    bar.style.background = pct>=100?'#4ade80':pct>0?'#fde68a':'rgba(255,255,255,0.5)';
+    $('sm-weather-pill').style.display = d.weatherGuarantee ? 'flex' : 'none';
+
+    const nw = $('sm-note-wrap');
+    if (d.note?.trim()) { nw.style.display='block'; $('sm-note-text').textContent=d.note; }
+    else nw.style.display = 'none';
+
+    $('sm-bar-btn').style.display     = parseFloat(d.barTotal||0)>0 ? 'flex' : 'none';
+    $('sm-sublet-btn').style.display  = d.isSeasonal ? 'flex' : 'none';
+
+    // Lettini
+    const assegnati    = parseInt(d.lettiniExtra||0);
+    const disponibili  = getLettinoDisponibili();
+    $('sm-lettini-assegnati').textContent  = assegnati;
+    $('sm-lettini-disponibili').textContent= disponibili;
+    $('sm-lettini-disponibili').style.color= disponibili===0?'var(--expired)':disponibili<=3?'var(--acconto)':'var(--free)';
+    $('sm-lettino-qty').value = 1;
+
+    // Versamenti
+    const rl = $('sm-rate-list');
+    rl.innerHTML = (d.rate?.length)
+        ? d.rate.map(r=>`<div class="sd-rate-item"><span class="rate-date">📅 ${r.data}</span><span class="rate-amt">+${r.importo.toFixed(2)}€</span></div>`).join('')
+        : '<div class="sd-rate-empty">Nessun versamento registrato</div>';
+
+    // Consumazioni
+    sdRenderConsumazioni(id);
+
+    // Info subaffitto (solo stagionali)
+    renderSubletInfoInDrawer(id);
+
+    $('spot-drawer').classList.add('open');
+    $('overlay').style.display = 'block';
+};
+
+function renderSubletInfoInDrawer(id) {
+    const old = $('sd-sublet-info');
+    if (old) old.remove();
+    const d = beachData[id];
+    if (!d?.isSeasonal) return;
+
+    const today        = todayIT();
+    const todayGuest   = slbmTodayGuest(id);
+    const credito      = parseFloat(d.subletCredito||0);
+    const allGuests    = (d.subletGuests||[]).filter(g => g.active);
+    const freeFuture   = (d.subletDates||[]).filter(dt => !slbmDateHasGuest(id, dt));
+    const upcomingG    = allGuests.filter(g => g.dates?.some(dt => dt !== today));
+    if (!todayGuest && !credito && !freeFuture.length && !upcomingG.length) return;
+
+    let html = `<div class="sd-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>🔄 Subaffitto</span>
+        ${credito>0?`<span style="font-size:11px;font-weight:700;background:var(--free);color:white;padding:2px 10px;border-radius:20px;">+${credito.toFixed(2)}€</span>`:''}
+    </div>`;
+
+    if (todayGuest) {
+        html += `<div style="background:linear-gradient(135deg,#7c3aed,#a78bfa);border-radius:12px;padding:13px 15px;color:white;margin-bottom:10px;">
+            <div style="font-size:10px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Ospite oggi</div>
+            <div style="font-size:15px;font-weight:700;">👤 ${todayGuest.nome}</div>
+            <div style="font-size:11px;opacity:.85;margin-top:2px;">📞 ${todayGuest.telefono||'-'} · ${(todayGuest.dates||[]).join(', ')}</div>
+            <div style="margin-top:7px;background:rgba(255,255,255,.2);display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">
+                ${todayGuest.pagato?'✓ Pagato '+(todayGuest.totalePagato||0).toFixed(2)+'€':'⏳ Da pagare '+(todayGuest.totalePagato||0).toFixed(2)+'€'}
+            </div>
+        </div>`;
+    }
+    if (credito > 0) {
+        html += `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:11px 13px;font-size:13px;color:#166534;margin-bottom:8px;">
+            💰 Accredito maturato: <b>${credito.toFixed(2)}€</b> (${Math.round(credito/SUBLET_CREDIT_DAY)} gg)
+        </div>`;
+    }
+    if (freeFuture.length) {
+        html += `<div style="font-size:12px;color:var(--eb-muted);margin-bottom:8px;">📅 Date libere: ${freeFuture.map(dt=>`<span style="background:#ede9fe;color:#7c3aed;font-weight:700;padding:2px 8px;border-radius:20px;font-size:11px;">${dt}</span>`).join(' ')}</div>`;
+    }
+    upcomingG.forEach(g => {
+        const fd = (g.dates||[]).filter(dt=>dt!==today);
+        if (!fd.length) return;
+        html += `<div style="background:var(--eb-bg);border-radius:8px;padding:8px 12px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);">
+            <b style="color:#7c3aed;">👤 ${g.nome}</b> · ${fd.join(', ')}<br>
+            <span style="color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?'✓ '+((g.totalePagato||0).toFixed(2))+'€':'⏳ Da pagare'}</span>
+        </div>`;
+    });
+
+    const sec = document.createElement('div');
+    sec.id = 'sd-sublet-info';
+    sec.className = 'sd-section';
+    sec.innerHTML = html;
+    const noteWrap = $('sm-note-wrap');
+    if (noteWrap) noteWrap.parentNode.insertBefore(sec, noteWrap);
+}
+
+window.closeSpotDrawer = () => {
+    $('spot-drawer').classList.remove('open');
+    $('overlay').style.display = 'none';
+};
+window.smOpenPayments = () => { closeSpotDrawer(); openPaymentModal(_currentSpotId); };
+window.smOpenQr       = () => { closeSpotDrawer(); openQrModal(_currentSpotId); };
+window.smAddSublet    = () => { closeSpotDrawer(); slbmOpen(_currentSpotId); };
+window.smResetBar     = () => {
+    beachData[_currentSpotId].barTotal      = 0;
+    beachData[_currentSpotId].consumazioni  = [];
+    fdb(_currentSpotId, beachData[_currentSpotId]);
+    showToast('🍹 Bar azzerato', 'info');
+    openSpotModal(_currentSpotId);
+};
+window.smFreeSpot = () => {
+    if (!confirm('Liberare la postazione #' + _currentSpotId + '?')) return;
+    delete beachData[_currentSpotId];
+    fdb(_currentSpotId, null);
+    closeSpotDrawer();
+    showToast('Postazione #' + _currentSpotId + ' liberata', 'info');
+};
+window.smChangeLettinoQty = delta => {
+    const e = $('sm-lettino-qty'), disp = getLettinoDisponibili();
+    const v = Math.max(1, parseInt(e.value)+delta);
+    if (disp===0) { e.value=1; showToast('Nessun lettino disponibile','warn'); }
+    else if (v>disp) { e.value=disp; showToast(`Massimo ${disp} disponibile${disp>1?'i':''}`, 'warn'); }
+    else e.value = v;
+};
+window.smAddLettini = () => {
+    const id=_currentSpotId, qty=parseInt($('sm-lettino-qty').value), disp=getLettinoDisponibili();
+    if (disp===0) return showToast('Nessun lettino disponibile','warn');
+    if (qty>disp) { showToast(`Solo ${disp} disponibile${disp>1?'i':''}`, 'warn'); $('sm-lettino-qty').value=disp; return; }
+    const d=beachData[id];
+    d.lettiniCosto  = parseFloat((parseFloat(d.lettiniCosto||0)+qty*prezzoLettino).toFixed(2));
+    d.lettiniExtra  = (parseInt(d.lettiniExtra||0)+qty);
+    fdb(id, d);
+    showToast(`Addebitati ${qty} lettino${qty>1?'i':''} (${(qty*prezzoLettino).toFixed(2)}€) su #${id}`, 'success');
+    openSpotModal(id);
+};
+
+// ── NUOVA PRENOTAZIONE ────────────────────────────────────────────────────
+window._nbSubletDates = [];
+
+window.nbSetTipo = tipo => {
+    $('nb-tipo-val').value = tipo;
+    const gEl = $('nb-tipo-g'), sEl = $('nb-tipo-s');
+    if (tipo === 'G') {
+        gEl.style.cssText = 'border:2.5px solid var(--free);border-radius:10px;padding:13px;text-align:center;cursor:pointer;background:#f0fdf4;';
+        sEl.style.cssText = 'border:2.5px solid var(--eb-border);border-radius:10px;padding:13px;text-align:center;cursor:pointer;background:white;';
+        $('nb-prezzo').placeholder = 'Es. 25.00';
+        const sl = $('nb-sublet-section'); if (sl) sl.style.display='none';
+    } else {
+        sEl.style.cssText = 'border:2.5px solid var(--eb-blue);border-radius:10px;padding:13px;text-align:center;cursor:pointer;background:var(--eb-blue-pale);';
+        gEl.style.cssText = 'border:2.5px solid var(--eb-border);border-radius:10px;padding:13px;text-align:center;cursor:pointer;background:white;';
+        $('nb-prezzo').placeholder = 'Es. 500.00';
+        const sl = $('nb-sublet-section'); if (sl) sl.style.display='block';
+    }
+};
+
+// Inietta sezione subaffitto nel modal al caricamento
+document.addEventListener('DOMContentLoaded', () => {
+    const weatherLabel = document.querySelector('#new-booking-modal label');
+    if (weatherLabel && !$('nb-sublet-section')) {
+        const sec = document.createElement('div');
+        sec.id = 'nb-sublet-section';
+        sec.style.cssText = 'display:none;margin-top:14px;padding:14px;background:#f5f3ff;border:1.5px solid #ddd6fe;border-radius:12px;';
+        sec.innerHTML = `
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#7c3aed;margin-bottom:10px;">📅 Date subaffitto (opzionale)</div>
+            <div id="nb-sl-wrap" style="display:flex;flex-wrap:wrap;gap:6px;min-height:32px;padding:8px;background:white;border-radius:8px;border:1.5px solid #ddd6fe;">
+                <span id="nb-sl-empty" style="font-size:11px;color:#a78bfa;font-style:italic;">Nessuna data aggiunta</span>
+            </div>
+            <button type="button" onclick="openCalForNewBooking()" style="margin-top:10px;width:100%;padding:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:9px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">📅 Apri calendario subaffitto</button>`;
+        weatherLabel.parentNode.insertBefore(sec, weatherLabel);
+    }
+});
+
+function nbRefreshSubletPills() {
+    const wrap = $('nb-sl-wrap'); if (!wrap) return;
+    if (!window._nbSubletDates?.length) {
+        wrap.innerHTML = '<span id="nb-sl-empty" style="font-size:11px;color:#a78bfa;font-style:italic;">Nessuna data aggiunta</span>';
+        return;
+    }
+    wrap.innerHTML = window._nbSubletDates.map(dt =>
+        `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#ede9fe;color:#7c3aed;border-radius:20px;font-size:11px;font-weight:700;">${dt}<button type="button" onclick="nbRemoveSubletDate('${dt}')" style="background:none;border:none;color:#7c3aed;cursor:pointer;font-size:13px;padding:0;line-height:1;">×</button></span>`
+    ).join('');
+}
+window.nbRemoveSubletDate = dt => { window._nbSubletDates = window._nbSubletDates.filter(d=>d!==dt); nbRefreshSubletPills(); };
+
+window.openCalForNewBooking = () => calOpen(null, window._nbSubletDates, dates => { window._nbSubletDates=dates; nbRefreshSubletPills(); });
+
+window.nbConfirm = () => {
+    const id    = _currentSpotId;
+    const nome  = $('nb-nome').value.trim();
+    if (!nome) return showToast('Inserisci il nome del cliente','warn');
+    const tel   = $('nb-tel').value.trim() || '-';
+    const isS   = $('nb-tipo-val').value === 'S';
+    const prezzo= parseFloat($('nb-prezzo').value);
+    if (isNaN(prezzo)||prezzo<=0) return showToast('Inserisci un prezzo valido','warn');
+    const entry = {
         nome: nome.toUpperCase(), telefono: tel, email: '-',
         prezzo: prezzo.toFixed(2), isSeasonal: isS,
         pagamento: 'nessuno', barTotal: 0, rate: [],
-        dataArrivo: toIT(arrivo), dataPartenza: toIT(partenza),
-        weatherGuarantee: weather, cancellationPolicy: 'nessuna', note: ''
+        dataArrivo: toIT($('nb-arrivo').value), dataPartenza: toIT($('nb-partenza').value),
+        weatherGuarantee: $('nb-weather').checked, cancellationPolicy: 'nessuna', note: ''
+    };
+    if (isS && window._nbSubletDates?.length) { entry.subletDates=window._nbSubletDates.slice(); entry.subletActive=true; }
+    beachData[id] = entry;
+    fdb(id, entry);
+    window._nbSubletDates = [];
+    closeModals();
+    showToast(`✓ #${id} — ${nome.toUpperCase()}${isS?' (Stagionale)':''} registrato`, 'success');
+};
+
+// ── CALENDARIO MULTI-SELEZIONE ────────────────────────────────────────────
+// calOpen(id, preselected[], onConfirm)
+// Se id è null: modalità "nuova prenotazione" (nessun dato Firebase)
+window.calOpen = function(id, presel, onConfirm) {
+    const MI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+    const DI = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+    function p2(n){ return ('0'+n).slice(-2); }
+    function fmt(y,m,d){ return p2(d)+'/'+p2(m+1)+'/'+y; }
+
+    const C = window.__cal = {
+        id, sel: (presel||[]).slice(),
+        y: new Date().getFullYear(), m: new Date().getMonth(),
+        onConfirm
     };
 
-    // Se stagionale con date subaffitto già selezionate, salvale subito
-    if (isS && window._nbSubletDates && window._nbSubletDates.length) {
-        entry.subletDates  = window._nbSubletDates.slice();
-        entry.subletActive = true;
+    function grid() {
+        const entry  = id ? (beachData[id]||{}) : {};
+        const already= new Set(entry.subletDates||[]);
+        const guests = new Set();
+        (entry.subletGuests||[]).filter(g=>g.active).forEach(g=>(g.dates||[]).forEach(dt=>guests.add(dt)));
+        const now=new Date(), ty=now.getFullYear(), tm=now.getMonth(), td=now.getDate();
+        const fd=new Date(C.y,C.m,1).getDay(), off=(fd===0?6:fd-1), max=new Date(C.y,C.m+1,0).getDate();
+        let h = DI.map(n=>`<div class="v4-dn">${n}</div>`).join('');
+        for(let i=0;i<off;i++) h+=`<div class="v4-d ve"></div>`;
+        for(let d=1;d<=max;d++){
+            const key=fmt(C.y,C.m,d);
+            const past = C.y<ty||(C.y===ty&&C.m<tm)||(C.y===ty&&C.m===tm&&d<td);
+            const isT  = C.y===ty&&C.m===tm&&d===td;
+            const hg   = guests.has(key);
+            const al   = already.has(key)&&!C.sel.includes(key);
+            const sel  = C.sel.includes(key);
+            let cls='v4-d';
+            if(past) cls+=' vp'; if(isT) cls+=' vt'; if(hg) cls+=' vg'; if(al) cls+=' va'; if(sel) cls+=' vs';
+            h+=`<div class="${cls}"${(!past&&!hg)?` onclick="window.__cal.toggle('${key}')"`:''} >${d}</div>`;
+        }
+        return h;
     }
+    function refresh(){
+        const g=$('v4-cal-grid'),p=$('v4-cal-prev'),l=$('v4-cal-mlbl');
+        if(g) g.innerHTML=grid();
+        if(l) l.textContent=MI[C.m]+' '+C.y;
+        if(p){ const n=C.sel.length; p.innerHTML=n===0?'Nessuna data selezionata':`<b>${n}</b> data${n>1?'e':''} selezionata${n>1?'e':''}: ${C.sel.join(', ')}`; }
+    }
+    C.toggle = key=>{ const i=C.sel.indexOf(key); i>=0?C.sel.splice(i,1):C.sel.push(key); refresh(); };
+    C.prev   = ()=>{ C.m--; if(C.m<0){C.m=11;C.y--;} refresh(); };
+    C.next   = ()=>{ C.m++; if(C.m>11){C.m=0;C.y++;} refresh(); };
+    C.close  = ()=>{ const ov=$('v4-cal-ov'); if(ov) ov.remove(); };
+    C.confirm= ()=>{
+        if(!C.sel.length){ showToast('Seleziona almeno una data','warn'); return; }
+        if(C.onConfirm) C.onConfirm(C.sel.slice());
+        C.close();
+    };
 
-    beachData[id] = entry;
-    set(ref(db, 'spiaggia_dati/' + id), entry);
-    closeModals();
+    // Esponi su window per accesso dagli onclick inline dell'HTML del calendario
+    window.__calToggle = k => C.toggle(k);
+    window.__calPrev   = () => C.prev();
+    window.__calNext   = () => C.next();
+    window.__calClose  = () => C.close();
+    window.__calConfirm= () => C.confirm();
 
-    // Reset date subaffitto
-    window._nbSubletDates = [];
-    var wrap = document.getElementById('nb-sl-dates-wrap');
-    if (wrap) wrap.innerHTML = '<span id="nb-sl-empty">Nessuna data aggiunta</span>';
-
-    showToast('✓ #' + id + ' — ' + nome.toUpperCase() + (isS ? ' (Stagionale)' : '') + ' registrato', 'success');
+    const entry = id ? (beachData[id]||{}) : {nome:'Nuovo stagionale'};
+    const ov = document.createElement('div'); ov.id='v4-cal-ov';
+    ov.innerHTML = `<div id="v4-cal-box"><div id="v4-cal-hdr"><div class="ch-tag">📅 Date Subaffitto</div><div class="ch-name">Ombrellone #${id||'—'} — ${entry.nome||''}</div></div><div class="v4-nav"><button class="v4-nav-btn" onclick="window.__calPrev()">‹</button><span class="v4-mlbl" id="v4-cal-mlbl"></span><button class="v4-nav-btn" onclick="window.__calNext()">›</button></div><div class="v4-grid" id="v4-cal-grid"></div><div class="v4-foot"><div class="v4-prev" id="v4-cal-prev"></div><button class="v4-ok" onclick="window.__calConfirm()">✓ Conferma date</button><button class="v4-cancel" onclick="window.__calClose()">Annulla</button></div></div>`;
+    ov.addEventListener('click', e=>{ if(e.target===ov) C.close(); });
+    const old=$('v4-cal-ov'); if(old) old.remove();
+    document.body.appendChild(ov);
+    refresh();
 };
 
-// Resetta anche le date subaffitto quando si apre il modal
-var _origHandleOmbrellone = window.handleOmbrellone;
-window.handleOmbrellone = function(id) {
-    window._nbSubletDates = [];
-    _origHandleOmbrellone(id);
+// slbmOpenAddDate: apre il calendario per un ombrellone stagionale esistente
+window.slbmOpenAddDate = id => calOpen(id, beachData[id]?.subletDates||[], dates => window.slbmSaveDates(id, dates));
+
+// ── SUBAFFITTO SCREEN ────────────────────────────────────────────────────
+function renderSubaffitto() {
+    const container = $('sublet-list'); if (!container) return;
+    const stagionali = Object.keys(beachData).filter(id => beachData[id]?.isSeasonal);
+    if (!stagionali.length) { container.innerHTML='<div style="font-size:13px;color:var(--eb-muted);text-align:center;padding:40px;">Nessun ombrellone stagionale registrato</div>'; renderSubletTodayBanner(); return; }
+    const today = todayIT();
+    container.innerHTML = stagionali.map(id => {
+        const d = beachData[id];
+        const dates  = d.subletDates||[], guests = d.subletGuests||[], credito = parseFloat(d.subletCredito||0);
+        const datesHtml = dates.length ? dates.map(dt => {
+            const g = guests.find(g=>g.active&&(g.dates||[]).includes(dt));
+            const isToday = dt===today;
+            if (g) return `<div onclick="slbmShowGuestDetail('${id}','${dt}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#ede9fe;border:2px solid #8b5cf6;font-size:12px;font-weight:700;color:#7c3aed;cursor:pointer;">🔄 ${dt} · <b>${g.nome}</b> <span style="font-size:10px;background:#8b5cf6;color:white;padding:1px 7px;border-radius:10px;">${g.pagato?'✓ Pagato':'⏳ Da pagare'}</span></div>`;
+            return `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:${isToday?'#fef3c7':'white'};border:2px solid ${isToday?'#f59e0b':'var(--eb-border)'};font-size:12px;font-weight:600;color:var(--eb-muted);"><span onclick="slbmOpenBookingFromDate('${id}','${dt}')" style="cursor:pointer;">📅 ${dt}${isToday?' ⬅️':''}</span><button onclick="slbmRemoveDate('${id}','${dt}')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:11px;padding:0;" title="Rimuovi">✕</button></div>`;
+        }).join('') : '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data inserita</span>';
+        const guestsHtml = guests.filter(g=>g.active).length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>${guests.filter(g=>g.active).map((g,gi)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);"><div><b>${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}</span><br><span style="color:#7c3aed;">${(g.dates||[]).join(', ')}</span></div><div style="text-align:right;flex-shrink:0;margin-left:10px;"><div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(g.totalePagato||0).toFixed(2)+'€':'⏳ Da pagare'}</div><button onclick="slbmToggleGuestPaid('${id}',${gi})" style="font-size:10px;background:none;border:1px solid ${g.pagato?'var(--eb-muted)':'var(--free)'};color:${g.pagato?'var(--eb-muted)':'var(--free)'};border-radius:6px;padding:2px 8px;cursor:pointer;font-family:Poppins,sans-serif;margin-top:3px;">${g.pagato?'✓ Pagato':'Segna Pagato'}</button></div></div>`).join('')}</div>` : '';
+        return `<div class="sublet-card"><div class="sublet-header"><div><div class="sublet-name">🏖️ #${id} — ${d.nome}</div><div class="sublet-spot" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:4px;"><span>Stagionale · ${d.prezzo}€</span>${credito>0?`<span style="color:var(--free);font-weight:700;background:#dcfce7;padding:2px 10px;border-radius:20px;font-size:11px;">💰 Accredito: +${credito.toFixed(2)}€</span>`:''}</div></div><button class="btn-sm btn-sea" onclick="slbmOpenAddDate('${id}')">📅 Aggiungi date</button></div><div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>${guestsHtml}</div>`;
+    }).join('');
+    renderSubletTodayBanner();
+}
+
+function renderSubletTodayBanner() {
+    const today=todayIT(), banner=$('sublet-today-banner'), list=$('sublet-today-list');
+    if (!banner||!list) return;
+    const active=[];
+    Object.keys(beachData).forEach(id=>{ const g=slbmTodayGuest(id); if(g) active.push({id,ospite:g.nome,pagato:g.pagato,totale:g.totalePagato||0}); });
+    banner.style.display = active.length ? 'block' : 'none';
+    if (list) list.innerHTML = active.map(a=>`<div style="background:rgba(255,255,255,0.18);border-radius:8px;padding:7px 13px;font-size:12px;color:white;"><b>#${a.id}</b> · ${a.ospite} <span style="opacity:.85;">${a.pagato?'✓ '+a.totale.toFixed(2)+'€':'⏳ Da pagare'}</span></div>`).join('');
+}
+
+// ── SUBAFFITTO: MODAL OSPITE ──────────────────────────────────────────────
+let _slbmId=null, _slbmDates=[];
+window.slbmOpen = id => {
+    _slbmId=id; _slbmDates=[];
+    const d=beachData[id]; if(!d) return;
+    $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`;
+    $('slbm-sub').textContent=`Stagionale · ${d.prezzo}€`;
+    $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false;
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false);
+    const ci=$('slbm-custom-extra'); if(ci) ci.value='';
+    slbmBuildDatesPicker(id); slbmCalcPreview();
+    $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block';
+};
+window.slbmOpenBookingFromSpot = id => { const d=beachData[id]; if(!d) return; _slbmId=id; _slbmDates=[todayIT()]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Disponibile oggi`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
+window.slbmOpenBookingFromDate= (id,dt) => { _slbmId=id; _slbmDates=[dt]; const d=beachData[id]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Ospite per ${dt}`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
+window.slbmOpenSpotGuest = id => { const g=slbmTodayGuest(id), d=beachData[id]; if(!g){handleOmbrellone(id);return;} if(confirm(`🔄 Ospite oggi\n👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${g.pagato?(g.totalePagato||0).toFixed(2)+'€ pagati':'Non ancora pagato'}\n\nAprire la scheda del titolare?`)) openSpotModal(id); };
+
+function slbmBuildDatesPicker(id) {
+    const picker=$('slbm-dates-picker'); if(!picker) return;
+    const dates=(beachData[id]?.subletDates)||[];
+    if (!dates.length){ picker.innerHTML='<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data libera. Aggiungile con il calendario.</span>'; return; }
+    picker.innerHTML = dates.map(dt => {
+        const hg=slbmDateHasGuest(id,dt), sel=_slbmDates.includes(dt);
+        return `<div onclick="${hg?'':` slbmToggleSlbmDate('${dt}')`}" style="padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:${hg?'not-allowed':'pointer'};border:2px solid ${hg?'#d1d5db':sel?'#8b5cf6':'var(--eb-border)'};background:${hg?'#f3f4f6':sel?'#ede9fe':'white'};color:${hg?'#9ca3af':sel?'#7c3aed':'var(--eb-muted)'};transition:all .15s;user-select:none;">${hg?'🔒':sel?'✓ ':''} ${dt}${hg?' (occupata)':''}</div>`;
+    }).join('');
+}
+window.slbmToggleSlbmDate = dt => { const i=_slbmDates.indexOf(dt); i>=0?_slbmDates.splice(i,1):_slbmDates.push(dt); slbmBuildDatesPicker(_slbmId); slbmCalcPreview(); };
+
+window.slbmCalcPreview = () => {
+    const preview=$('slbm-calc-preview'); if(!preview) return;
+    const days=_slbmDates.length; let extra=0;
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb=>{
+        if(!cb.checked) return;
+        if(cb.dataset.custom==='1'){const v=parseFloat($('slbm-custom-extra')?.value||0); if(!isNaN(v)&&v>0) extra+=v*days;}
+        else extra+=parseFloat(cb.dataset.price||0)*days;
+    });
+    if(days===0){preview.style.display='none';return;}
+    preview.style.display='block';
+    $('slbm-prev-days').textContent=`${days} gg`;
+    $('slbm-prev-credit').textContent=`+${(days*SUBLET_CREDIT_DAY).toFixed(2)}€`;
+    $('slbm-prev-base').textContent=`${SUBLET_BASE.toFixed(2)}€`;
+    const er=$('slbm-prev-extras-row'), ev=$('slbm-prev-extras');
+    if(er&&ev){er.style.display=extra>0?'flex':'none'; ev.textContent=`${extra.toFixed(2)}€`;}
+    $('slbm-prev-total').textContent=`${(SUBLET_BASE+extra).toFixed(2)}€`;
+};
+window.slbmConfirm = () => {
+    const id=_slbmId, nome=$('slbm-nome').value.trim().toUpperCase(), tel=$('slbm-tel').value.trim()||'-', pagato=$('slbm-pagato').checked;
+    if(!nome) return showToast('Inserisci il nome dell\'ospite','warn');
+    if(!_slbmDates.length) return showToast('Seleziona almeno una data','warn');
+    const d=beachData[id]; if(!d.subletGuests) d.subletGuests=[];
+    let extraTot=0, extraDet=[];
+    document.querySelectorAll('.slbm-extra-cb').forEach(cb=>{
+        if(!cb.checked) return;
+        if(cb.dataset.custom==='1'){const v=parseFloat($('slbm-custom-extra')?.value||0); if(!isNaN(v)&&v>0){extraTot+=v*_slbmDates.length;extraDet.push({nome:'Extra personalizzato',prezzo:v});}}
+        else{const p=parseFloat(cb.dataset.price||0); const lbl=cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim()||'Extra'; extraTot+=p*_slbmDates.length; extraDet.push({nome:lbl,prezzo:p});}
+    });
+    const totPagato=SUBLET_BASE+extraTot, credito=_slbmDates.length*SUBLET_CREDIT_DAY;
+    d.subletGuests.push({nome,telefono:tel,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
+    d.subletCredito=parseFloat((parseFloat(d.subletCredito||0)+credito).toFixed(2));
+    d.subletActive=true;
+    fdb(id,d); closeModals();
+    showToast(`✓ ${nome} registrato · Accredito +${credito.toFixed(2)}€`, 'success');
+};
+window.slbmRemoveDate = (id,dt) => { if(!confirm(`Rimuovere il ${dt}?`)) return; if(slbmDateHasGuest(id,dt)) return showToast('Data con ospite: non rimuovibile','warn'); const d=beachData[id]; d.subletDates=(d.subletDates||[]).filter(x=>x!==dt); fdb(id,d); showToast('Data rimossa','info'); };
+window.slbmShowGuestDetail = (id,dt) => { const d=beachData[id]; const g=(d.subletGuests||[]).find(x=>x.active&&(x.dates||[]).includes(dt)); if(!g) return; alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`); };
+window.slbmToggleGuestPaid = (id,gi) => { const d=beachData[id]; if(!d.subletGuests?.[gi]) return; d.subletGuests[gi].pagato=!d.subletGuests[gi].pagato; fdb(id,d); showToast(d.subletGuests[gi].pagato?'✓ Pagato':'Pagamento rimosso','info'); };
+
+// ── CONSUMAZIONI BAR ─────────────────────────────────────────────────────
+function sdRenderConsumazioni(id) {
+    const d=beachData[id], cons=d?.consumazioni||[];
+    const total=cons.reduce((s,c)=>s+parseFloat(c.prezzo||0),0);
+    const badge=$('sd-cons-total-badge'); if(badge){badge.textContent=total.toFixed(2)+'€'; badge.style.background=total>0?'var(--bar)':'var(--eb-muted)';}
+    const list=$('sd-cons-list'); if(!list) return;
+    if(!cons.length){list.innerHTML='<div style="padding:16px;text-align:center;font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna consumazione registrata</div>'; }
+    else {
+        list.innerHTML = cons.map((c,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--eb-bg);font-size:13px;"><div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="font-size:16px;">🥤</span><div><div style="font-weight:600;">${c.nome}</div><div style="font-size:10px;color:var(--eb-muted);">🕐 ${c.ora}</div></div></div><div style="display:flex;align-items:center;gap:8px;"><span style="font-weight:700;color:var(--bar);">+${parseFloat(c.prezzo).toFixed(2)}€</span><button onclick="sdRemoveConsumazione(${i})" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:3px 8px;cursor:pointer;font-size:11px;font-family:Poppins,sans-serif;">✕</button></div></div>`).join('') +
+        `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--eb-bg);font-size:13px;font-weight:700;"><span>Totale consumazioni</span><span style="color:var(--bar);font-size:15px;">${total.toFixed(2)}€</span></div>`;
+    }
+    const quick=$('sd-cons-quick');
+    if(quick) quick.innerHTML = Object.values(dynamicProducts).length ? Object.values(dynamicProducts).map(p=>`<button onclick="sdQuickAdd('${p.nome.replace(/'/g,"\\'")}',${p.prezzo})" style="padding:5px 12px;border:1.5px solid ${p.colore||'#f97316'}33;background:${p.colore||'#f97316'}18;color:${p.colore||'#f97316'};border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif;">${p.nome} ${p.prezzo.toFixed(2)}€</button>`).join('') : '<span style="font-size:11px;color:var(--eb-muted);">Nessun prodotto nel menu</span>';
+}
+window.sdQuickAdd = (nome,prezzo) => { $('sd-cons-nome').value=nome; $('sd-cons-prezzo').value=prezzo.toFixed(2); };
+window.sdAddConsumazione = () => {
+    const id=_currentSpotId; if(!id) return;
+    const nome=$('sd-cons-nome').value.trim(), prezzo=parseFloat($('sd-cons-prezzo').value);
+    if(!nome) return showToast('Inserisci il nome','warn');
+    if(isNaN(prezzo)||prezzo<=0) return showToast('Prezzo non valido','warn');
+    const d=beachData[id]; if(!d.consumazioni) d.consumazioni=[];
+    const ora=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+    d.consumazioni.push({nome,prezzo,ora});
+    d.barTotal=parseFloat((parseFloat(d.barTotal||0)+prezzo).toFixed(2));
+    fdb(id,d); $('sd-cons-nome').value=''; $('sd-cons-prezzo').value='';
+    sdRenderConsumazioni(id);
+    const bt=$('sm-bar'); if(bt) bt.textContent=d.barTotal.toFixed(2)+'€';
+    const bb=$('sm-bar-btn'); if(bb) bb.style.display='flex';
+    showToast(`✓ ${nome} (+${prezzo.toFixed(2)}€) su #${id}`,'success');
+};
+window.sdRemoveConsumazione = idx => {
+    const id=_currentSpotId; if(!id) return;
+    const d=beachData[id]; if(!d.consumazioni?.[idx]) return;
+    const r=d.consumazioni[idx];
+    if(!confirm(`Rimuovere "${r.nome}" (${parseFloat(r.prezzo).toFixed(2)}€)?`)) return;
+    d.consumazioni.splice(idx,1);
+    d.barTotal=parseFloat(d.consumazioni.reduce((s,c)=>s+parseFloat(c.prezzo||0),0).toFixed(2));
+    fdb(id,d); sdRenderConsumazioni(id);
+    const bt=$('sm-bar'); if(bt) bt.textContent=d.barTotal.toFixed(2)+'€';
+    const bb=$('sm-bar-btn'); if(bb) bb.style.display=d.barTotal>0?'flex':'none';
+    showToast('Consumazione rimossa','info');
 };
 
-// ════════════════════════════════════════════════════════════════════════
-// FINE PATCH V5
-// ════════════════════════════════════════════════════════════════════════
+// ── PAYMENT MODAL ─────────────────────────────────────────────────────────
+window.openPaymentModal = id => {
+    currentEditingId=id; const d=beachData[id]; if(!d.rate) d.rate=[];
+    $('pm-title').innerText=`#${id} · ${d.nome} · Pagamenti`;
+    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
+    const paid=(d.rate||[]).reduce((s,r)=>s+r.importo,0);
+    const pct=total>0?Math.min(100,Math.round((paid/total)*100)):0;
+    const ln=parseFloat(d.lettiniCosto||0)>0?' (inc. 🛌'+parseFloat(d.lettiniCosto).toFixed(2)+'€)':'';
+    $('pm-total').innerText=total.toFixed(2)+'€'+ln; $('pm-paid').innerText=paid.toFixed(2)+'€'; $('pm-rem').innerText=(total-paid).toFixed(2)+'€';
+    $('pm-progress').style.width=pct+'%'; $('pm-weather').checked=d.weatherGuarantee||false; $('pm-cancellation').value=d.cancellationPolicy||'nessuna'; $('pm-note').value=d.note||'';
+    $('pm-history').innerHTML=d.rate.length?d.rate.map(r=>`<div style="padding:4px 0;border-bottom:1px solid var(--eb-bg);">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join(''):'<div style="color:#aaa;text-align:center;padding:8px;">Nessun versamento</div>';
+    $('payment-modal').style.display='block'; $('overlay').style.display='block';
+};
+window.saveRata = () => {
+    const amt=parseFloat($('pm-new-amount').value); if(isNaN(amt)||amt<=0) return showToast('Importo non valido','warn');
+    const d=beachData[currentEditingId]; d.rate.push({importo:amt,data:new Date().toLocaleDateString('it-IT')});
+    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
+    const paid=d.rate.reduce((s,r)=>s+r.importo,0);
+    d.pagamento=paid>=total?'saldo':paid>0?'acconto':'nessuno';
+    fdb(currentEditingId,d); $('pm-new-amount').value='';
+    openPaymentModal(currentEditingId); showToast(`✓ ${amt.toFixed(2)}€ registrati`,'success');
+};
+window.saveModalExtras = () => {
+    const d=beachData[currentEditingId]; if(!d) return;
+    d.weatherGuarantee=$('pm-weather').checked; d.cancellationPolicy=$('pm-cancellation').value; d.note=$('pm-note').value;
+    fdb(currentEditingId,d); showToast('✓ Opzioni salvate','success');
+};
+window.openCancelModal = () => { selectedCancelOption=null; document.querySelectorAll('.cancel-option').forEach(el=>el.classList.remove('selected')); $('btn-confirm-cancel').disabled=true; $('cancel-modal').style.display='block'; $('payment-modal').style.display='none'; };
+window.selectCancelOption = (el,val) => { document.querySelectorAll('.cancel-option').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selectedCancelOption=val; $('btn-confirm-cancel').disabled=false; };
+window.confirmCancel = () => {
+    if(!selectedCancelOption||!currentEditingId) return;
+    const d=beachData[currentEditingId];
+    const msgs={rimborso:`✓ Cancellata · Rimborso per ${d.nome}`,voucher:`🎫 Voucher per ${d.nome}`,trattieni:`🔒 Importo trattenuto · ${d.nome}`};
+    delete beachData[currentEditingId]; fdb(currentEditingId,null);
+    closeModals(); showToast(msgs[selectedCancelOption]||'Cancellata','info');
+};
+window.closeModals = () => { document.querySelectorAll('.modal').forEach(m=>m.style.display='none'); $('overlay').style.display='none'; };
+
+// ── QR ────────────────────────────────────────────────────────────────────
+window.openQrModal = id => {
+    const d=beachData[id]; $('qr-modal-label').textContent=`Ombrellone #${id}${d?' · '+d.nome:''}`;
+    const c=$('qr-code-container'); c.innerHTML='';
+    new QRCode(c,{text:`${location.origin}${location.pathname}?order=1&spot=${id}`,width:160,height:160,colorDark:'#0d5c8c',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});
+    $('qr-modal').style.display='block'; $('overlay').style.display='block';
+};
+function renderQrOrders() {
+    const list=$('qr-orders-list'), badge=$('qr-orders-badge'), wrap=$('qr-orders-wrap'); if(!list) return;
+    const pending=Object.keys(qrOrders).filter(k=>qrOrders[k]&&!qrOrders[k].done);
+    if(badge){badge.textContent=pending.length; badge.style.display=pending.length?'inline':'none';}
+    if(wrap) wrap.style.display=Object.keys(qrOrders).length?'block':'none';
+    if(!Object.keys(qrOrders).length){list.innerHTML='<div style="font-size:12px;color:var(--eb-muted);text-align:center;padding:12px;">Nessun ordine QR</div>';return;}
+    list.innerHTML=Object.keys(qrOrders).sort().reverse().map(k=>{const o=qrOrders[k];const cls=o.done?'qr-order-item qr-order-done':'qr-order-item';const action=o.done?'':`<button onclick="markQrDone('${k}')" style="background:var(--free);color:white;border:none;border-radius:6px;padding:3px 8px;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;cursor:pointer;">✓</button>`;return `<div class="${cls}"><span class="qr-badge">#${o.spot||'?'}</span><span style="flex:1;margin:0 8px;">${o.items||''}</span><span style="font-weight:700;">${(o.total||0).toFixed(2)}€</span>${action}</div>`;}).join('');
+}
+window.markQrDone=(k)=>{if(qrOrders[k]){qrOrders[k].done=true;set(qrOrdersRef,qrOrders);showToast('✓ Ordine completato','success');}};
+window.showQrOrdersModal=()=>{$('qr-orders-wrap').style.display='block';};
+
+// ── BAR / POS ─────────────────────────────────────────────────────────────
+window.addToCart    = (n,p)=>{cart.push({n,p});updateCartUI();};
+window.removeFromCart=(i)=>{cart.splice(i,1);updateCartUI();};
+function updateCartUI(){
+    cartTotal=cart.reduce((a,b)=>a+b.p,0);
+    $('cart-list').innerHTML=cart.map((i,idx)=>`<div class="cart-item"><span>${i.n}</span><div style="display:flex;align-items:center;gap:6px;"><b>${i.p.toFixed(2)}€</b><span class="remove-btn" onclick="removeFromCart(${idx})">🗑️</span></div></div>`).join('');
+    $('cart-total').innerText=cartTotal.toFixed(2);
+}
+window.openBeerMenu =()=>{$('beer-menu').style.display='block';$('overlay').style.display='block';};
+window.closeBeerMenu=()=>{$('beer-menu').style.display='none';$('overlay').style.display='none';};
+window.filterClients=()=>{const v=$('clientSearch').value.toUpperCase(),r=$('search-results');if(v.length<1){r.classList.add('hidden');return;}let h='';Object.keys(beachData).forEach(id=>{if(id.includes(v)||beachData[id].nome.includes(v)) h+=`<div class="search-item" onclick="selectClient('${id}','${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`;});r.innerHTML=h;r.classList.remove('hidden');};
+window.selectClient =(id,nome)=>{$('selected-id').value=id;$('clientSearch').value=`#${id} ${nome}`;$('search-results').classList.add('hidden');};
+window.chargeToSelected=()=>{const id=$('selected-id').value;if(!id||cartTotal===0) return showToast('Seleziona un cliente e aggiungi prodotti','warn');beachData[id].barTotal=parseFloat((parseFloat(beachData[id].barTotal||0)+cartTotal).toFixed(2));fdb(id,beachData[id]);showToast(`✓ ${cartTotal.toFixed(2)}€ addebitati su #${id}`,'success');cart=[];updateCartUI();$('selected-id').value='';$('clientSearch').value='';};
+window.directPay    =()=>{showToast('✓ Pagato in cassa!','success');cart=[];updateCartUI();};
+
+// ── EXTRA LETTINI ─────────────────────────────────────────────────────────
+window.changeQty=(d)=>{const e=$('extra-qty'),disp=getLettinoDisponibili(),v=Math.max(1,parseInt(e.value)+d);if(v>disp&&disp>0){e.value=disp;showToast(`⚠️ Massimo ${disp} disponibile${disp>1?'i':''}`, 'warn');}else if(disp===0){e.value=1;showToast('⚠️ Nessun lettino disponibile','warn');}else e.value=v;};
+window.filterClientsExtra=()=>{const v=$('extraSearch').value.toUpperCase(),r=$('extra-results');if(v.length<1){r.classList.add('hidden');return;}let h='';Object.keys(beachData).forEach(id=>{if(id.includes(v)||beachData[id].nome.includes(v)) h+=`<div class="search-item" onclick="selectExtra('${id}','${beachData[id].nome}')">#${id} — ${beachData[id].nome}</div>`;});r.innerHTML=h;r.classList.remove('hidden');};
+window.selectExtra  =(id,nome)=>{$('extra-selected-id').value=id;$('extraSearch').value=`#${id} ${nome}`;$('extra-results').classList.add('hidden');};
+function getLettinoDisponibili(){return Math.max(0,(warehouseData.lettini?.totale||0)-Object.values(beachData).reduce((s,d)=>s+parseInt(d?.lettiniExtra||0),0));}
+window.chargeExtraToBeach=()=>{const id=$('extra-selected-id').value,qty=parseInt($('extra-qty').value);if(!id) return showToast('Seleziona un ombrellone','warn');const disp=getLettinoDisponibili();if(qty>disp){showToast(disp===0?'⚠️ Nessun lettino disponibile':`⚠️ Solo ${disp} disponibile${disp>1?'i':''}`, 'warn');$('extra-qty').value=disp||1;return;}const d=beachData[id];d.prezzo=(parseFloat(d.prezzo)+(qty*prezzoLettino)).toFixed(2);d.lettiniExtra=(parseInt(d.lettiniExtra||0)+qty);fdb(id,d);showToast(`✓ ${qty}x lettino addebitato su #${id}`,'success');};
+window.directPayExtra=()=>{const qty=parseInt($('extra-qty').value),disp=getLettinoDisponibili();if(qty>disp){showToast(disp===0?'⚠️ Nessun lettino disponibile':`⚠️ Solo ${disp} disponibile${disp>1?'i':''}`, 'warn');$('extra-qty').value=disp||1;return;}showToast('✓ Pagato in cassa!','success');};
+
+// ── PRODOTTI BAR ──────────────────────────────────────────────────────────
+window.addProdotto=()=>{const nome=$('prod-nome').value.trim(),prezzo=parseFloat($('prod-prezzo').value),colore=$('prod-colore').value;if(!nome||isNaN(prezzo)) return showToast('Dati non validi','warn');dynamicProducts['p_'+Date.now()]={nome,prezzo,colore};set(prodRef,dynamicProducts);$('prod-nome').value='';$('prod-prezzo').value='';showToast('✓ Prodotto aggiunto','success');};
+window.deleteProdotto=(id)=>{if(confirm('Eliminare?')){delete dynamicProducts[id];set(prodRef,dynamicProducts);}};
+function renderDynamicProducts(){
+    const admin=$('lista-prodotti-admin'),pos=$('dynamic-pos-items');
+    let ah='',ph='';
+    Object.keys(dynamicProducts).forEach(id=>{const p=dynamicProducts[id];const c=p.colore||'#95a5a6';ah+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);"><span style="font-size:13px;display:flex;align-items:center;gap:8px;"><span style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block;"></span>${p.nome} · <b>${p.prezzo.toFixed(2)}€</b></span><button onclick="deleteProdotto('${id}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button></div>`;ph+=`<button class="pos-btn" style="border-bottom-color:${c}" onclick="addToCart('${p.nome.replace(/'/g,"\\'")}',${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;});
+    if(admin) admin.innerHTML=ah||'<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">Nessun prodotto</div>';
+    if(pos) pos.innerHTML=ph;
+}
+
+// ── ARCHIVIO ──────────────────────────────────────────────────────────────
+function buildArchivioRows(){
+    archivioAllRows=[];
+    Object.keys(beachData).forEach(id=>{const d=beachData[id];if(!d) return;const paid=(d.rate||[]).reduce((a,b)=>a+b.importo,0);const tot=parseFloat(d.prezzo||0)+parseFloat(d.lettiniCosto||0);const pct=tot>0?Math.min(100,Math.round((paid/tot)*100)):0;archivioAllRows.push({id,...d,paid,pct});});
+}
+window.filterArchivio=()=>{
+    const q=$('archivio-search').value.toLowerCase(),tipo=$('archivio-filter-tipo').value,stato=$('archivio-filter-stato').value;
+    let rows=archivioAllRows.filter(d=>{const m=(!q||(d.nome||'').toLowerCase().includes(q)||(d.telefono||'').toLowerCase().includes(q)||(String(d.id)).includes(q));const t=(!tipo||(tipo==='G'&&!d.isSeasonal)||(tipo==='S'&&d.isSeasonal));const s=(!stato||d.pagamento===stato);return m&&t&&s;});
+    renderArchivioRows(rows,$('db-body'));
+};
+function renderArchivioRows(rows,tbody){
+    if(!tbody) return;
+    tbody.innerHTML=rows.map(d=>{const bCls=d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';return `<tr><td>#${d.id}</td><td><div style="font-weight:600;">${d.nome}</div>${d.weatherGuarantee?'<span style="font-size:10px;">☀️ Garanzia Meteo</span>':''}</td><td>${d.telefono||'-'}</td><td><span style="font-size:11px;font-weight:700;color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span></td><td><div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div></td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td><button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button></td></tr>`;}).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
+}
+window.exportCSV=()=>{buildArchivioRows();const header=['#','Nome','Telefono','Tipo','Prezzo','Bar','Pagamento','Note'];const rows=archivioAllRows.map(d=>[d.id,d.nome,d.telefono||'',d.isSeasonal?'Stagionale':'Giornaliero',d.prezzo,parseFloat(d.barTotal||0).toFixed(2),d.pagamento||'nessuno',(d.note||'').replace(/,/g,' ')]);const csv=[header,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;a.click();showToast('📥 CSV esportato!','success');};
+
+// ── ADMIN UTENTI ──────────────────────────────────────────────────────────
+window.addUser=async()=>{const email=$('new-username').value.trim(),pass=$('new-password').value.trim(),role=$('new-role').value;if(!email||!pass) return showToast('Compila email e password.','warn');if(pass.length<6) return showToast('Password troppo corta (min. 6).','warn');const btn=document.querySelector('#screen-admin-utenti .btn-sea');btn.innerText='Creazione…';btn.disabled=true;try{const uc=await createUserWithEmailAndPassword(secondaryAuth,email,pass);await set(ref(db,'utenti_suite/'+uc.user.uid),{email,role});await secondaryAuth.signOut();showToast('✓ Utente creato','success');}catch(err){showToast(err.code==='auth/email-already-in-use'?'Email già in uso.':'Errore: '+err.message,'warn');}finally{btn.innerText='➕ Aggiungi Utente';btn.disabled=false;}};
+window.deleteUser=(uid)=>{if(confirm('Eliminare?')){delete usersData[uid];set(usersRef,usersData);}};
+window.toggleUserRole=(uid)=>{const u=usersData[uid];u.role=u.role==='admin'?'staff':'admin';set(ref(db,'utenti_suite/'+uid+'/role'),u.role);showToast('Ruolo aggiornato','info');};
+function renderUtenti(){const list=$('lista-utenti');if(!list) return;const keys=Object.keys(usersData);if(!keys.length){list.innerHTML='<div style="color:#bbb;font-size:13px;text-align:center;padding:16px 0;">Nessun utente</div>';return;}list.innerHTML=keys.map(uid=>{const u=usersData[uid];const isA=(u.role||'staff')==='admin';const rc=isA?'var(--expired)':'var(--eb-blue)';const rl=isA?'Admin':'Staff';const dn=u.email||u.username||uid;return `<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);gap:8px;"><span style="font-size:13px;display:flex;align-items:center;gap:8px;flex:1;overflow:hidden;"><span>👤</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><b>${dn}</b></span><span style="font-size:10px;font-weight:700;text-transform:uppercase;background:${rc}20;color:${rc};padding:2px 8px;border-radius:20px;">${rl}</span></span><div style="display:flex;gap:6px;flex-shrink:0;"><button onclick="toggleUserRole('${uid}')" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;white-space:nowrap;">${isA?'→ Staff':'→ Admin'}</button><button onclick="deleteUser('${uid}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button></div></div>`;}).join('');}
+
+// ── IMPOSTAZIONI ──────────────────────────────────────────────────────────
+window.savePrezzoLettino=()=>{const v=parseFloat($('extra-price-input').value);if(isNaN(v)||v<=0) return alert('Prezzo non valido');set(prezzoLettiniRef,v);showToast('✓ Prezzo aggiornato','success');};
+
+// ── AUTH ──────────────────────────────────────────────────────────────────
+window.checkLogin=async()=>{const email=$('userInput').value.trim(),pass=$('passInput').value;const errEl=$('login-error');const btn=document.querySelector('#screen-login .btn-login');errEl.innerText='';if(!email||!pass){errEl.innerText='Compila tutti i campi.';return;}btn.innerText='Accesso…';btn.disabled=true;try{await signInWithEmailAndPassword(auth,email,pass);}catch(err){let m='Credenziali non valide.';if(err.code==='auth/too-many-requests') m='Troppi tentativi.';if(err.code==='auth/invalid-email') m='Email non valida.';errEl.innerText=m;$('userInput').style.borderColor='var(--expired)';$('passInput').style.borderColor='var(--expired)';}finally{btn.innerText='Accedi alla Suite';btn.disabled=false;}};
+window.logout=async()=>{await signOut(auth);$('userInput').value='';$('passInput').value='';$('login-error').innerText='';};
+
+function applyRoleUI(){
+    const isAdmin=currentUser?.role==='admin';
+    document.querySelectorAll('.admin-only').forEach(el=>el.style.display=isAdmin?'':'none');
+    document.querySelectorAll('.staff-hidden').forEach(el=>el.style.display=isAdmin?'':'none');
+    const pe=$('admin-price-editor');if(pe) pe.style.display=isAdmin?'block':'none';
+    $('main-topbar').classList.remove('hidden');
+    const disp=currentUser.username.includes('@')?currentUser.username.split('@')[0]:currentUser.username;
+    $('logged-user-label').innerText=disp+(isAdmin?' · Admin':' · Staff');
+}
+
+// ── FIREBASE LISTENERS ────────────────────────────────────────────────────
+onValue(qrOrdersRef,  s=>{qrOrders=s.val()||{}; renderQrOrders();});
+onValue(warehouseRef, s=>{const v=s.val();if(v) Object.assign(warehouseData,v); renderWarehouse();});
+
+onAuthStateChanged(auth, async firebaseUser => {
+    if (firebaseUser) {
+        const snap = await new Promise(r => onValue(usersRef,r,{onlyOnce:true}));
+        const allUsers = snap.val()||{};
+        let role='staff';
+        if(allUsers[firebaseUser.uid]) role=allUsers[firebaseUser.uid].role||'staff';
+        else{const match=Object.values(allUsers).find(u=>u.email===firebaseUser.email||u.username===firebaseUser.email);if(match) role=match.role||'staff';else await set(ref(db,'utenti_suite/'+firebaseUser.uid),{email:firebaseUser.email,role:'staff'});}
+        currentUser={username:firebaseUser.email,role};
+        applyRoleUI(); updateHomeDate();
+        if(!window._dataStarted){
+            window._dataStarted=true;
+            if(role==='admin') onValue(usersRef,s=>{usersData=s.val()||{};renderUtenti();});
+            onValue(dbRef,s=>{beachData=s.val()||{};renderSpiaggia();renderToday();renderSubaffitto();buildArchivioRows();filterArchivio();});
+            onValue(prodRef,s=>{dynamicProducts=s.val()||{};renderDynamicProducts();});
+            onValue(prezzoLettiniRef,s=>{const v=s.val();if(v&&v>0) prezzoLettino=parseFloat(v);const d=$('extra-price-display');const i=$('extra-price-input');if(d) d.innerHTML=prezzoLettino.toFixed(2)+'€ <small>/ cad.</small>';if(i) i.value=prezzoLettino.toFixed(2);renderWarehouse();});
+        }
+        const ls=$('screen-login');
+        if(!ls.classList.contains('hidden')) navTo('screen-home');
+    } else {
+        currentUser=null;
+        document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
+        $('screen-login').classList.remove('hidden');
+        $('main-topbar').classList.add('hidden');
+    }
+});
 
 </script>
 </body>
