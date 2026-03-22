@@ -69,8 +69,10 @@
         .topbar-badge { font-size: 10px; background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.85); padding: 3px 10px; border-radius: 20px; }
         .topbar-btn { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.28); border-radius: 8px; padding: 6px 16px; font-size: 12px; font-family: 'Poppins', sans-serif; font-weight: 500; cursor: pointer; transition: background 0.2s; }
         .topbar-btn:hover { background: rgba(255,255,255,0.28); }
+        #topbar-home-btn:hover { background: rgba(255,255,255,0.28); }
 
         /* ── PAGE WRAP ── */
+        .nav-bar { display: none !important; }
         .page-wrap { width: 100%; max-width: 1200px; padding: 28px 24px 0; }
         .screen { width: 100%; display: flex; flex-direction: column; align-items: center; animation: fadeUp 0.3s ease; }
         .hidden { display: none !important; }
@@ -277,7 +279,6 @@
         #qr-modal .qr-wrap { display: flex; justify-content: center; margin: 16px 0; }
         #qr-modal .qr-hint { font-size: 12px; color: var(--eb-muted); margin-top: 8px; }
 
-        /* Cancellation modal */
         .cancel-option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--eb-border); border-radius: var(--radius-sm); cursor: pointer; margin-bottom: 10px; transition: border-color 0.2s, background 0.2s; }
         .cancel-option:hover { border-color: var(--eb-blue-mid); background: var(--eb-blue-pale); }
         .cancel-option.selected { border-color: var(--eb-blue-mid); background: var(--eb-blue-pale); }
@@ -804,16 +805,6 @@
     <input type="number" id="pm-new-amount" class="field" placeholder="Importo rata (€)" style="margin-bottom:12px;">
     <button onclick="saveRata()" class="btn-primary btn-pay">✓ Registra Versamento</button>
 
-    <!-- Politica cancellazione -->
-    <div style="margin-top:10px; padding:12px; background:var(--eb-bg); border-radius:var(--radius-sm); border:1px solid var(--eb-border); text-align:left;">
-        <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--eb-muted); margin-bottom:8px;">Politica Cancellazione</div>
-        <select id="pm-cancellation" class="field" style="padding:8px 12px; font-size:12px;">
-            <option value="nessuna">Nessuna (non rimborsabile)</option>
-            <option value="rimborso">Rimborso completo</option>
-            <option value="voucher">Voucher per altra data</option>
-            <option value="parziale">Rimborso parziale (50%)</option>
-        </select>
-    </div>
     <!-- Note cliente -->
     <div style="margin-top:10px;">
         <textarea id="pm-note" class="field" rows="2" placeholder="Note sul cliente o sulla prenotazione…" style="resize:none; padding:10px;"></textarea>
@@ -1092,6 +1083,7 @@
         <div class="logo-icon">🏖️</div>
         Lido Suite <span class="logo-sub">2026</span>
     </div>
+    <button id="topbar-home-btn" onclick="navTo('screen-home')" style="display:none;align-items:center;gap:7px;background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.28);border-radius:8px;padding:6px 16px;font-size:12px;font-family:'Poppins',sans-serif;font-weight:600;cursor:pointer;transition:background 0.2s;white-space:nowrap;">← Home</button>
     <div class="topbar-right">
         <span class="topbar-user" id="logged-user-label"></span>
         <span class="topbar-badge">v5.0</span>
@@ -1479,6 +1471,9 @@ window.navTo = id => {
     if (currentUser?.role === 'staff' && !STAFF_SCREENS.includes(id)) { showToast('⛔ Accesso non autorizzato','warn'); return; }
     document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
     $(id).classList.remove('hidden');
+    // Mostra/nascondi pulsante Home nella topbar
+    const homeBtn = $('topbar-home-btn');
+    if (homeBtn) homeBtn.style.display = id === 'screen-home' ? 'none' : 'inline-flex';
     if (id === 'screen-home')       { updateHomeDate(); renderToday(); }
     if (id === 'screen-subaffitto') renderSubaffitto();
     if (id === 'screen-magazzino')  renderWarehouse();
@@ -1837,7 +1832,7 @@ window.nbConfirm = () => {
         prezzo: prezzo.toFixed(2), isSeasonal: isS,
         pagamento: 'nessuno', barTotal: 0, rate: [],
         dataArrivo: toIT($('nb-arrivo').value), dataPartenza: toIT($('nb-partenza').value),
-        weatherGuarantee: false, cancellationPolicy: 'nessuna', note: ''
+        weatherGuarantee: false, note: ''
     };
     if (isS && window._nbSubletDates?.length) { entry.subletDates=window._nbSubletDates.slice(); entry.subletActive=true; }
     beachData[id] = entry;
@@ -2145,7 +2140,7 @@ window.openPaymentModal = id => {
     const pct=total>0?Math.min(100,Math.round((paid/total)*100)):0;
     const ln=parseFloat(d.lettiniCosto||0)>0?' (inc. 🛌'+parseFloat(d.lettiniCosto).toFixed(2)+'€)':'';
     $('pm-total').innerText=total.toFixed(2)+'€'+ln; $('pm-paid').innerText=paid.toFixed(2)+'€'; $('pm-rem').innerText=(total-paid).toFixed(2)+'€';
-    $('pm-progress').style.width=pct+'%'; $('pm-cancellation').value=d.cancellationPolicy||'nessuna'; $('pm-note').value=d.note||'';
+    $('pm-progress').style.width=pct+'%'; $('pm-note').value=d.note||'';
     $('pm-history').innerHTML=d.rate.length?d.rate.map(r=>`<div style="padding:4px 0;border-bottom:1px solid var(--eb-bg);">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join(''):'<div style="color:#aaa;text-align:center;padding:8px;">Nessun versamento</div>';
     $('payment-modal').style.display='block'; $('overlay').style.display='block';
 };
@@ -2160,7 +2155,7 @@ window.saveRata = () => {
 };
 window.saveModalExtras = () => {
     const d=beachData[currentEditingId]; if(!d) return;
-    d.cancellationPolicy=$('pm-cancellation').value; d.note=$('pm-note').value;
+    d.note=$('pm-note').value;
     fdb(currentEditingId,d); showToast('✓ Opzioni salvate','success');
 };
 window.openCancelModal = () => { selectedCancelOption=null; document.querySelectorAll('.cancel-option').forEach(el=>el.classList.remove('selected')); $('btn-confirm-cancel').disabled=true; $('cancel-modal').style.display='block'; $('payment-modal').style.display='none'; };
