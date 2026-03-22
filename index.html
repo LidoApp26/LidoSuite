@@ -1369,10 +1369,11 @@
         <div class="db-container">
             <div class="db-toolbar">
                 <input type="text" id="archivio-search" class="field db-search" placeholder="🔍 Cerca per nome, telefono…" oninput="filterArchivio()">
-                <select id="archivio-filter-tipo" class="field" style="width:140px;" onchange="filterArchivio()">
+                <select id="archivio-filter-tipo" class="field" style="width:160px;" onchange="filterArchivio()">
                     <option value="">Tutti</option>
                     <option value="G">Solo Giornalieri</option>
                     <option value="S">Solo Stagionali</option>
+                    <option value="SUB">Solo Subaffitti</option>
                 </select>
                 <select id="archivio-filter-stato" class="field" style="width:150px;" onchange="filterArchivio()">
                     <option value="">Tutti gli stati</option>
@@ -2224,18 +2225,105 @@ function renderDynamicProducts(){
 // ── ARCHIVIO ──────────────────────────────────────────────────────────────
 function buildArchivioRows(){
     archivioAllRows=[];
-    Object.keys(beachData).forEach(id=>{const d=beachData[id];if(!d) return;const paid=(d.rate||[]).reduce((a,b)=>a+b.importo,0);const tot=parseFloat(d.prezzo||0)+parseFloat(d.lettiniCosto||0);const pct=tot>0?Math.min(100,Math.round((paid/tot)*100)):0;archivioAllRows.push({id,...d,paid,pct});});
+    // Clienti titolari (giornalieri + stagionali)
+    Object.keys(beachData).forEach(id=>{
+        const d=beachData[id]; if(!d) return;
+        const paid=(d.rate||[]).reduce((a,b)=>a+b.importo,0);
+        const tot=parseFloat(d.prezzo||0)+parseFloat(d.lettiniCosto||0);
+        const pct=tot>0?Math.min(100,Math.round((paid/tot)*100)):0;
+        archivioAllRows.push({id,...d,paid,pct,_rowType:'titolare'});
+    });
+    // Ospiti subaffitto (da subletGuests di ogni stagionale)
+    Object.keys(beachData).forEach(id=>{
+        const d=beachData[id]; if(!d?.isSeasonal) return;
+        (d.subletGuests||[]).filter(g=>g.active).forEach((g,gi)=>{
+            archivioAllRows.push({
+                id:`${id}S${gi}`,           // id univoco display
+                _spotId: id,                // ombrellone titolare
+                _guestIdx: gi,
+                _rowType: 'subaffitto',
+                nome: g.nome,
+                telefono: g.telefono||'-',
+                email: g.email||'-',
+                prezzo: (g.baseTotale||parseFloat(g.basePrice||20)*(g.dates?.length||1)).toFixed(2),
+                barTotal: g.barTotal||0,
+                pagamento: g.pagato ? 'saldo' : 'nessuno',
+                paid: g.pagato ? (parseFloat(g.totalePagato||0)) : 0,
+                pct: g.pagato ? 100 : 0,
+                isSeasonal: false,
+                note: `Subaffitto #${id} · ${(g.dates||[]).join(', ')}`,
+                dataArrivo: (g.dates||[])[0]||'-',
+                dataPartenza: (g.dates||[])[(g.dates||[]).length-1]||'-',
+                _titolare: d.nome,
+                _totalePagato: g.totalePagato||0,
+                _extraTotale: g.extraTotale||0,
+            });
+        });
+    });
 }
+
 window.filterArchivio=()=>{
-    const q=$('archivio-search').value.toLowerCase(),tipo=$('archivio-filter-tipo').value,stato=$('archivio-filter-stato').value;
-    let rows=archivioAllRows.filter(d=>{const m=(!q||(d.nome||'').toLowerCase().includes(q)||(d.telefono||'').toLowerCase().includes(q)||(String(d.id)).includes(q));const t=(!tipo||(tipo==='G'&&!d.isSeasonal)||(tipo==='S'&&d.isSeasonal));const s=(!stato||d.pagamento===stato);return m&&t&&s;});
+    const q=$('archivio-search').value.toLowerCase();
+    const tipo=$('archivio-filter-tipo').value;
+    const stato=$('archivio-filter-stato').value;
+    let rows=archivioAllRows.filter(d=>{
+        const m=(!q||(d.nome||'').toLowerCase().includes(q)||(d.telefono||'').toLowerCase().includes(q)||(d.email||'').toLowerCase().includes(q)||(String(d.id)).includes(q));
+        let t=true;
+        if(tipo==='G')   t = d._rowType==='titolare' && !d.isSeasonal;
+        if(tipo==='S')   t = d._rowType==='titolare' && d.isSeasonal;
+        if(tipo==='SUB') t = d._rowType==='subaffitto';
+        const s=(!stato||d.pagamento===stato);
+        return m&&t&&s;
+    });
     renderArchivioRows(rows,$('db-body'));
 };
+
 function renderArchivioRows(rows,tbody){
     if(!tbody) return;
-    tbody.innerHTML=rows.map(d=>{const bCls=d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';return `<tr><td>#${d.id}</td><td><div style="font-weight:600;">${d.nome}</div></td><td>${d.telefono||'-'}</td><td style="font-size:12px;color:var(--eb-muted);">${d.email&&d.email!=='-'?`<a href="mailto:${d.email}" style="color:var(--eb-blue);text-decoration:none;">${d.email}</a>`:'-'}</td><td><span style="font-size:11px;font-weight:700;color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span></td><td><div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div></td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td><button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button></td></tr>`;}).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
+    tbody.innerHTML=rows.map(d=>{
+        const isSub = d._rowType==='subaffitto';
+        const bCls=d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';
+        const rowBg = isSub ? 'background:#f5f3ff;' : '';
+        const spotLabel = isSub
+            ? `#${d._spotId}<br><span style="font-size:9px;font-weight:700;background:#8b5cf6;color:white;padding:1px 5px;border-radius:4px;">🔄 SUB</span>`
+            : `#${d.id}`;
+        const clienteCell = isSub
+            ? `<div style="font-weight:600;">${d.nome}</div><div style="font-size:10px;color:#7c3aed;">Ombrellone #${d._spotId} · ${d._titolare}</div>`
+            : `<div style="font-weight:600;">${d.nome}</div>`;
+        const emailCell = d.email&&d.email!=='-'
+            ? `<a href="mailto:${d.email}" style="color:var(--eb-blue);text-decoration:none;font-size:12px;">${d.email}</a>`
+            : '-';
+        const tipoCell = isSub
+            ? `<span style="font-size:11px;font-weight:700;color:#7c3aed;">🔄 SUB</span>`
+            : `<span style="font-size:11px;font-weight:700;color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span>`;
+        const prezzoCell = isSub
+            ? `<div style="font-weight:600;">${d.prezzo}€</div><div style="font-size:10px;color:var(--eb-muted);">${d.pagamento==='saldo'?'✓ Pagato':'⏳ Da pagare'}</div>`
+            : `<div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div>`;
+        const azioniCell = isSub
+            ? `<button onclick="gdOpenByIndex('${d._spotId}',${d._guestIdx})" style="background:none;color:#7c3aed;border:1px solid #7c3aed;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">📋 Scheda</button>`
+            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`;
+        return `<tr style="${rowBg}"><td>${spotLabel}</td><td>${clienteCell}</td><td>${d.telefono||'-'}</td><td style="color:var(--eb-muted);">${emailCell}</td><td>${tipoCell}</td><td>${prezzoCell}</td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td>${azioniCell}</td></tr>`;
+    }).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
 }
-window.exportCSV=()=>{buildArchivioRows();const header=['#','Nome','Telefono','Email','Tipo','Prezzo','Bar','Pagamento','Note'];const rows=archivioAllRows.map(d=>[d.id,d.nome,d.telefono||'',d.email&&d.email!=='-'?d.email:'',d.isSeasonal?'Stagionale':'Giornaliero',d.prezzo,parseFloat(d.barTotal||0).toFixed(2),d.pagamento||'nessuno',(d.note||'').replace(/,/g,' ')]);const csv=[header,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;a.click();showToast('📥 CSV esportato!','success');};
+
+window.exportCSV=()=>{
+    buildArchivioRows();
+    const header=['#','Nome','Telefono','Email','Tipo','Prezzo','Bar','Pagamento','Note'];
+    const rows=archivioAllRows.map(d=>[
+        d._rowType==='subaffitto'?`${d._spotId}-SUB`:d.id,
+        d.nome, d.telefono||'',
+        d.email&&d.email!=='-'?d.email:'',
+        d._rowType==='subaffitto'?'Subaffitto':d.isSeasonal?'Stagionale':'Giornaliero',
+        d.prezzo, parseFloat(d.barTotal||0).toFixed(2),
+        d.pagamento||'nessuno', (d.note||'').replace(/,/g,' ')
+    ]);
+    const csv=[header,...rows].map(r=>r.join(',')).join('\n');
+    const a=document.createElement('a');
+    a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+    a.download=`lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;
+    a.click();
+    showToast('📥 CSV esportato!','success');
+};
 
 // ── ADMIN UTENTI ──────────────────────────────────────────────────────────
 window.addUser=async()=>{const email=$('new-username').value.trim(),pass=$('new-password').value.trim(),role=$('new-role').value;if(!email||!pass) return showToast('Compila email e password.','warn');if(pass.length<6) return showToast('Password troppo corta (min. 6).','warn');const btn=document.querySelector('#screen-admin-utenti .btn-sea');btn.innerText='Creazione…';btn.disabled=true;try{const uc=await createUserWithEmailAndPassword(secondaryAuth,email,pass);await set(ref(db,'utenti_suite/'+uc.user.uid),{email,role});await secondaryAuth.signOut();showToast('✓ Utente creato','success');}catch(err){showToast(err.code==='auth/email-already-in-use'?'Email già in uso.':'Errore: '+err.message,'warn');}finally{btn.innerText='➕ Aggiungi Utente';btn.disabled=false;}};
