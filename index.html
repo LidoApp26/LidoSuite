@@ -757,6 +757,10 @@
             <label class="form-label">Telefono</label>
             <input type="tel" id="nb-tel" class="field" placeholder="Es. 333 1234567">
         </div>
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Email</label>
+            <input type="email" id="nb-email" class="field" placeholder="Es. mario@email.it">
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
             <div>
                 <label class="form-label">Arrivo</label>
@@ -1016,6 +1020,10 @@
         <div style="margin-bottom:14px;">
             <label class="form-label">Telefono</label>
             <input type="tel" id="slbm-tel" class="field" placeholder="Es. 333 1234567">
+        </div>
+        <div style="margin-bottom:14px;">
+            <label class="form-label">Email</label>
+            <input type="email" id="slbm-email" class="field" placeholder="Es. mario@email.it">
         </div>
         <!-- Extra servizi -->
         <div style="margin-bottom:6px;">
@@ -1383,7 +1391,7 @@
             </div>
             <table>
                 <thead>
-                    <tr><th>#</th><th>Cliente</th><th>Telefono</th><th>Tipo</th><th>Spiaggia €</th><th>Bar €</th><th>Pagamento</th><th>Note</th><th>Azioni</th></tr>
+                    <tr><th>#</th><th>Cliente</th><th>Telefono</th><th>Email</th><th>Tipo</th><th>Spiaggia €</th><th>Bar €</th><th>Pagamento</th><th>Note</th><th>Azioni</th></tr>
                 </thead>
                 <tbody id="db-body"></tbody>
             </table>
@@ -1599,6 +1607,7 @@ window.handleOmbrellone = id => {
     if (!beachData[id]) {
         $('nb-title').textContent = 'Ombrellone #' + id;
         $('nb-nome').value = ''; $('nb-tel').value = ''; $('nb-prezzo').value = '';
+        if($('nb-email')) $('nb-email').value = '';
         const today = new Date().toISOString().split('T')[0];
         $('nb-arrivo').value = today; $('nb-partenza').value = today;
         window._nbSubletDates = [];
@@ -1693,7 +1702,7 @@ function renderSubletInfoInDrawer(id) {
         html += `<div style="background:linear-gradient(135deg,#7c3aed,#a78bfa);border-radius:12px;padding:13px 15px;color:white;margin-bottom:10px;">
             <div style="font-size:10px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Ospite oggi</div>
             <div style="font-size:15px;font-weight:700;">👤 ${todayGuest.nome}</div>
-            <div style="font-size:11px;opacity:.85;margin-top:2px;">📞 ${todayGuest.telefono||'-'} · ${(todayGuest.dates||[]).join(', ')}</div>
+            <div style="font-size:11px;opacity:.85;margin-top:2px;">📞 ${todayGuest.telefono||'-'}${todayGuest.email&&todayGuest.email!=='-'?' · ✉️ '+todayGuest.email:''} · ${(todayGuest.dates||[]).join(', ')}</div>
             <div style="margin-top:7px;background:rgba(255,255,255,.2);display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;">
                 ${todayGuest.pagato?'✓ Pagato '+(todayGuest.totalePagato||0).toFixed(2)+'€':'⏳ Da pagare '+(todayGuest.totalePagato||0).toFixed(2)+'€'}
             </div>
@@ -1819,11 +1828,12 @@ window.nbConfirm = () => {
     const nome  = $('nb-nome').value.trim();
     if (!nome) return showToast('Inserisci il nome del cliente','warn');
     const tel   = $('nb-tel').value.trim() || '-';
+    const email = $('nb-email').value.trim() || '-';
     const isS   = $('nb-tipo-val').value === 'S';
     const prezzo= parseFloat($('nb-prezzo').value);
     if (isNaN(prezzo)||prezzo<=0) return showToast('Inserisci un prezzo valido','warn');
     const entry = {
-        nome: nome.toUpperCase(), telefono: tel, email: '-',
+        nome: nome.toUpperCase(), telefono: tel, email,
         prezzo: prezzo.toFixed(2), isSeasonal: isS,
         pagamento: 'nessuno', barTotal: 0, rate: [],
         dataArrivo: toIT($('nb-arrivo').value), dataPartenza: toIT($('nb-partenza').value),
@@ -1924,7 +1934,7 @@ function renderSubaffitto() {
             if (g) return `<div onclick="slbmShowGuestDetail('${id}','${dt}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#ede9fe;border:2px solid #8b5cf6;font-size:12px;font-weight:700;color:#7c3aed;cursor:pointer;">🔄 ${dt} · <b>${g.nome}</b> <span style="font-size:10px;background:#8b5cf6;color:white;padding:1px 7px;border-radius:10px;">${g.pagato?'✓ Pagato':'⏳ Da pagare'}</span></div>`;
             return `<div style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:${isToday?'#fef3c7':'white'};border:2px solid ${isToday?'#f59e0b':'var(--eb-border)'};font-size:12px;font-weight:600;color:var(--eb-muted);"><span onclick="slbmOpenBookingFromDate('${id}','${dt}')" style="cursor:pointer;">📅 ${dt}${isToday?' ⬅️':''}</span><button onclick="slbmRemoveDate('${id}','${dt}')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:11px;padding:0;" title="Rimuovi">✕</button></div>`;
         }).join('') : '<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data inserita</span>';
-        const guestsHtml = guests.filter(g=>g.active).length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>${guests.filter(g=>g.active).map((g,gi)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);"><div><b>${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}</span><br><span style="color:#7c3aed;">${(g.dates||[]).join(', ')}</span></div><div style="text-align:right;flex-shrink:0;margin-left:10px;display:flex;flex-direction:column;gap:4px;"><div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(parseFloat(g.totalePagato||0)+parseFloat(g.barTotal||0)).toFixed(2)+'€ ✓':'⏳ Da pagare'}</div><button onclick="gdOpenByIndex('${id}',${gi})" style="font-size:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:6px;padding:3px 10px;cursor:pointer;font-family:Poppins,sans-serif;font-weight:700;">📋 Scheda</button></div></div>`).join('')}</div>` : '';
+        const guestsHtml = guests.filter(g=>g.active).length ? `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--eb-border);"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);margin-bottom:8px;">Ospiti Registrati</div>${guests.filter(g=>g.active).map((g,gi)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--eb-bg);border-radius:9px;margin-bottom:6px;font-size:12px;border:1.5px solid var(--eb-border);"><div><b>${g.nome}</b> <span style="color:var(--eb-muted);">· ${g.telefono||'-'}${g.email&&g.email!=='-'?' · '+g.email:''}</span><br><span style="color:#7c3aed;">${(g.dates||[]).join(', ')}</span></div><div style="text-align:right;flex-shrink:0;margin-left:10px;display:flex;flex-direction:column;gap:4px;"><div style="font-weight:700;color:${g.pagato?'var(--free)':'var(--acconto)'};">${g.pagato?(parseFloat(g.totalePagato||0)+parseFloat(g.barTotal||0)).toFixed(2)+'€ ✓':'⏳ Da pagare'}</div><button onclick="gdOpenByIndex('${id}',${gi})" style="font-size:10px;background:linear-gradient(135deg,#7c3aed,#a78bfa);color:white;border:none;border-radius:6px;padding:3px 10px;cursor:pointer;font-family:Poppins,sans-serif;font-weight:700;">📋 Scheda</button></div></div>`).join('')}</div>` : '';
         return `<div class="sublet-card"><div class="sublet-header"><div><div class="sublet-name">🏖️ #${id} — ${d.nome}</div><div class="sublet-spot" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:4px;"><span>Stagionale · ${d.prezzo}€</span>${credito>0?`<span style="color:var(--free);font-weight:700;background:#dcfce7;padding:2px 10px;border-radius:20px;font-size:11px;">💰 Accredito: +${credito.toFixed(2)}€</span>`:''}</div></div><button class="btn-sm btn-sea" onclick="slbmOpenAddDate('${id}')">📅 Aggiungi date</button></div><div class="sublet-dates" id="sublet-dates-${id}">${datesHtml}</div>${guestsHtml}</div>`;
     }).join('');
     renderSubletTodayBanner();
@@ -1946,14 +1956,14 @@ window.slbmOpen = id => {
     const d=beachData[id]; if(!d) return;
     $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`;
     $('slbm-sub').textContent=`Stagionale · ${d.prezzo}€`;
-    $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false;
+    $('slbm-nome').value=''; $('slbm-tel').value=''; if($('slbm-email')) $('slbm-email').value=''; $('slbm-pagato').checked=false;
     document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false);
     const ci=$('slbm-custom-extra'); if(ci) ci.value='';
     slbmBuildDatesPicker(id); slbmCalcPreview();
     $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block';
 };
-window.slbmOpenBookingFromSpot = id => { const d=beachData[id]; if(!d) return; _slbmId=id; _slbmDates=[todayIT()]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Disponibile oggi`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
-window.slbmOpenBookingFromDate= (id,dt) => { _slbmId=id; _slbmDates=[dt]; const d=beachData[id]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Ospite per ${dt}`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
+window.slbmOpenBookingFromSpot = id => { const d=beachData[id]; if(!d) return; _slbmId=id; _slbmDates=[todayIT()]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Disponibile oggi`; $('slbm-nome').value=''; $('slbm-tel').value=''; if($('slbm-email')) $('slbm-email').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
+window.slbmOpenBookingFromDate= (id,dt) => { _slbmId=id; _slbmDates=[dt]; const d=beachData[id]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Ospite per ${dt}`; $('slbm-nome').value=''; $('slbm-tel').value=''; if($('slbm-email')) $('slbm-email').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
 // slbmOpenSpotGuest: definita nel blocco drawer ospite in fondo
 
 // ── Calendario inline nel modal subaffitto ─────────────────────────────
@@ -2062,7 +2072,7 @@ window.slbmCalcPreview = () => {
     $('slbm-prev-total').textContent=`${(SUBLET_BASE+extra).toFixed(2)}€`;
 };
 window.slbmConfirm = () => {
-    const id=_slbmId, nome=$('slbm-nome').value.trim().toUpperCase(), tel=$('slbm-tel').value.trim()||'-', pagato=$('slbm-pagato').checked;
+    const id=_slbmId, nome=$('slbm-nome').value.trim().toUpperCase(), tel=$('slbm-tel').value.trim()||'-', email=$('slbm-email')?.value.trim()||'-', pagato=$('slbm-pagato').checked;
     if(!nome) return showToast('Inserisci il nome dell\'ospite','warn');
     if(!_slbmDates.length) return showToast('Seleziona almeno una data','warn');
     const d=beachData[id]; if(!d.subletGuests) d.subletGuests=[];
@@ -2073,14 +2083,14 @@ window.slbmConfirm = () => {
         else{const p=parseFloat(cb.dataset.price||0); const lbl=cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim()||'Extra'; extraTot+=p*_slbmDates.length; extraDet.push({nome:lbl,prezzo:p});}
     });
     const totPagato=SUBLET_BASE+extraTot, credito=_slbmDates.length*SUBLET_CREDIT_DAY;
-    d.subletGuests.push({nome,telefono:tel,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
+    d.subletGuests.push({nome,telefono:tel,email,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
     d.subletCredito=parseFloat((parseFloat(d.subletCredito||0)+credito).toFixed(2));
     d.subletActive=true;
     fdb(id,d); closeModals();
     showToast(`✓ ${nome} registrato · Accredito +${credito.toFixed(2)}€`, 'success');
 };
 window.slbmRemoveDate = (id,dt) => { if(!confirm(`Rimuovere il ${dt}?`)) return; if(slbmDateHasGuest(id,dt)) return showToast('Data con ospite: non rimuovibile','warn'); const d=beachData[id]; d.subletDates=(d.subletDates||[]).filter(x=>x!==dt); fdb(id,d); showToast('Data rimossa','info'); };
-window.slbmShowGuestDetail = (id,dt) => { const d=beachData[id]; const g=(d.subletGuests||[]).find(x=>x.active&&(x.dates||[]).includes(dt)); if(!g) return; alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`); };
+window.slbmShowGuestDetail = (id,dt) => { const d=beachData[id]; const g=(d.subletGuests||[]).find(x=>x.active&&(x.dates||[]).includes(dt)); if(!g) return; alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n✉️ ${g.email&&g.email!=='-'?g.email:'—'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`); };
 window.slbmToggleGuestPaid = (id,gi) => { const d=beachData[id]; if(!d.subletGuests?.[gi]) return; d.subletGuests[gi].pagato=!d.subletGuests[gi].pagato; fdb(id,d); showToast(d.subletGuests[gi].pagato?'✓ Pagato':'Pagamento rimosso','info'); };
 
 // ── CONSUMAZIONI BAR ─────────────────────────────────────────────────────
@@ -2228,9 +2238,9 @@ window.filterArchivio=()=>{
 };
 function renderArchivioRows(rows,tbody){
     if(!tbody) return;
-    tbody.innerHTML=rows.map(d=>{const bCls=d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';return `<tr><td>#${d.id}</td><td><div style="font-weight:600;">${d.nome}</div></td><td>${d.telefono||'-'}</td><td><span style="font-size:11px;font-weight:700;color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span></td><td><div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div></td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td><button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button></td></tr>`;}).join('')||'<tr><td colspan="9" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
+    tbody.innerHTML=rows.map(d=>{const bCls=d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';return `<tr><td>#${d.id}</td><td><div style="font-weight:600;">${d.nome}</div></td><td>${d.telefono||'-'}</td><td style="font-size:12px;color:var(--eb-muted);">${d.email&&d.email!=='-'?`<a href="mailto:${d.email}" style="color:var(--eb-blue);text-decoration:none;">${d.email}</a>`:'-'}</td><td><span style="font-size:11px;font-weight:700;color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span></td><td><div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div></td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td><button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button></td></tr>`;}).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
 }
-window.exportCSV=()=>{buildArchivioRows();const header=['#','Nome','Telefono','Tipo','Prezzo','Bar','Pagamento','Note'];const rows=archivioAllRows.map(d=>[d.id,d.nome,d.telefono||'',d.isSeasonal?'Stagionale':'Giornaliero',d.prezzo,parseFloat(d.barTotal||0).toFixed(2),d.pagamento||'nessuno',(d.note||'').replace(/,/g,' ')]);const csv=[header,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;a.click();showToast('📥 CSV esportato!','success');};
+window.exportCSV=()=>{buildArchivioRows();const header=['#','Nome','Telefono','Email','Tipo','Prezzo','Bar','Pagamento','Note'];const rows=archivioAllRows.map(d=>[d.id,d.nome,d.telefono||'',d.email&&d.email!=='-'?d.email:'',d.isSeasonal?'Stagionale':'Giornaliero',d.prezzo,parseFloat(d.barTotal||0).toFixed(2),d.pagamento||'nessuno',(d.note||'').replace(/,/g,' ')]);const csv=[header,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download=`lido_suite_${new Date().toLocaleDateString('it-IT').replace(/\//g,'-')}.csv`;a.click();showToast('📥 CSV esportato!','success');};
 
 // ── ADMIN UTENTI ──────────────────────────────────────────────────────────
 window.addUser=async()=>{const email=$('new-username').value.trim(),pass=$('new-password').value.trim(),role=$('new-role').value;if(!email||!pass) return showToast('Compila email e password.','warn');if(pass.length<6) return showToast('Password troppo corta (min. 6).','warn');const btn=document.querySelector('#screen-admin-utenti .btn-sea');btn.innerText='Creazione…';btn.disabled=true;try{const uc=await createUserWithEmailAndPassword(secondaryAuth,email,pass);await set(ref(db,'utenti_suite/'+uc.user.uid),{email,role});await secondaryAuth.signOut();showToast('✓ Utente creato','success');}catch(err){showToast(err.code==='auth/email-already-in-use'?'Email già in uso.':'Errore: '+err.message,'warn');}finally{btn.innerText='➕ Aggiungi Utente';btn.disabled=false;}};
@@ -2325,7 +2335,8 @@ function gdOpen(id, idx) {
     // Hero
     $('gd-spot-label').textContent   = `Ombrellone #${id}`;
     $('gd-nome').textContent          = g.nome;
-    $('gd-tel').textContent           = g.telefono && g.telefono !== '-' ? '📞 ' + g.telefono : '';
+    const _gdContact = [g.telefono&&g.telefono!=='-'?'📞 '+g.telefono:'', g.email&&g.email!=='-'?'✉️ '+g.email:''].filter(Boolean).join('  ·  ');
+    $('gd-tel').textContent = _gdContact;
     $('gd-dates-pill').textContent    = `📅 ${(g.dates||[]).join(' · ')}`;
     $('gd-pay-pill').textContent      = `${days} giorno${days>1?'i':''}`;
     $('gd-pay-status').textContent    = g.pagato ? '✓ Pagato' : '⏳ Da pagare';
