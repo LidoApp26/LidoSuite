@@ -1008,11 +1008,19 @@
             <div class="slbm-icon">💰</div>
             <p>Il titolare riceverà un <strong>accredito di 5€ per ogni giorno</strong> ceduto. Il nuovo ospite pagherà <strong>20€ di base</strong> più eventuali extra selezionati.</p>
         </div>
-        <!-- Date subaffitto -->
+        <!-- Date subaffitto — calendario inline -->
         <div style="margin-bottom:14px;">
-            <label class="form-label">Seleziona date disponibili per il subaffitto</label>
-            <div id="slbm-dates-picker" style="display:flex; flex-wrap:wrap; gap:7px; padding:14px; background:var(--eb-bg); border-radius:10px; border:1.5px solid var(--eb-border); min-height:54px;"></div>
-            <div style="font-size:11px; color:var(--eb-muted); margin-top:6px;">Clicca per selezionare/deselezionare le date del subaffitto</div>
+            <label class="form-label">Seleziona date per il subaffitto</label>
+            <!-- Nav mese -->
+            <div class="v4-nav" style="padding:8px 4px 4px; background:var(--eb-bg); border-radius:10px 10px 0 0; border:1.5px solid var(--eb-border); border-bottom:none;">
+                <button class="v4-nav-btn" onclick="slbmCalPrev()" type="button">&#8249;</button>
+                <span class="v4-mlbl" id="slbm-cal-mlbl" style="font-size:13px;"></span>
+                <button class="v4-nav-btn" onclick="slbmCalNext()" type="button">&#8250;</button>
+            </div>
+            <!-- Griglia giorni -->
+            <div class="v4-grid" id="slbm-cal-grid" style="background:white; border:1.5px solid var(--eb-border); border-top:none; border-radius:0 0 10px 10px; padding:4px 10px 10px;"></div>
+            <!-- Riepilogo selezione -->
+            <div id="slbm-cal-summary" style="margin-top:8px; font-size:11px; color:var(--eb-muted); min-height:16px; padding:0 2px;"></div>
         </div>
         <!-- Dati ospite -->
         <div style="margin-bottom:12px;">
@@ -1964,16 +1972,93 @@ window.slbmOpenBookingFromSpot = id => { const d=beachData[id]; if(!d) return; _
 window.slbmOpenBookingFromDate= (id,dt) => { _slbmId=id; _slbmDates=[dt]; const d=beachData[id]; $('slbm-title').textContent=`Ombrellone #${id} — ${d.nome}`; $('slbm-sub').textContent=`Ospite per ${dt}`; $('slbm-nome').value=''; $('slbm-tel').value=''; $('slbm-pagato').checked=false; document.querySelectorAll('.slbm-extra-cb').forEach(cb=>cb.checked=false); slbmBuildDatesPicker(id); slbmCalcPreview(); $('sublet-booking-modal').style.display='block'; $('overlay').style.display='block'; };
 // slbmOpenSpotGuest: definita nel blocco drawer ospite in fondo
 
-function slbmBuildDatesPicker(id) {
-    const picker=$('slbm-dates-picker'); if(!picker) return;
-    const dates=(beachData[id]?.subletDates)||[];
-    if (!dates.length){ picker.innerHTML='<span style="font-size:12px;color:var(--eb-muted);font-style:italic;">Nessuna data libera. Aggiungile con il calendario.</span>'; return; }
-    picker.innerHTML = dates.map(dt => {
-        const hg=slbmDateHasGuest(id,dt), sel=_slbmDates.includes(dt);
-        return `<div onclick="${hg?'':` slbmToggleSlbmDate('${dt}')`}" style="padding:7px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:${hg?'not-allowed':'pointer'};border:2px solid ${hg?'#d1d5db':sel?'#8b5cf6':'var(--eb-border)'};background:${hg?'#f3f4f6':sel?'#ede9fe':'white'};color:${hg?'#9ca3af':sel?'#7c3aed':'var(--eb-muted)'};transition:all .15s;user-select:none;">${hg?'🔒':sel?'✓ ':''} ${dt}${hg?' (occupata)':''}</div>`;
-    }).join('');
+// ── Calendario inline nel modal subaffitto ─────────────────────────────
+// Stato mese/anno del calendario inline
+let _slbmCalY = new Date().getFullYear();
+let _slbmCalM = new Date().getMonth();
+
+const _MI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+const _DI = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+function _p2(n){ return ('0'+n).slice(-2); }
+function _fmtDate(y,m,d){ return _p2(d)+'/'+_p2(m+1)+'/'+y; }
+
+function slbmRenderInlineCal() {
+    const grid  = $('slbm-cal-grid');
+    const lbl   = $('slbm-cal-mlbl');
+    const summ  = $('slbm-cal-summary');
+    if (!grid || !lbl) return;
+
+    const d      = beachData[_slbmId] || {};
+    const guests = new Set();
+    (d.subletGuests||[]).filter(g=>g.active).forEach(g=>(g.dates||[]).forEach(dt=>guests.add(dt)));
+
+    const now=new Date(), ty=now.getFullYear(), tm=now.getMonth(), td=now.getDate();
+    const firstWD = new Date(_slbmCalY, _slbmCalM, 1).getDay();
+    const offset  = firstWD===0 ? 6 : firstWD-1;
+    const maxD    = new Date(_slbmCalY, _slbmCalM+1, 0).getDate();
+
+    // Header label
+    lbl.textContent = _MI[_slbmCalM] + ' ' + _slbmCalY;
+
+    // Grid HTML
+    let h = _DI.map(n=>`<div class="v4-dn">${n}</div>`).join('');
+    for(let i=0;i<offset;i++) h+=`<div class="v4-d ve"></div>`;
+    for(let day=1; day<=maxD; day++){
+        const key  = _fmtDate(_slbmCalY, _slbmCalM, day);
+        const past = _slbmCalY<ty || (_slbmCalY===ty && _slbmCalM<tm) || (_slbmCalY===ty && _slbmCalM===tm && day<td);
+        const isT  = _slbmCalY===ty && _slbmCalM===tm && day===td;
+        const hg   = guests.has(key);
+        const sel  = _slbmDates.includes(key);
+        let cls='v4-d';
+        if(past) cls+=' vp';
+        if(isT)  cls+=' vt';
+        if(hg)   cls+=' vg';
+        if(sel)  cls+=' vs';
+        const click = (!past && !hg) ? `onclick="slbmToggleSlbmDate('${key}')"` : '';
+        h += `<div class="${cls}" ${click}>${day}</div>`;
+    }
+    grid.innerHTML = h;
+
+    // Summary
+    if(summ){
+        const n = _slbmDates.length;
+        summ.innerHTML = n===0
+            ? '<span style="font-style:italic;">Nessuna data selezionata</span>'
+            : `<b style="color:#7c3aed;">${n} data${n>1?'e':''} selezionata${n>1?'e':''}:</b> ${_slbmDates.join(', ')}`;
+    }
 }
-window.slbmToggleSlbmDate = dt => { const i=_slbmDates.indexOf(dt); i>=0?_slbmDates.splice(i,1):_slbmDates.push(dt); slbmBuildDatesPicker(_slbmId); slbmCalcPreview(); };
+
+window.slbmCalPrev = () => {
+    _slbmCalM--;
+    if(_slbmCalM<0){ _slbmCalM=11; _slbmCalY--; }
+    slbmRenderInlineCal();
+};
+window.slbmCalNext = () => {
+    _slbmCalM++;
+    if(_slbmCalM>11){ _slbmCalM=0; _slbmCalY++; }
+    slbmRenderInlineCal();
+};
+
+// slbmToggleSlbmDate aggiorna _slbmDates e ri-renderizza il calendario inline + preview
+window.slbmToggleSlbmDate = dt => {
+    const i=_slbmDates.indexOf(dt);
+    i>=0 ? _slbmDates.splice(i,1) : _slbmDates.push(dt);
+    slbmRenderInlineCal();
+    slbmCalcPreview();
+};
+
+// slbmBuildDatesPicker → ora inizializza il calendario inline (mese corrente)
+function slbmBuildDatesPicker(id) {
+    const now = new Date();
+    _slbmCalY = now.getFullYear();
+    _slbmCalM = now.getMonth();
+    // Se ci sono date pre-selezionate, vai al mese della prima
+    if(_slbmDates.length){
+        const parts = _slbmDates[0].split('/');
+        if(parts.length===3){ _slbmCalM=parseInt(parts[1])-1; _slbmCalY=parseInt(parts[2]); }
+    }
+    slbmRenderInlineCal();
+}
 
 window.slbmCalcPreview = () => {
     const preview=$('slbm-calc-preview'); if(!preview) return;
@@ -1984,37 +2069,31 @@ window.slbmCalcPreview = () => {
         else extra+=parseFloat(cb.dataset.price||0)*days;
     });
     if(days===0){preview.style.display='none';return;}
-    const base = SUBLET_BASE * days;
     preview.style.display='block';
     $('slbm-prev-days').textContent=`${days} gg`;
     $('slbm-prev-credit').textContent=`+${(days*SUBLET_CREDIT_DAY).toFixed(2)}€`;
-    $('slbm-prev-base').textContent=`${SUBLET_BASE.toFixed(2)}€ × ${days} gg = ${base.toFixed(2)}€`;
+    $('slbm-prev-base').textContent=`${SUBLET_BASE.toFixed(2)}€`;
     const er=$('slbm-prev-extras-row'), ev=$('slbm-prev-extras');
     if(er&&ev){er.style.display=extra>0?'flex':'none'; ev.textContent=`${extra.toFixed(2)}€`;}
-    $('slbm-prev-total').textContent=`${(base+extra).toFixed(2)}€`;
+    $('slbm-prev-total').textContent=`${(SUBLET_BASE+extra).toFixed(2)}€`;
 };
 window.slbmConfirm = () => {
     const id=_slbmId, nome=$('slbm-nome').value.trim().toUpperCase(), tel=$('slbm-tel').value.trim()||'-', pagato=$('slbm-pagato').checked;
     if(!nome) return showToast('Inserisci il nome dell\'ospite','warn');
     if(!_slbmDates.length) return showToast('Seleziona almeno una data','warn');
     const d=beachData[id]; if(!d.subletGuests) d.subletGuests=[];
-    const days=_slbmDates.length;
     let extraTot=0, extraDet=[];
     document.querySelectorAll('.slbm-extra-cb').forEach(cb=>{
         if(!cb.checked) return;
-        if(cb.dataset.custom==='1'){const v=parseFloat($('slbm-custom-extra')?.value||0); if(!isNaN(v)&&v>0){extraTot+=v*days;extraDet.push({nome:'Extra personalizzato',prezzo:v});}}
-        else{const p=parseFloat(cb.dataset.price||0); const lbl=cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim()||'Extra'; extraTot+=p*days; extraDet.push({nome:lbl,prezzo:p});}
+        if(cb.dataset.custom==='1'){const v=parseFloat($('slbm-custom-extra')?.value||0); if(!isNaN(v)&&v>0){extraTot+=v*_slbmDates.length;extraDet.push({nome:'Extra personalizzato',prezzo:v});}}
+        else{const p=parseFloat(cb.dataset.price||0); const lbl=cb.closest('.slbm-extra-item')?.querySelector('label')?.childNodes[1]?.textContent?.trim()||'Extra'; extraTot+=p*_slbmDates.length; extraDet.push({nome:lbl,prezzo:p});}
     });
-    const base=SUBLET_BASE*days;
-    const totPagato=base+extraTot, credito=days*SUBLET_CREDIT_DAY;
-    d.subletGuests.push({nome,telefono:tel,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,baseTotale:base,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
+    const totPagato=SUBLET_BASE+extraTot, credito=_slbmDates.length*SUBLET_CREDIT_DAY;
+    d.subletGuests.push({nome,telefono:tel,dates:[..._slbmDates],totalePagato:pagato?totPagato:0,basePrice:SUBLET_BASE,extraDettaglio:extraDet,extraTotale:extraTot,pagato,active:true,registratoIl:todayIT()});
     d.subletCredito=parseFloat((parseFloat(d.subletCredito||0)+credito).toFixed(2));
     d.subletActive=true;
-    fdb(id,d);
-    renderSpiaggia();
-    renderSubaffitto();
-    closeModals();
-    showToast(`✓ ${nome} registrato · ${days} gg · ${totPagato.toFixed(2)}€ · Accredito +${credito.toFixed(2)}€`, 'success');
+    fdb(id,d); closeModals();
+    showToast(`✓ ${nome} registrato · Accredito +${credito.toFixed(2)}€`, 'success');
 };
 window.slbmRemoveDate = (id,dt) => { if(!confirm(`Rimuovere il ${dt}?`)) return; if(slbmDateHasGuest(id,dt)) return showToast('Data con ospite: non rimuovibile','warn'); const d=beachData[id]; d.subletDates=(d.subletDates||[]).filter(x=>x!==dt); fdb(id,d); showToast('Data rimossa','info'); };
 window.slbmShowGuestDetail = (id,dt) => { const d=beachData[id]; const g=(d.subletGuests||[]).find(x=>x.active&&(x.dates||[]).includes(dt)); if(!g) return; alert(`👤 ${g.nome}\n📞 ${g.telefono||'-'}\n📅 ${(g.dates||[]).join(', ')}\n💰 ${(g.totalePagato||0).toFixed(2)}€ (${g.pagato?'Pagato':'Non pagato'})\n📦 Extra: ${g.extraDettaglio?.map(e=>e.nome+' '+e.prezzo+'€').join(', ')||'nessuno'}`); };
@@ -2274,7 +2353,7 @@ function gdOpen(id, idx) {
     btnP.className   = 'gd-btn-primary ' + (g.pagato ? 'gd-btn-ghost' : 'gd-btn-pay');
 
     // Riepilogo costi
-    let costHtml = `<div class="gd-info-row"><span class="gd-label">Tariffa base (${parseFloat(g.basePrice||SUBLET_BASE).toFixed(2)}€ × ${days} gg)</span><span class="gd-val">${parseFloat(g.baseTotale || (parseFloat(g.basePrice||SUBLET_BASE)*days)).toFixed(2)}€</span></div>`;
+    let costHtml = `<div class="gd-info-row"><span class="gd-label">Tariffa base</span><span class="gd-val">${parseFloat(g.basePrice||SUBLET_BASE).toFixed(2)}€</span></div>`;
     if (g.extraDettaglio?.length) {
         g.extraDettaglio.forEach(e => {
             costHtml += `<div class="gd-info-row"><span class="gd-label">${e.nome} × ${days} gg</span><span class="gd-val">${(e.prezzo*days).toFixed(2)}€</span></div>`;
@@ -2389,7 +2468,6 @@ window.gdTerminaSubaffitto = () => {
     d.subletDates = (d.subletDates||[]).filter(dt => !gdDates.includes(dt));
     g.active = false;
     fdb(_gdSpotId, d);
-    renderSpiaggia();
     closeGuestDrawer();
     showToast(`Subaffitto di ${g.nome} terminato`, 'info');
 };
