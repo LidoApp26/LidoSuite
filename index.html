@@ -114,6 +114,7 @@
         .home-card.extra .home-card-accent { background: linear-gradient(90deg, var(--extra), #a78bfa); }
         .home-card.archive .home-card-accent { background: linear-gradient(90deg, #1a2d3d, #4a6070); }
         .home-card.settings .home-card-accent { background: linear-gradient(90deg, var(--wood), var(--wood-light)); }
+        .home-card.prezzi .home-card-accent { background: linear-gradient(90deg, #0891b2, #22d3ee); }
         .home-card.flussi .home-card-accent { background: linear-gradient(90deg, var(--free), #4ade80); }
         .home-card.admin .home-card-accent { background: linear-gradient(90deg, var(--expired), #f87171); }
         .home-card.subaffitto .home-card-accent { background: linear-gradient(90deg, #0891b2, #22d3ee); }
@@ -1163,11 +1164,19 @@
                 <div class="home-card-accent"></div>
                 <span class="home-icon">🍽️</span><h3>Prodotti</h3><small>Menu bar</small>
             </div>
+            <div class="home-card prezzi admin-only" onclick="navTo('screen-prezzi')">
+                <div class="home-card-accent"></div>
+                <span class="home-icon">💰</span><h3>Prezzi Spiaggia</h3><small>Tariffe ombrelloni online</small>
+            </div>
             <div class="home-card flussi staff-hidden" onclick="navTo('screen-flussi')">
                 <div class="home-card-accent"></div>
                 <span class="home-icon">💰</span><h3>Flussi di Cassa</h3><small>Incassi &amp; statistiche</small>
             </div>
-            <div class="home-card admin admin-only" onclick="navTo('screen-admin-utenti')">
+            <div class="home-card subaffitto" onclick="navTo('screen-prenotazioni')">
+                <div class="home-card-accent"></div>
+                <span class="home-icon">🌐</span><h3>Prenotazioni Online</h3><small>Richieste dal sito web</small>
+                <span id="home-prenotazioni-badge" style="display:none;position:absolute;top:10px;right:10px;background:var(--expired);color:white;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;"></span>
+            </div>
                 <div class="home-card-accent"></div>
                 <span class="home-icon">🔐</span><h3>Utenti</h3><small>Solo amministratore</small>
             </div>
@@ -1392,6 +1401,85 @@
     </div>
 </div>
 
+<!-- ── PRENOTAZIONI ONLINE ── -->
+<div id="screen-prenotazioni" class="screen hidden">
+    <div class="page-wrap">
+        <div class="section-header">
+            <div class="section-header-left"><h2>🌐 Prenotazioni Online</h2><p>Richieste arrivate dal sito web · conferma automatica dopo pagamento</p></div>
+            <div style="display:flex;gap:8px;">
+                <button class="btn-sm" style="background:var(--eb-blue-pale);color:var(--eb-blue);" onclick="filterPrenotazioni('tutte')">Tutte</button>
+                <button class="btn-sm" style="background:#fef3c7;color:#92400e;" onclick="filterPrenotazioni('in_attesa')">In attesa</button>
+                <button class="btn-sm" style="background:#dcfce7;color:#15803d;" onclick="filterPrenotazioni('approvata')">Approvate</button>
+            </div>
+        </div>
+        <div id="prenotazioni-list" style="display:flex;flex-direction:column;gap:12px;width:100%;">
+            <div style="text-align:center;padding:40px;color:var(--eb-muted);">Carico prenotazioni…</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── PREZZI SPIAGGIA ── -->
+<div id="screen-prezzi" class="screen hidden">
+    <div class="page-wrap">
+        <div class="section-header">
+            <div class="section-header-left">
+                <h2>💰 Prezzi Spiaggia</h2>
+                <p>Tariffe applicate alle prenotazioni online · default 25€</p>
+            </div>
+        </div>
+
+        <!-- Prezzo default -->
+        <div class="section-card" style="margin-bottom:20px;">
+            <h2 style="font-size:15px;margin-bottom:12px;">⚙️ Prezzo Default</h2>
+            <p style="font-size:12px;color:var(--eb-muted);margin-bottom:14px;">Applicato a tutti gli ombrelloni senza prezzo specifico</p>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <input type="number" id="prezzi-default" class="field" style="width:120px;font-size:18px;font-weight:700;text-align:center;" step="0.50" min="0" placeholder="25">
+                <span style="font-size:18px;font-weight:700;color:var(--eb-muted);">€</span>
+                <button onclick="salvaPrezzDefault()" style="padding:10px 20px;background:linear-gradient(135deg,var(--eb-blue),var(--eb-blue-mid));color:white;border:none;border-radius:9px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Salva Default</button>
+            </div>
+        </div>
+
+        <!-- Prezzi per settore -->
+        <div class="section-card" style="margin-bottom:20px;">
+            <h2 style="font-size:15px;margin-bottom:6px;">🏖️ Prezzi per Settore</h2>
+            <p style="font-size:12px;color:var(--eb-muted);margin-bottom:16px;">Imposta lo stesso prezzo per un gruppo di ombrelloni</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:flex-end;">
+                <div>
+                    <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--eb-muted);display:block;margin-bottom:5px;">Da ombrellone</label>
+                    <input type="number" id="prezzi-range-da" class="field" placeholder="Es. 1" min="1" max="200">
+                </div>
+                <div>
+                    <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--eb-muted);display:block;margin-bottom:5px;">A ombrellone</label>
+                    <input type="number" id="prezzi-range-a" class="field" placeholder="Es. 50" min="1" max="200">
+                </div>
+                <div>
+                    <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--eb-muted);display:block;margin-bottom:5px;">Prezzo (€)</label>
+                    <input type="number" id="prezzi-range-val" class="field" placeholder="Es. 30" step="0.50" min="0">
+                </div>
+                <button onclick="salvaRangePrezzo()" style="padding:11px 16px;background:linear-gradient(135deg,#0891b2,#22d3ee);color:white;border:none;border-radius:9px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Applica</button>
+            </div>
+        </div>
+
+        <!-- Griglia prezzi -->
+        <div class="section-card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h2 style="font-size:15px;">📋 Prezzi Individuali</h2>
+                <button onclick="resetTuttiPrezzi()" style="padding:7px 14px;background:white;color:var(--expired);border:1.5px solid var(--expired);border-radius:8px;font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">🗑 Reset tutti</button>
+            </div>
+            <p style="font-size:12px;color:var(--eb-muted);margin-bottom:16px;">Clicca su un ombrellone per impostare il suo prezzo individuale</p>
+            <div id="prezzi-settore-a" style="margin-bottom:20px;">
+                <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--eb-blue);text-transform:uppercase;margin-bottom:10px;">Settore A · 1–100</div>
+                <div style="display:grid;grid-template-columns:repeat(10,1fr);gap:5px;" id="prezzi-grid-a"></div>
+            </div>
+            <div id="prezzi-settore-b">
+                <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--eb-blue);text-transform:uppercase;margin-bottom:10px;">Settore B · 101–200</div>
+                <div style="display:grid;grid-template-columns:repeat(10,1fr);gap:5px;" id="prezzi-grid-b"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -1434,7 +1522,7 @@ let archivioAllRows = [];
 let cart = [], cartTotal = 0;
 let _currentSpotId  = null;
 
-const STAFF_SCREENS     = ['screen-home','screen-spiaggia','screen-extra','screen-bar','screen-subaffitto'];
+const STAFF_SCREENS     = ['screen-home','screen-spiaggia','screen-extra','screen-bar','screen-subaffitto','screen-prenotazioni'];
 const SUBLET_BASE       = 20;
 const SUBLET_CREDIT_DAY = 5;
 
@@ -1481,6 +1569,8 @@ window.navTo = id => {
     if (id === 'screen-archivio')   { buildArchivioRows(); filterArchivio(); }
     if (id === 'screen-admin-utenti') renderUtenti();
     if (id === 'screen-spiaggia')   setTimeout(patchSubletSpots, 60);
+    if (id === 'screen-prenotazioni') renderPrenotazioni();
+    if (id === 'screen-prezzi')       renderPrezziGrid();
 };
 
 // ── HOME & DATE ──────────────────────────────────────────────────────────
@@ -2556,6 +2646,172 @@ window.gdTerminaSubaffitto = () => {
 // ════════════════════════════════════════════════════════════════════════
 // FINE DRAWER OSPITE SUBAFFITTO
 // ════════════════════════════════════════════════════════════════════════
+
+// ── PRENOTAZIONI ONLINE ───────────────────────────────────────────────────
+const prenotazioniRef = ref(db, 'prenotazioni_pendenti');
+let prenotazioniData  = {};
+let _prenFilter       = 'tutte';
+
+onValue(prenotazioniRef, s => {
+    prenotazioniData = s.val() || {};
+    renderPrenotazioni();
+    // Badge home
+    const inAttesa = Object.values(prenotazioniData).filter(p => p.stato === 'pagata' || p.stato === 'in_attesa').length;
+    const badge = $('home-prenotazioni-badge');
+    if (badge) { badge.textContent = inAttesa; badge.style.display = inAttesa > 0 ? 'block' : 'none'; }
+});
+
+window.filterPrenotazioni = filter => { _prenFilter = filter; renderPrenotazioni(); };
+
+function renderPrenotazioni() {
+    const list = $('prenotazioni-list'); if (!list) return;
+    let entries = Object.entries(prenotazioniData)
+        .map(([id, p]) => ({id, ...p}))
+        .sort((a,b) => (b.creatoIl||'').localeCompare(a.creatoIl||''));
+
+    if (_prenFilter !== 'tutte') entries = entries.filter(p => p.stato === _prenFilter);
+
+    if (!entries.length) {
+        list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--eb-muted);font-size:13px;">
+            ${_prenFilter==='tutte'?'Nessuna prenotazione online ricevuta':'Nessuna prenotazione con questo stato'}
+        </div>`; return;
+    }
+
+    list.innerHTML = entries.map(p => {
+        const statoColor = p.stato==='approvata'?'var(--free)':p.stato==='pagata'?'var(--acconto)':p.stato==='conflitto'?'var(--expired)':'var(--eb-muted)';
+        const statoLabel = p.stato==='approvata'?'✓ Approvata':p.stato==='pagata'?'💳 Pagata — da approvare':p.stato==='conflitto'?'⚠️ Conflitto':p.stato==='in_attesa'?'⏳ In attesa':'—';
+        const canApprove = p.stato === 'pagata';
+        const canReject  = p.stato === 'pagata' || p.stato === 'in_attesa';
+        return `<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow-sm);border:1.5px solid var(--eb-border);padding:20px;${p.stato==='pagata'?'border-left:4px solid var(--acconto);':''}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <div style="font-size:16px;font-weight:700;">🏖️ Ombrellone #${p.spotId} · ${p.data}</div>
+                    <div style="font-size:13px;color:var(--eb-muted);margin-top:4px;">
+                        👤 ${p.nome} · 📞 ${p.telefono||'-'} · ✉️ ${p.email||'-'}
+                    </div>
+                    <div style="font-size:12px;color:var(--eb-muted);margin-top:3px;">
+                        ${p.persone} pers. · ${p.importo}€ · ${p.metodo||'-'} · ${p.note||''}
+                    </div>
+                    <div style="font-size:10px;color:var(--eb-muted);margin-top:4px;">ID: ${p.id} · ${p.creatoIl?new Date(p.creatoIl).toLocaleString('it-IT'):''}</div>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+                    <span style="font-size:11px;font-weight:700;background:${statoColor}20;color:${statoColor};padding:3px 12px;border-radius:20px;">${statoLabel}</span>
+                    ${canApprove ? `<button onclick="approvaPrenotazione('${p.id}')" style="padding:8px 16px;background:linear-gradient(135deg,var(--free),#4ade80);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;">✓ Approva</button>` : ''}
+                    ${canReject  ? `<button onclick="rifiutaPrenotazione('${p.id}')" style="padding:8px 16px;background:white;color:var(--expired);border:1.5px solid var(--expired);border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;">✕ Rifiuta</button>` : ''}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+window.approvaPrenotazione = async id => {
+    const p = prenotazioniData[id]; if (!p) return;
+    if (!confirm(`Approvare la prenotazione di ${p.nome} — Ombrellone #${p.spotId} per ${p.data}?`)) return;
+    // Scrivi in spiaggia_dati
+    const entry = {
+        nome: p.nome, telefono: p.telefono||'-', email: p.email||'-',
+        prezzo: p.importo.toFixed(2), isSeasonal: false,
+        pagamento: 'saldo', barTotal: 0,
+        rate: [{ importo: p.importo, data: p.data }],
+        dataArrivo: p.data, dataPartenza: p.data,
+        note: `Prenotazione online${p.note?' · '+p.note:''}`,
+        weatherGuarantee: false, prenotatoOnline: true, bookingId: id,
+    };
+    await set(ref(db, `spiaggia_dati/${p.spotId}`), entry);
+    await set(ref(db, `prenotazioni_pendenti/${id}/stato`), 'approvata');
+    await set(ref(db, `prenotazioni_pendenti/${id}/approvataIl`), new Date().toISOString());
+    showToast(`✓ Prenotazione approvata — #${p.spotId} · ${p.nome}`, 'success');
+};
+
+window.rifiutaPrenotazione = async id => {
+    const p = prenotazioniData[id]; if (!p) return;
+    if (!confirm(`Rifiutare la prenotazione di ${p.nome}?\nIl rimborso dovrà essere gestito manualmente dal pannello Stripe/PayPal.`)) return;
+    await set(ref(db, `prenotazioni_pendenti/${id}/stato`), 'rifiutata');
+    await set(ref(db, `prenotazioni_pendenti/${id}/rifiutataIl`), new Date().toISOString());
+    showToast(`Prenotazione rifiutata`, 'info');
+};
+
+// ── PREZZI SPIAGGIA ───────────────────────────────────────────────────────
+const prezziRef = ref(db, 'prezzi_ombrelloni');
+let prezziData  = {};
+
+onValue(prezziRef, s => {
+    prezziData = s.val() || {};
+    if ($('screen-prezzi') && !$('screen-prezzi').classList.contains('hidden')) {
+        renderPrezziGrid();
+    }
+});
+
+function getPrezzo(id) {
+    return parseFloat(prezziData[id] || prezziData['default'] || 25);
+}
+
+function renderPrezziGrid() {
+    const gridA = $('prezzi-grid-a');
+    const gridB = $('prezzi-grid-b');
+    if (!gridA || !gridB) return;
+
+    // Aggiorna campo default
+    const defEl = $('prezzi-default');
+    if (defEl && !defEl.matches(':focus')) defEl.value = prezziData['default'] || 25;
+
+    let hA = '', hB = '';
+    for (let i = 1; i <= 200; i++) {
+        const hasCustom = prezziData[i] !== undefined;
+        const prezzo    = getPrezzo(i);
+        const bg        = hasCustom ? 'background:#ecfeff;border-color:#0891b2;' : 'background:white;';
+        const col       = hasCustom ? 'color:#0891b2;' : 'color:var(--eb-muted);';
+        const html = `<div onclick="openPrezzoEdit(${i})" style="border:1.5px solid var(--eb-border);border-radius:8px;padding:6px 4px;text-align:center;cursor:pointer;transition:all .15s;${bg}" title="Ombrellone #${i}">
+            <div style="font-size:10px;font-weight:700;${col}">#${i}</div>
+            <div style="font-size:11px;font-weight:700;color:var(--eb-text);">${prezzo}€</div>
+        </div>`;
+        if (i <= 100) hA += html; else hB += html;
+    }
+    gridA.innerHTML = hA;
+    gridB.innerHTML = hB;
+}
+
+window.openPrezzoEdit = id => {
+    const attuale = prezziData[id] !== undefined ? prezziData[id] : (prezziData['default'] || 25);
+    const nuovo   = prompt(`Prezzo ombrellone #${id}\nAttuale: ${attuale}€\n\nNuovo prezzo (€):`, attuale);
+    if (nuovo === null) return;
+    const val = parseFloat(nuovo);
+    if (isNaN(val) || val < 0) { showToast('Prezzo non valido', 'warn'); return; }
+    set(ref(db, `prezzi_ombrelloni/${id}`), val);
+    showToast(`✓ Ombrellone #${id} → ${val}€`, 'success');
+};
+
+window.salvaPrezzDefault = () => {
+    const val = parseFloat($('prezzi-default').value);
+    if (isNaN(val) || val < 0) { showToast('Prezzo non valido', 'warn'); return; }
+    set(ref(db, 'prezzi_ombrelloni/default'), val);
+    showToast(`✓ Prezzo default → ${val}€`, 'success');
+};
+
+window.salvaRangePrezzo = () => {
+    const da  = parseInt($('prezzi-range-da').value);
+    const a   = parseInt($('prezzi-range-a').value);
+    const val = parseFloat($('prezzi-range-val').value);
+    if (isNaN(da)||isNaN(a)||isNaN(val)||da<1||a>200||da>a||val<0) {
+        showToast('Valori non validi', 'warn'); return;
+    }
+    const updates = {};
+    for (let i = da; i <= a; i++) updates[`prezzi_ombrelloni/${i}`] = val;
+    import('https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js').then(({update}) => {
+        update(ref(db, '/'), updates);
+        showToast(`✓ Ombrelloni #${da}–#${a} → ${val}€`, 'success');
+        $('prezzi-range-da').value = '';
+        $('prezzi-range-a').value  = '';
+        $('prezzi-range-val').value= '';
+    });
+};
+
+window.resetTuttiPrezzi = () => {
+    if (!confirm('Cancellare tutti i prezzi individuali?\nResterà solo il prezzo default.')) return;
+    const defaultVal = prezziData['default'] || 25;
+    set(prezziRef, { default: defaultVal });
+    showToast('Prezzi individuali azzerati', 'info');
+};
 
 </script>
 </body>
