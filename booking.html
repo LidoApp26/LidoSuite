@@ -532,7 +532,7 @@ window.pagaStripe = async () => {
                 importo:     getSpotPrice(selectedSpot),
                 nomeCliente: cliente.nome,
                 email:       cliente.email,
-                successUrl:  `${location.origin}/booking-success.html?id=${pendingBookingId}&metodo=stripe`,
+                successUrl:  `${location.origin}/LidoSuite/booking-success.html?id=${pendingBookingId}&metodo=stripe`,
                 cancelUrl:   `${location.href}?cancel=1`,
             })
         });
@@ -568,7 +568,7 @@ window.pagaPayPal = async () => {
                 importo:     getSpotPrice(selectedSpot),
                 nomeCliente: cliente.nome,
                 email:       cliente.email,
-                successUrl:  `${location.origin}/booking-success.html?id=${pendingBookingId}&metodo=paypal`,
+                successUrl:  `${location.origin}/LidoSuite/booking-success.html?id=${pendingBookingId}&metodo=paypal`,
                 cancelUrl:   `${location.href}?cancel=1`,
             })
         });
