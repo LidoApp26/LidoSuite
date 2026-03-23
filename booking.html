@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenota il tuo Ombrellone — Lido Suite 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue:    #0d5c8c;
+            --blue-m:  #1a7db8;
+            --blue-l:  #3aa5d8;
+            --blue-p:  #e8f4fb;
+            --bg:      #f0f7fc;
+            --text:    #1a2d3d;
+            --muted:   #6b8499;
+            --border:  #d6e8f5;
+            --green:   #22c55e;
+            --orange:  #f97316;
+            --purple:  #8b5cf6;
+            --radius:  14px;
+            --shadow:  0 4px 16px rgba(13,92,140,.12);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(135deg, var(--blue) 0%, var(--blue-m) 60%, var(--blue-l) 100%);
+            padding: 0 32px; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 16px rgba(13,92,140,.25);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .hdr-logo { font-size: 20px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .hdr-logo span { font-size: 11px; font-weight: 400; opacity: .65; }
+        .hdr-nav { font-size: 12px; color: rgba(255,255,255,.8); }
+
+        /* ── HERO ── */
+        .hero {
+            background: linear-gradient(160deg, var(--blue) 0%, var(--blue-m) 50%, var(--blue-l) 100%);
+            padding: 60px 24px 80px; text-align: center; color: white;
+        }
+        .hero h1 { font-size: 36px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 12px; }
+        .hero p  { font-size: 16px; opacity: .85; max-width: 520px; margin: 0 auto 32px; }
+        .hero-steps { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+        .hero-step { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; opacity: .9; }
+        .hero-step-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+
+        /* ── MAIN ── */
+        .main { max-width: 1100px; margin: -32px auto 60px; padding: 0 20px; }
+
+        /* ── CARD ── */
+        .card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); border: 1.5px solid var(--border); padding: 28px; margin-bottom: 24px; }
+        .card-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .card-sub   { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+        /* ── DATE PICKER ── */
+        .date-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 8px; }
+        .date-row > div { flex: 1; min-width: 160px; }
+        label.lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--muted); display: block; margin-bottom: 5px; }
+        input[type=date], select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 9px; font-family: 'Poppins', sans-serif; font-size: 13px; background: var(--bg); color: var(--text); cursor: pointer; }
+        input[type=date]:focus, select:focus { outline: none; border-color: var(--blue-m); box-shadow: 0 0 0 3px rgba(26,125,184,.1); background: white; }
+        .btn-search { padding: 12px 24px; background: linear-gradient(135deg,var(--blue),var(--blue-m)); color: white; border: none; border-radius: 9px; font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: transform .15s; }
+        .btn-search:hover { transform: translateY(-2px); }
+
+        /* ── MAPPA OMBRELLONI ── */
+        .map-wrap { overflow-x: auto; }
+        .sector-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; color: var(--blue); text-transform: uppercase; margin-bottom: 10px; opacity: .8; text-align: center; }
+        .sectors { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+        .sector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+        .spot {
+            width: 62px; height: 62px; border-radius: 9px; border: 1.5px solid var(--border);
+            background: white; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; font-family: 'Poppins', sans-serif; transition: transform .15s, box-shadow .15s;
+            position: relative; user-select: none;
+        }
+        .spot:hover:not(.spot-occupied):not(.spot-unavail) { transform: translateY(-3px); box-shadow: var(--shadow); }
+        .spot b   { font-size: 13px; font-weight: 700; color: var(--text); }
+        .spot small { font-size: 8px; color: var(--muted); margin-top: 1px; }
+        .spot.spot-free     { border-color: var(--border); background: #f8fafc; cursor: pointer; }
+        .spot.spot-free:hover { border-color: var(--blue-m); background: var(--blue-p); }
+        .spot.spot-occupied { background: #f3f4f6; border-color: #d1d5db; cursor: not-allowed; }
+        .spot.spot-occupied b { color: #9ca3af; }
+        .spot.spot-occupied small { color: #d1d5db; }
+        .spot.spot-selected { background: var(--blue); border-color: var(--blue); }
+        .spot.spot-selected b, .spot.spot-selected small { color: white; }
+        .spot.spot-unavail  { background: #f9fafb; border-color: #e5e7eb; cursor: not-allowed; opacity: .5; }
+        .price-tag { position: absolute; bottom: -7px; left: 50%; transform: translateX(-50%); background: var(--green); color: white; font-size: 8px; font-weight: 700; padding: 1px 5px; border-radius: 4px; white-space: nowrap; }
+        .spot.spot-selected .price-tag { background: rgba(255,255,255,.3); }
+        .legend { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); font-weight: 500; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+        /* ── SELECTED SPOT CARD ── */
+        #selected-card { display: none; }
+        .selected-hero { background: linear-gradient(135deg,var(--blue),var(--blue-m)); border-radius: 10px; padding: 16px 20px; color: white; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .selected-hero .sh-left h3 { font-size: 20px; font-weight: 700; }
+        .selected-hero .sh-left p  { font-size: 12px; opacity: .85; margin-top: 3px; }
+        .selected-hero .sh-price   { font-size: 28px; font-weight: 700; }
+
+        /* ── FORM ── */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        @media (max-width: 580px) { .form-grid { grid-template-columns: 1fr; } }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group.full { grid-column: 1/-1; }
+        input[type=text], input[type=email], input[type=tel] {
+            width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 9px;
+            font-family: 'Poppins', sans-serif; font-size: 13px; background: var(--bg); color: var(--text);
+            transition: border-color .2s, box-shadow .2s;
+        }
+        input:focus { outline: none; border-color: var(--blue-m); box-shadow: 0 0 0 3px rgba(26,125,184,.1); background: white; }
+        input::placeholder { color: #b0c4d4; }
+
+        /* ── SUMMARY ── */
+        .summary-box { background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+        .summary-row { display: flex; justify-content: space-between; font-size: 13px; padding: 5px 0; border-bottom: 1px solid white; }
+        .summary-row:last-child { border-bottom: none; font-weight: 700; font-size: 15px; padding-top: 10px; border-top: 1px solid var(--border); margin-top: 4px; }
+
+        /* ── PAYMENT BUTTONS ── */
+        .pay-methods { display: flex; gap: 12px; flex-wrap: wrap; }
+        .pay-btn {
+            flex: 1; min-width: 160px; padding: 14px 20px; border: none; border-radius: 10px;
+            font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 700;
+            cursor: pointer; transition: transform .15s, box-shadow .15s; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .pay-btn:hover { transform: translateY(-2px); }
+        .pay-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+        .pay-stripe { background: #635bff; color: white; box-shadow: 0 4px 14px rgba(99,91,255,.3); }
+        .pay-paypal { background: #003087; color: white; box-shadow: 0 4px 14px rgba(0,48,135,.3); }
+        .pay-btn svg { width: 22px; height: 22px; fill: white; flex-shrink: 0; }
+
+        /* ── LOADING / STATES ── */
+        .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+        .spinner { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .no-results { text-align: center; padding: 40px; color: var(--muted); }
+        .no-results .emoji { font-size: 48px; margin-bottom: 12px; }
+        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--text); color: white; padding: 12px 24px; border-radius: 30px; font-size: 13px; font-weight: 600; z-index: 999; transition: transform .3s; pointer-events: none; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.err  { background: #ef4444; }
+        .toast.ok   { background: linear-gradient(135deg,#15803d,var(--green)); }
+
+        /* ── INFO BOX ── */
+        .info-box { background: #ecfeff; border: 1.5px solid #a5f3fc; border-radius: 10px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+        .info-box p { font-size: 12px; color: #0e7490; line-height: 1.6; }
+
+        @media (max-width: 600px) {
+            header { padding: 0 16px; }
+            .hero h1 { font-size: 26px; }
+            .sectors { gap: 20px; }
+            .spot { width: 52px; height: 52px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── HEADER ── -->
+<header>
+    <div class="hdr-logo">🏖️ Lido Suite <span>2026</span></div>
+    <div class="hdr-nav">Prenotazione Online</div>
+</header>
+
+<!-- ── HERO ── -->
+<div class="hero">
+    <h1>🌊 Prenota il tuo ombrellone</h1>
+    <p>Scegli la data, seleziona il posto sulla mappa e paga online in pochi secondi</p>
+    <div class="hero-steps">
+        <div class="hero-step"><div class="hero-step-num">1</div> Scegli la data</div>
+        <div class="hero-step"><div class="hero-step-num">2</div> Seleziona l'ombrellone</div>
+        <div class="hero-step"><div class="hero-step-num">3</div> Inserisci i dati</div>
+        <div class="hero-step"><div class="hero-step-num">4</div> Paga e ricevi conferma</div>
+    </div>
+</div>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+    <!-- STEP 1: Selezione data -->
+    <div class="card" id="step-date">
+        <div class="card-title">📅 Quando vuoi venire?</div>
+        <div class="card-sub">Seleziona la data e il numero di persone per vedere gli ombrelloni disponibili</div>
+        <div class="date-row">
+            <div>
+                <label class="lbl">Data</label>
+                <input type="date" id="pick-date" min="">
+            </div>
+            <div>
+                <label class="lbl">Persone</label>
+                <select id="pick-persons">
+                    <option value="1">1 persona</option>
+                    <option value="2" selected>2 persone</option>
+                    <option value="3">3 persone</option>
+                    <option value="4">4+ persone</option>
+                </select>
+            </div>
+            <div style="flex:0;">
+                <label class="lbl">&nbsp;</label>
+                <button class="btn-search" onclick="cercaDisponibilita()">🔍 Cerca disponibilità</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STEP 2: Mappa ombrelloni -->
+    <div class="card" id="step-map" style="display:none;">
+        <div class="card-title">🏖️ Scegli il tuo posto</div>
+        <div class="card-sub" id="map-subtitle">Clicca su un ombrellone disponibile per selezionarlo</div>
+        <div class="legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#f8fafc;border:1.5px solid #cbd5e1;"></div>Disponibile</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--blue);"></div>Selezionato</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#f3f4f6;border:1.5px solid #d1d5db;"></div>Occupato</div>
+        </div>
+        <div class="map-wrap" id="map-wrap">
+            <div class="loading"><div class="spinner"></div><br>Carico disponibilità…</div>
+        </div>
+    </div>
+
+    <!-- STEP 3+4: Form + pagamento -->
+    <div class="card" id="selected-card">
+        <div class="selected-hero" id="selected-hero">
+            <div class="sh-left">
+                <h3 id="sh-title">Ombrellone #—</h3>
+                <p id="sh-details">—</p>
+            </div>
+            <div class="sh-price" id="sh-price">0€</div>
+        </div>
+
+        <div class="card-title" style="margin-top:8px;">👤 I tuoi dati</div>
+        <div class="card-sub">Li useremo solo per confermare la prenotazione</div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="lbl">Nome *</label>
+                <input type="text" id="f-nome" placeholder="Mario" autocomplete="given-name">
+            </div>
+            <div class="form-group">
+                <label class="lbl">Cognome *</label>
+                <input type="text" id="f-cognome" placeholder="Rossi" autocomplete="family-name">
+            </div>
+            <div class="form-group">
+                <label class="lbl">Email * (riceverai la conferma)</label>
+                <input type="email" id="f-email" placeholder="mario@email.it" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="lbl">Telefono</label>
+                <input type="tel" id="f-tel" placeholder="333 1234567" autocomplete="tel">
+            </div>
+            <div class="form-group full">
+                <label class="lbl">Note (opzionale)</label>
+                <input type="text" id="f-note" placeholder="Es. sedia per disabili, carrozzina…">
+            </div>
+        </div>
+
+        <div class="info-box" style="margin-top:16px;">
+            <span style="font-size:20px;">🔒</span>
+            <p>Pagamento sicuro gestito da <strong>Stripe</strong> o <strong>PayPal</strong>. Non memorizziamo i dati della tua carta. Dopo il pagamento riceverai una email di conferma con tutti i dettagli.</p>
+        </div>
+
+        <!-- Riepilogo costo -->
+        <div class="summary-box" id="summary-box">
+            <div class="summary-row"><span>Ombrellone</span><span id="sum-spot">—</span></div>
+            <div class="summary-row"><span>Data</span><span id="sum-date">—</span></div>
+            <div class="summary-row"><span>Persone</span><span id="sum-persons">—</span></div>
+            <div class="summary-row"><span>💰 Totale</span><span id="sum-total" style="color:var(--blue);">—</span></div>
+        </div>
+
+        <div class="pay-methods">
+            <button class="pay-btn pay-stripe" id="btn-stripe" onclick="pagaStripe()">
+                <svg viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z"/></svg>
+                Paga con Stripe
+            </button>
+            <button class="pay-btn pay-paypal" id="btn-paypal" onclick="pagaPayPal()">
+                <svg viewBox="0 0 24 24"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c1.379 3.821-1.073 8.188-5.508 9.312h-2.16l-.787 4.99H16.3c.524 0 .968-.382 1.05-.9l.043-.275.797-5.057.051-.275c.082-.518.526-.9 1.05-.9h.665c4.29 0 6.993-1.756 7.892-6.615a5.15 5.15 0 0 0-.078-2.834 4.2 4.2 0 0 0-.548-.905z"/></svg>
+                Paga con PayPal
+            </button>
+        </div>
+        <p style="font-size:11px;color:var(--muted);text-align:center;margin-top:10px;">Verrai reindirizzato al checkout sicuro. La prenotazione sarà confermata solo dopo il pagamento.</p>
+    </div>
+
+</div>
+
+<!-- ── FIREBASE + LOGICA ── -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js';
+import { getDatabase, ref, onValue, push, set } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js';
+
+const firebaseConfig = {
+    apiKey:      "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
+    authDomain:  "lido-d7fdf.firebaseapp.com",
+    databaseURL: "https://lido-d7fdf-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:   "lido-d7fdf",
+    appId:       "1:830446694284:web:284451a591ec296d2ef0a9"
+};
+
+// ⚠️ CONFIGURAZIONE — sostituire con i propri valori
+// Queste sono le Cloud Function URL (generate dopo il deploy)
+const CF_BASE_URL = 'https://europe-west1-lido-d7fdf.cloudfunctions.net';
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+let beachData   = {};
+let prezziData  = {}; // { [spotId]: prezzo } — caricato da Firebase
+let selectedSpot = null;
+let selectedDate = null;
+let selectedPersons = 2;
+let pendingBookingId = null; // id in prenotazioni_pendenti
+
+// ── Init ─────────────────────────────────────────────────────────────────
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('pick-date').min   = today;
+document.getElementById('pick-date').value = today;
+
+// Carica dati spiaggia + prezzi in sola lettura
+// Quando i dati arrivano, aggiorna la mappa se è già aperta
+let dataLoaded = false;
+onValue(ref(db, 'spiaggia_dati'), s => {
+    beachData = s.val() || {};
+    dataLoaded = true;
+    // Se la mappa è già visibile, aggiornala con i dati reali
+    const mapCard = document.getElementById('step-map');
+    if (mapCard && mapCard.style.display !== 'none' && selectedDate) {
+        renderMap(formatDateIT(selectedDate));
+    }
+});
+onValue(ref(db, 'prezzi_ombrelloni'), s => { prezziData = s.val() || {}; });
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function toast(msg, type='') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function getSpotPrice(id) {
+    // Prima cerca nel nodo prezzi_ombrelloni, poi usa prezzo base del beachData se stagionale
+    if (prezziData[id]) return parseFloat(prezziData[id]);
+    return 25; // prezzo default — configurabile
+}
+
+function isOccupied(id, dateIT) {
+    const d = beachData[id];
+    if (!d) return false;
+
+    // Stagionale: sempre occupato per tutta la stagione
+    // a meno che non abbia quella data nel pool subaffitto
+    if (d.isSeasonal) {
+        const subletDates = d.subletDates || [];
+        // Libero solo se è una data di subaffitto senza ospite registrato
+        if (subletDates.includes(dateIT)) {
+            const hasGuest = (d.subletGuests || []).some(g =>
+                g.active && (g.dates || []).includes(dateIT)
+            );
+            return hasGuest; // occupato se c'è già un ospite
+        }
+        return true; // stagionale senza subaffitto = sempre occupato
+    }
+
+    // Giornaliero: occupato solo nella sua data
+    if (!d.dataArrivo || d.dataArrivo === '-') return false;
+    return d.dataArrivo === dateIT || isDateBetween(dateIT, d.dataArrivo, d.dataPartenza);
+}
+
+function isDateBetween(check, from, to) {
+    try {
+        const [cd,cm,cy] = check.split('/').map(Number);
+        const checkD = new Date(cy,cm-1,cd);
+        if (from && from !== '-') {
+            const [fd,fm,fy] = from.split('/').map(Number);
+            if (checkD >= new Date(fy,fm-1,fd) && (!to || to==='-')) return true;
+        }
+        if (from && to && from !== '-' && to !== '-') {
+            const [fd,fm,fy] = from.split('/').map(Number);
+            const [td,tm,ty] = to.split('/').map(Number);
+            return checkD >= new Date(fy,fm-1,fd) && checkD <= new Date(ty,tm-1,td);
+        }
+    } catch(e) {}
+    return false;
+}
+
+function formatDateIT(isoDate) {
+    if (!isoDate) return '';
+    const [y,m,d] = isoDate.split('-');
+    return `${d}/${m}/${y}`;
+}
+
+// ── Cerca disponibilità ───────────────────────────────────────────────────
+window.cercaDisponibilita = () => {
+    const dateVal = document.getElementById('pick-date').value;
+    if (!dateVal) { toast('Seleziona una data', 'err'); return; }
+    selectedDate    = dateVal;
+    selectedPersons = parseInt(document.getElementById('pick-persons').value);
+    const dateIT    = formatDateIT(dateVal);
+
+    document.getElementById('step-map').style.display = 'block';
+    document.getElementById('selected-card').style.display = 'none';
+    selectedSpot = null;
+
+    document.getElementById('map-subtitle').textContent =
+        `Disponibilità per ${dateIT} · ${selectedPersons} persona${selectedPersons>1?'e':''} · Clicca per selezionare`;
+
+    // Se i dati non sono ancora caricati da Firebase, mostra spinner e attendi
+    if (!dataLoaded || Object.keys(beachData).length === 0) {
+        document.getElementById('map-wrap').innerHTML =
+            '<div class="loading"><div class="spinner"></div><br>Carico disponibilità dal database…</div>';
+        document.getElementById('step-map').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // La mappa si aggiornerà automaticamente quando onValue riceve i dati
+        return;
+    }
+
+    renderMap(dateIT);
+    document.getElementById('step-map').scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+// ── Render mappa ──────────────────────────────────────────────────────────
+function renderMap(dateIT) {
+    const wrap = document.getElementById('map-wrap');
+    let westHTML = '', eastHTML = '';
+    let freeCount = 0;
+
+    for (let i = 1; i <= 200; i++) {
+        const occupied = isOccupied(i, dateIT);
+        const price    = getSpotPrice(i);
+        if (!occupied) freeCount++;
+        const cls  = occupied ? 'spot spot-occupied' : 'spot spot-free';
+        const onclick = occupied ? '' : `onclick="selectSpot(${i}, ${price})"`;
+        const priceTag = occupied ? '' : `<div class="price-tag">${price}€</div>`;
+        const spotDiv = `<div class="${cls}" id="spot-${i}" ${onclick}>
+            <b>${i}</b>
+            <small>${occupied ? 'OCCU.' : 'LIBERO'}</small>
+            ${priceTag}
+        </div>`;
+        if (i <= 100) westHTML += spotDiv; else eastHTML += spotDiv;
+    }
+
+    wrap.innerHTML = `
+        <div class="sectors">
+            <div><div class="sector-label">Settore A · 1–100</div><div class="sector">${westHTML}</div></div>
+            <div><div class="sector-label">Settore B · 101–200</div><div class="sector">${eastHTML}</div></div>
+        </div>
+        <div style="margin-top:16px;text-align:center;font-size:13px;color:var(--muted);">
+            <b style="color:var(--blue);">${freeCount}</b> ombrelloni disponibili per questa data
+        </div>`;
+}
+
+// ── Seleziona spot ────────────────────────────────────────────────────────
+window.selectSpot = (id, price) => {
+    // Deseleziona precedente
+    if (selectedSpot) {
+        const prev = document.getElementById(`spot-${selectedSpot}`);
+        if (prev) { prev.className = 'spot spot-free'; }
+    }
+    selectedSpot = id;
+    const el = document.getElementById(`spot-${id}`);
+    if (el) el.className = 'spot spot-selected';
+
+    const dateIT = formatDateIT(selectedDate);
+
+    // Mostra card dati + pagamento
+    document.getElementById('sh-title').textContent   = `Ombrellone #${id}`;
+    document.getElementById('sh-details').textContent = `${dateIT} · ${selectedPersons} persona${selectedPersons>1?'e':''}`;
+    document.getElementById('sh-price').textContent   = `${price}€`;
+    document.getElementById('sum-spot').textContent    = `#${id}`;
+    document.getElementById('sum-date').textContent    = dateIT;
+    document.getElementById('sum-persons').textContent = `${selectedPersons}`;
+    document.getElementById('sum-total').textContent   = `${price}€`;
+
+    const card = document.getElementById('selected-card');
+    card.style.display = 'block';
+    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+// ── Validazione form ──────────────────────────────────────────────────────
+function validateForm() {
+    const nome    = document.getElementById('f-nome').value.trim();
+    const cognome = document.getElementById('f-cognome').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    if (!nome)    { toast('Inserisci il nome',    'err'); return null; }
+    if (!cognome) { toast('Inserisci il cognome', 'err'); return null; }
+    if (!email || !email.includes('@')) { toast('Email non valida', 'err'); return null; }
+    return {
+        nome:     (nome + ' ' + cognome).toUpperCase(),
+        email,
+        telefono: document.getElementById('f-tel').value.trim() || '-',
+        note:     document.getElementById('f-note').value.trim() || '',
+    };
+}
+
+// ── Crea prenotazione pendente su Firebase ────────────────────────────────
+async function creaPrenotazionePendente(cliente, metodo) {
+    const price = getSpotPrice(selectedSpot);
+    const booking = {
+        spotId:     selectedSpot,
+        data:       formatDateIT(selectedDate),
+        dataISO:    selectedDate,
+        persone:    selectedPersons,
+        importo:    price,
+        nome:       cliente.nome,
+        email:      cliente.email,
+        telefono:   cliente.telefono,
+        note:       cliente.note,
+        metodo,
+        stato:      'in_attesa',   // → 'pagata' dopo conferma
+        creatoIl:   new Date().toISOString(),
+    };
+    const newRef = push(ref(db, 'prenotazioni_pendenti'));
+    await set(newRef, booking);
+    return newRef.key;
+}
+
+// ── Paga con Stripe ───────────────────────────────────────────────────────
+window.pagaStripe = async () => {
+    const cliente = validateForm();
+    if (!cliente || !selectedSpot || !selectedDate) return;
+
+    const btn = document.getElementById('btn-stripe');
+    btn.disabled = true; btn.textContent = 'Carico…';
+
+    try {
+        pendingBookingId = await creaPrenotazionePendente(cliente, 'stripe');
+
+        // Chiama Cloud Function per creare Stripe Checkout Session
+        const res = await fetch(`${CF_BASE_URL}/createStripeSession`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                bookingId:   pendingBookingId,
+                spotId:      selectedSpot,
+                data:        formatDateIT(selectedDate),
+                importo:     getSpotPrice(selectedSpot),
+                nomeCliente: cliente.nome,
+                email:       cliente.email,
+                successUrl:  `${location.origin}/booking-success.html?id=${pendingBookingId}&metodo=stripe`,
+                cancelUrl:   `${location.href}?cancel=1`,
+            })
+        });
+        const json = await res.json();
+        if (json.url) {
+            window.location.href = json.url; // redirect a Stripe Checkout
+        } else {
+            throw new Error(json.error || 'Errore Stripe');
+        }
+    } catch(e) {
+        toast('Errore: ' + e.message, 'err');
+        btn.disabled = false; btn.textContent = 'Paga con Stripe';
+    }
+};
+
+// ── Paga con PayPal ───────────────────────────────────────────────────────
+window.pagaPayPal = async () => {
+    const cliente = validateForm();
+    if (!cliente || !selectedSpot || !selectedDate) return;
+
+    const btn = document.getElementById('btn-paypal');
+    btn.disabled = true; btn.textContent = 'Carico…';
+
+    try {
+        pendingBookingId = await creaPrenotazionePendente(cliente, 'paypal');
+
+        const res = await fetch(`${CF_BASE_URL}/createPayPalOrder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                bookingId:   pendingBookingId,
+                spotId:      selectedSpot,
+                importo:     getSpotPrice(selectedSpot),
+                nomeCliente: cliente.nome,
+                email:       cliente.email,
+                successUrl:  `${location.origin}/booking-success.html?id=${pendingBookingId}&metodo=paypal`,
+                cancelUrl:   `${location.href}?cancel=1`,
+            })
+        });
+        const json = await res.json();
+        const approvalUrl = json.links?.find(l => l.rel === 'approve')?.href;
+        if (approvalUrl) {
+            window.location.href = approvalUrl;
+        } else {
+            throw new Error(json.error || 'Errore PayPal');
+        }
+    } catch(e) {
+        toast('Errore: ' + e.message, 'err');
+        btn.disabled = false; btn.textContent = 'Paga con PayPal';
+    }
+};
+
+// ── Gestisci ritorno da cancel ────────────────────────────────────────────
+if (new URLSearchParams(location.search).get('cancel') === '1') {
+    toast('Pagamento annullato', 'err');
+    history.replaceState({}, '', location.pathname);
+}
+</script>
+</body>
+</html>
