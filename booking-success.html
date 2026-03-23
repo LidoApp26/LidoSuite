@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenotazione Confermata — Lido Suite 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue:#0d5c8c; --blue-m:#1a7db8; --green:#22c55e; --bg:#f0f7fc; --text:#1a2d3d; --muted:#6b8499; --border:#d6e8f5; }
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { font-family:'Poppins',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
+        .card { background:white; border-radius:20px; box-shadow:0 8px 32px rgba(13,92,140,.15); padding:48px 40px; max-width:480px; width:100%; text-align:center; }
+        .icon-wrap { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,#15803d,var(--green)); display:flex; align-items:center; justify-content:center; font-size:38px; margin:0 auto 24px; box-shadow:0 8px 24px rgba(34,197,94,.3); }
+        h1 { font-size:26px; font-weight:700; margin-bottom:8px; color:var(--text); }
+        .subtitle { font-size:14px; color:var(--muted); margin-bottom:28px; }
+        .details-box { background:var(--bg); border:1.5px solid var(--border); border-radius:12px; padding:20px; text-align:left; margin-bottom:24px; }
+        .detail-row { display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid white; }
+        .detail-row:last-child { border-bottom:none; font-weight:700; }
+        .detail-row .label { color:var(--muted); }
+        .detail-row .value { font-weight:600; }
+        .email-notice { background:#ecfeff; border:1.5px solid #a5f3fc; border-radius:10px; padding:14px 16px; font-size:12px; color:#0e7490; margin-bottom:24px; display:flex; gap:10px; align-items:flex-start; text-align:left; }
+        .btn-home { display:inline-block; padding:13px 32px; background:linear-gradient(135deg,var(--blue),var(--blue-m)); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; transition:transform .15s; }
+        .btn-home:hover { transform:translateY(-2px); }
+        .booking-code { font-size:11px; color:var(--muted); margin-top:16px; }
+        .booking-code b { color:var(--blue); font-family:monospace; font-size:13px; }
+        /* Loading state */
+        .loading { color:var(--muted); padding:20px 0; }
+        .spinner { display:inline-block; width:32px; height:32px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin .8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        /* Error state */
+        .err-icon { font-size:48px; margin-bottom:16px; }
+        .err-msg { color:#ef4444; font-weight:600; margin-bottom:8px; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="card-loading">
+    <div class="loading"><div class="spinner"></div><br><br>Confermo la prenotazione…</div>
+</div>
+
+<div class="card" id="card-success" style="display:none;">
+    <div class="icon-wrap">✓</div>
+    <h1>Prenotazione Confermata!</h1>
+    <p class="subtitle">Il tuo ombrellone è stato prenotato con successo</p>
+
+    <div class="details-box" id="details-box">
+        <!-- popolato da JS -->
+    </div>
+
+    <div class="email-notice">
+        <span style="font-size:18px;">📧</span>
+        <span>Abbiamo inviato una <strong>email di conferma</strong> all'indirizzo fornito con tutti i dettagli della prenotazione e il codice di accesso.</span>
+    </div>
+
+    <a href="booking.html" class="btn-home">🏖️ Prenota un altro ombrellone</a>
+    <div class="booking-code">Codice prenotazione: <b id="booking-code">—</b></div>
+</div>
+
+<div class="card" id="card-error" style="display:none;">
+    <div class="err-icon">❌</div>
+    <div class="err-msg">Verifica pagamento fallita</div>
+    <p style="font-size:13px;color:#6b8499;margin-bottom:24px;">Il pagamento non è stato confermato. Se hai completato il pagamento, contatta il lido con il codice qui sotto.</p>
+    <div class="booking-code">Codice riferimento: <b id="error-code">—</b></div>
+    <br>
+    <a href="booking.html" class="btn-home" style="background:linear-gradient(135deg,#ef4444,#f87171);">← Torna alla prenotazione</a>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js';
+import { getDatabase, ref, get, update } from 'https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js';
+
+const firebaseConfig = {
+    apiKey:      "AIzaSyCe0bXllUDHXCael1PmTUFkFbeeAF0poM0",
+    authDomain:  "lido-d7fdf.firebaseapp.com",
+    databaseURL: "https://lido-d7fdf-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:   "lido-d7fdf",
+    appId:       "1:830446694284:web:284451a591ec296d2ef0a9"
+};
+
+const CF_BASE_URL = 'https://europe-west1-lido-d7fdf.cloudfunctions.net';
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+const params    = new URLSearchParams(location.search);
+const bookingId = params.get('id');
+const metodo    = params.get('metodo');
+const sessionId = params.get('session_id'); // da Stripe redirect
+
+function showSuccess(booking) {
+    document.getElementById('card-loading').style.display = 'none';
+    document.getElementById('card-success').style.display = 'block';
+    document.getElementById('booking-code').textContent = bookingId;
+    document.getElementById('details-box').innerHTML = `
+        <div class="detail-row"><span class="label">Ombrellone</span><span class="value">#${booking.spotId}</span></div>
+        <div class="detail-row"><span class="label">Data</span><span class="value">${booking.data}</span></div>
+        <div class="detail-row"><span class="label">Persone</span><span class="value">${booking.persone}</span></div>
+        <div class="detail-row"><span class="label">Intestato a</span><span class="value">${booking.nome}</span></div>
+        <div class="detail-row"><span class="label">Email</span><span class="value">${booking.email}</span></div>
+        <div class="detail-row"><span class="label">Pagamento</span><span class="value" style="color:var(--green);">✓ ${metodo==='stripe'?'Stripe':'PayPal'} — ${booking.importo}€</span></div>
+    `;
+}
+
+function showError() {
+    document.getElementById('card-loading').style.display = 'none';
+    document.getElementById('card-error').style.display = 'block';
+    document.getElementById('error-code').textContent = bookingId || '—';
+}
+
+async function confermaPrenotazione() {
+    if (!bookingId) { showError(); return; }
+
+    try {
+        // Verifica pagamento tramite Cloud Function
+        const verifyRes = await fetch(`${CF_BASE_URL}/verifyPayment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookingId, metodo, sessionId })
+        });
+        const result = await verifyRes.json();
+
+        if (!result.success) { showError(); return; }
+
+        // Leggi prenotazione da Firebase
+        const snap = await get(ref(db, `prenotazioni_pendenti/${bookingId}`));
+        const booking = snap.val();
+        if (!booking) { showError(); return; }
+
+        // Se non già confermata, aggiorna stato
+        if (booking.stato !== 'pagata') {
+            await update(ref(db, `prenotazioni_pendenti/${bookingId}`), { stato: 'pagata', pagatoIl: new Date().toISOString() });
+        }
+
+        showSuccess(booking);
+    } catch(e) {
+        console.error(e);
+        // Fallback: mostra comunque se il booking esiste e risulta pagato
+        try {
+            const snap = await get(ref(db, `prenotazioni_pendenti/${bookingId}`));
+            const booking = snap.val();
+            if (booking && booking.stato === 'pagata') { showSuccess(booking); return; }
+        } catch(_) {}
+        showError();
+    }
+}
+
+confermaPrenotazione();
+</script>
+</body>
+</html>
