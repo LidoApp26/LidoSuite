@@ -1282,11 +1282,26 @@
         <div class="pos-container">
             <div class="pos-grid-wrap">
                 <div class="pos-section-title">Prodotti</div>
-                <!-- Pulsanti Menù -->
-                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-                    <button onclick="openMenuModal('colazione')" style="padding:8px 18px;background:linear-gradient(135deg,#f59e0b,#fbbf24);color:white;border:none;border-radius:20px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(245,158,11,.3);">☕ Menù Colazione</button>
-                    <button onclick="openMenuModal('pranzo')" style="padding:8px 18px;background:linear-gradient(135deg,#22c55e,#4ade80);color:white;border:none;border-radius:20px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(34,197,94,.3);">🥗 Menù Pranzo</button>
-                    <button onclick="openMenuModal('apericena')" style="padding:8px 18px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;border:none;border-radius:20px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(139,92,246,.3);">🌅 Menù Apericena</button>
+                <!-- Pulsanti Menù — stile home-card -->
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+                    <div onclick="openMenuModal('colazione')" style="background:white;border-radius:var(--radius);padding:22px 14px 18px;text-align:center;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:var(--shadow-sm);border:1.5px solid var(--eb-border);position:relative;overflow:hidden;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(245,158,11,.2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+                        <div style="font-size:32px;margin-bottom:8px;">☕</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--eb-text);">Colazione</div>
+                        <div style="font-size:11px;color:var(--eb-muted);margin-top:3px;">Caffetteria & Breakfast</div>
+                    </div>
+                    <div onclick="openMenuModal('pranzo')" style="background:white;border-radius:var(--radius);padding:22px 14px 18px;text-align:center;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:var(--shadow-sm);border:1.5px solid var(--eb-border);position:relative;overflow:hidden;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(34,197,94,.2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;background:linear-gradient(90deg,#16a34a,#22c55e);"></div>
+                        <div style="font-size:32px;margin-bottom:8px;">🥗</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--eb-text);">Pranzo</div>
+                        <div style="font-size:11px;color:var(--eb-muted);margin-top:3px;">12:00 – 14:30</div>
+                    </div>
+                    <div onclick="openMenuModal('apericena')" style="background:white;border-radius:var(--radius);padding:22px 14px 18px;text-align:center;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;box-shadow:var(--shadow-sm);border:1.5px solid var(--eb-border);position:relative;overflow:hidden;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 24px rgba(139,92,246,.2)'" onmouseout="this.style.transform='';this.style.boxShadow='var(--shadow-sm)'">
+                        <div style="position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;background:linear-gradient(90deg,#7c3aed,#8b5cf6);"></div>
+                        <div style="font-size:32px;margin-bottom:8px;">🌅</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--eb-text);">Apericena</div>
+                        <div style="font-size:11px;color:var(--eb-muted);margin-top:3px;">16:30 – 20:30</div>
+                    </div>
                 </div>
                 <div class="pos-grid">
                     <button class="pos-btn pos-btn-fixed" data-fixed-id="fisso_caffe" style="border-bottom-color:#795548" onclick="addToCart('☕ Caffè', 1.20)">☕ Caffè<br><small>1.20€</small></button>
