@@ -1481,6 +1481,57 @@
     </div>
 </div>
 
+<!-- ── MODAL MODIFICA CLIENTE (admin only) ── -->
+<div id="edit-client-modal" class="modal" style="width:480px;padding:0;overflow:hidden;text-align:left;max-height:92vh;">
+    <div style="padding:22px 28px 18px;background:linear-gradient(135deg,#0d5c8c,#1a7db8);color:white;">
+        <div style="font-size:11px;font-weight:600;opacity:0.8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">✏️ Modifica Cliente</div>
+        <div style="font-size:20px;font-weight:700;" id="ec-title">Ombrellone #—</div>
+    </div>
+    <div style="padding:20px 28px 8px;overflow-y:auto;max-height:65vh;">
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Nome Cliente</label>
+            <input type="text" id="ec-nome" class="field" style="text-transform:uppercase;">
+        </div>
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Telefono</label>
+            <input type="tel" id="ec-tel" class="field">
+        </div>
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Email</label>
+            <input type="email" id="ec-email" class="field">
+        </div>
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Prezzo Base (€)</label>
+            <input type="number" id="ec-prezzo" class="field" step="0.50" min="0">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div>
+                <label class="form-label">Data Arrivo</label>
+                <input type="date" id="ec-arrivo" class="field">
+            </div>
+            <div>
+                <label class="form-label">Data Partenza</label>
+                <input type="date" id="ec-partenza" class="field">
+            </div>
+        </div>
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Note</label>
+            <input type="text" id="ec-note" class="field" placeholder="Note sul cliente…">
+        </div>
+        <div style="margin-bottom:12px;">
+            <label class="form-label">Tipo prenotazione</label>
+            <select id="ec-tipo" class="field">
+                <option value="false">Giornaliero</option>
+                <option value="true">Stagionale</option>
+            </select>
+        </div>
+    </div>
+    <div style="padding:14px 28px 22px;display:flex;flex-direction:column;gap:8px;">
+        <button onclick="saveEditClient()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--eb-blue),var(--eb-blue-mid));color:white;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">💾 Salva Modifiche</button>
+        <button onclick="closeModals()" style="width:100%;padding:11px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);">Annulla</button>
+    </div>
+</div>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -2404,7 +2455,7 @@ function renderArchivioRows(rows,tbody){
             : `<div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div>`;
         const azioniCell = isSub
             ? `<button onclick="gdOpenByIndex('${d._spotId}',${d._guestIdx})" style="background:none;color:#7c3aed;border:1px solid #7c3aed;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">📋 Scheda</button>`
-            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`;
+            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`+(currentUser?.role==='admin'?`<button onclick="openEditClient(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">✏️ Modifica</button>`:'');
         return `<tr style="${rowBg}"><td>${spotLabel}</td><td>${clienteCell}</td><td>${d.telefono||'-'}</td><td style="color:var(--eb-muted);">${emailCell}</td><td>${tipoCell}</td><td>${prezzoCell}</td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td>${azioniCell}</td></tr>`;
     }).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
 }
@@ -2824,6 +2875,54 @@ window.resetTuttiPrezzi = () => {
     const defaultVal = prezziData['default'] || 25;
     set(prezziRef, { default: defaultVal });
     showToast('Prezzi individuali azzerati', 'info');
+};
+
+// ── MODIFICA CLIENTE (admin only) ─────────────────────────────────────────
+let _editClientId = null;
+
+window.openEditClient = id => {
+    if (currentUser?.role !== 'admin') { showToast('⛔ Solo gli amministratori possono modificare', 'warn'); return; }
+    const d = beachData[id];
+    if (!d) return;
+    _editClientId = id;
+    $('ec-title').textContent = `Ombrellone #${id} — ${d.nome}`;
+    $('ec-nome').value    = d.nome || '';
+    $('ec-tel').value     = d.telefono && d.telefono !== '-' ? d.telefono : '';
+    $('ec-email').value   = d.email && d.email !== '-' ? d.email : '';
+    $('ec-prezzo').value  = d.prezzo || '';
+    $('ec-note').value    = d.note || '';
+    $('ec-tipo').value    = d.isSeasonal ? 'true' : 'false';
+    // Converti date da dd/mm/yyyy a yyyy-mm-dd per input date
+    const toISO = s => { if (!s || s==='-') return ''; const [g,m,a]=s.split('/'); return `${a}-${m}-${g}`; };
+    $('ec-arrivo').value   = toISO(d.dataArrivo);
+    $('ec-partenza').value = toISO(d.dataPartenza);
+    $('edit-client-modal').style.display = 'block';
+    $('overlay').style.display = 'block';
+};
+
+window.saveEditClient = () => {
+    if (!_editClientId) return;
+    if (currentUser?.role !== 'admin') { showToast('⛔ Solo gli amministratori', 'warn'); return; }
+    const d = beachData[_editClientId];
+    if (!d) return;
+    const nome    = $('ec-nome').value.trim().toUpperCase();
+    const tel     = $('ec-tel').value.trim() || '-';
+    const email   = $('ec-email').value.trim() || '-';
+    const prezzo  = parseFloat($('ec-prezzo').value);
+    const note    = $('ec-note').value.trim();
+    const isSeas  = $('ec-tipo').value === 'true';
+    const arrivo  = $('ec-arrivo').value ? toIT($('ec-arrivo').value) : d.dataArrivo;
+    const partenza= $('ec-partenza').value ? toIT($('ec-partenza').value) : d.dataPartenza;
+    if (!nome) { showToast('Il nome è obbligatorio', 'warn'); return; }
+    if (isNaN(prezzo) || prezzo < 0) { showToast('Prezzo non valido', 'warn'); return; }
+    const updated = { ...d, nome, telefono: tel, email, prezzo: prezzo.toFixed(2), note, isSeasonal: isSeas, dataArrivo: arrivo, dataPartenza: partenza };
+    beachData[_editClientId] = updated;
+    fdb(_editClientId, updated);
+    closeModals();
+    buildArchivioRows();
+    filterArchivio();
+    renderSpiaggia();
+    showToast(`✓ #${_editClientId} — ${nome} aggiornato`, 'success');
 };
 
 </script>
