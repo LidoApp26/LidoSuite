@@ -1289,10 +1289,10 @@
                     <button onclick="openMenuModal('apericena')" style="padding:8px 18px;background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:white;border:none;border-radius:20px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(139,92,246,.3);">🌅 Menù Apericena</button>
                 </div>
                 <div class="pos-grid">
-                    <button class="pos-btn" style="border-bottom-color:#795548" onclick="addToCart('☕ Caffè', 1.20)">☕ Caffè<br><small>1.20€</small></button>
-                    <button class="pos-btn" style="border-bottom-color:#2196F3" onclick="addToCart('💧 Acqua', 1.00)">💧 Acqua<br><small>1.00€</small></button>
-                    <button class="pos-btn" style="border-bottom-color:#f97316" onclick="openBeerMenu()">🍺 Birra Spina<br><small>scegli formato</small></button>
-                    <button class="pos-btn" style="border-bottom-color:#E91E63" onclick="addToCart('🍹 Spritz', 6.00)">🍹 Spritz<br><small>6.00€</small></button>
+                    <button class="pos-btn pos-btn-fixed" data-fixed-id="fisso_caffe" style="border-bottom-color:#795548" onclick="addToCart('☕ Caffè', 1.20)">☕ Caffè<br><small>1.20€</small></button>
+                    <button class="pos-btn pos-btn-fixed" data-fixed-id="fisso_acqua" style="border-bottom-color:#2196F3" onclick="addToCart('💧 Acqua', 1.00)">💧 Acqua<br><small>1.00€</small></button>
+                    <button class="pos-btn pos-btn-fixed" data-fixed-id="fisso_birra" style="border-bottom-color:#f97316" onclick="openBeerMenu()">🍺 Birra Spina<br><small>scegli formato</small></button>
+                    <button class="pos-btn pos-btn-fixed" data-fixed-id="fisso_spritz" style="border-bottom-color:#E91E63" onclick="addToCart('🍹 Spritz', 6.00)">🍹 Spritz<br><small>6.00€</small></button>
                     <div id="dynamic-pos-items" style="display:contents"></div>
                 </div>
             </div>
@@ -2400,24 +2400,55 @@ window.addProdotto=()=>{
     else{dynamicProducts['p_'+Date.now()]={nome,prezzo,colore};showToast('✓ Prodotto aggiunto','success');}
     set(prodRef,dynamicProducts);$('prod-nome').value='';$('prod-prezzo').value='';
 };
-window.deleteProdotto=(id)=>{if(confirm('Eliminare questo prodotto?')){delete dynamicProducts[id];set(prodRef,dynamicProducts);}};
+window.deleteProdotto=(id)=>{
+    if(id.startsWith('fisso_')){
+        if(!confirm('Rimuovere questo prodotto fisso dal POS?\nPotrai aggiungerlo di nuovo manualmente.')) return;
+        // Save deleted fixed products list
+        const deleted=JSON.parse(localStorage.getItem('lido_deleted_fixed')||'[]');
+        deleted.push(id); localStorage.setItem('lido_deleted_fixed',JSON.stringify(deleted));
+        renderDynamicProducts(); showToast('Prodotto rimosso dal POS','info'); return;
+    }
+    if(confirm('Eliminare questo prodotto?')){delete dynamicProducts[id];set(prodRef,dynamicProducts);}
+};
 window.editProdotto=(id)=>{
     const p=dynamicProducts[id];if(!p) return;
     $('prod-nome').value=p.nome;$('prod-prezzo').value=p.prezzo;$('prod-colore').value=p.colore||'#9b59b6';
     $('prod-edit-id').value=id;$('prod-add-btn').textContent='💾 Salva Modifiche';
     $('prod-nome').focus();showToast('Modifica e clicca Salva Modifiche','info');
 };
+const FIXED_PRODUCTS = [
+    {id:'fisso_caffe',  nome:'☕ Caffè',       prezzo:1.20, colore:'#795548', special:false},
+    {id:'fisso_acqua',  nome:'💧 Acqua',        prezzo:1.00, colore:'#2196F3', special:false},
+    {id:'fisso_birra',  nome:'🍺 Birra Spina',  prezzo:null, colore:'#f97316', special:true},
+    {id:'fisso_spritz', nome:'🍹 Spritz',       prezzo:6.00, colore:'#E91E63', special:false},
+];
 function renderDynamicProducts(){
     const admin=$('lista-prodotti-admin'),pos=$('dynamic-pos-items');
+    const deleted=JSON.parse(localStorage.getItem('lido_deleted_fixed')||'[]');
     let ah='',ph='';
-    const keys=Object.keys(dynamicProducts);
-    if(!keys.length){if(admin) admin.innerHTML='<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">Nessun prodotto aggiuntivo</div>';if(pos) pos.innerHTML='';return;}
-    keys.forEach(id=>{
-        const p=dynamicProducts[id];const col=p.colore||'#95a5a6';
-        ah+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--eb-bg);"><span style="font-size:13px;display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0;"></span><b>${p.nome}</b> · ${p.prezzo.toFixed(2)}€</span><div style="display:flex;gap:6px;flex-shrink:0;"><button onclick="editProdotto('${id}')" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✏️</button><button onclick="deleteProdotto('${id}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button></div></div>`;
-        ph+=`<button class="pos-btn" style="border-bottom-color:${col}" onclick="addToCart('${p.nome.replace(/'/g,"\'")}',${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
+    // Sezione prodotti fissi
+    ah+='<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);padding:8px 0 4px;">Prodotti fissi</div>';
+    FIXED_PRODUCTS.forEach(p=>{
+        if(deleted.includes(p.id)) return;
+        const prezzoLabel=p.prezzo ? p.prezzo.toFixed(2)+'€' : 'vari formati';
+        ah+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--eb-bg);"><span style="font-size:13px;display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:50%;background:${p.colore};display:inline-block;flex-shrink:0;"></span><b>${p.nome}</b> · <span style="color:var(--eb-muted);">${prezzoLabel}</span></span><div style="display:flex;gap:6px;flex-shrink:0;"><span style="font-size:9px;background:var(--eb-bg);color:var(--eb-muted);padding:2px 7px;border-radius:10px;font-weight:600;align-self:center;">FISSO</span><button onclick="deleteProdotto('${p.id}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button></div></div>`;
+        if(!p.special && p.prezzo) ph+=`<button class="pos-btn" style="border-bottom-color:${p.colore}" onclick="addToCart('${p.nome}',${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
     });
-    if(admin) admin.innerHTML=ah;if(pos) pos.innerHTML=ph;
+    // Sezione prodotti aggiuntivi
+    const keys=Object.keys(dynamicProducts);
+    if(keys.length){
+        ah+='<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--eb-muted);padding:12px 0 4px;margin-top:4px;border-top:1.5px solid var(--eb-border);">Prodotti aggiuntivi</div>';
+        keys.forEach(id=>{
+            const p=dynamicProducts[id];const col=p.colore||'#95a5a6';
+            ah+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--eb-bg);"><span style="font-size:13px;display:flex;align-items:center;gap:8px;"><span style="width:12px;height:12px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0;"></span><b>${p.nome}</b> · ${p.prezzo.toFixed(2)}€</span><div style="display:flex;gap:6px;flex-shrink:0;"><button onclick="editProdotto('${id}')" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✏️</button><button onclick="deleteProdotto('${id}')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-family:'Poppins',sans-serif;">✕</button></div></div>`;
+            ph+=`<button class="pos-btn" style="border-bottom-color:${col}" onclick="addToCart('${p.nome.replace(/'/g,"\'")}',${p.prezzo})">${p.nome}<br><small>${p.prezzo.toFixed(2)}€</small></button>`;
+        });
+    }
+    if(admin) admin.innerHTML=ah||'<div style="color:#bbb;font-size:13px;text-align:center;padding:16px;">Nessun prodotto</div>';
+    // POS: show non-deleted fixed + dynamic (fixed buttons already in HTML, manage visibility)
+    const fixedBtns=document.querySelectorAll('.pos-btn-fixed');
+    fixedBtns.forEach(btn=>{btn.style.display=deleted.includes(btn.dataset.fixedId)?'none':'';});
+    if(pos) pos.innerHTML=ph;
 }
 
 
