@@ -1538,7 +1538,7 @@
     </div>
 </div>
 
-<!-- ── MODAL MENÙ ── -->
+<!-- ── MODAL MENÙ (generati via JS) ── -->
 <style>
     .menu-modal { width:560px; max-width:96vw; padding:0; overflow:hidden; max-height:90vh; text-align:left; }
     .menu-hero { padding:22px 28px 16px; color:white; }
@@ -1552,114 +1552,9 @@
     .menu-add-btn { padding:4px 12px; border:none; border-radius:20px; font-family:'Poppins',sans-serif; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; color:white; transition:transform .15s; }
     .menu-add-btn:hover { transform:scale(1.05); }
 </style>
-
-<!-- Menù Colazione -->
-<div id="modal-menu-colazione" class="modal menu-modal">
-    <div class="menu-hero" style="background:linear-gradient(135deg,#f59e0b,#fbbf24);">
-        <div style="font-size:11px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:1.5px;">🌊 La Sirenetta Beach & More</div>
-        <div style="font-size:22px;font-weight:700;margin-top:4px;">☕ Caffetteria & Breakfast</div>
-        <div style="font-size:12px;opacity:.85;margin-top:3px;">Tocca un prodotto per aggiungerlo al carrello</div>
-    </div>
-    <div class="menu-body">
-        <div class="menu-section">
-            <div class="menu-section-title">☕ Caffè</div>
-            ${[['Espresso',1.30],['Decaffeinato',1.40],['Corretto',1.70],['Caffè doppio',2.50],['Americano',1.80],['Shakerato',3.50],['Shakerato corretto',4.50],['Ginseng piccolo',1.80],['Ginseng grande',2.50],['Orzo piccolo',1.60],['Orzo grande',2.20]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#f59e0b;" onclick="addToCart('☕ ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🥛 Cappuccini & Latte</div>
-            ${[['Cappuccino',1.80],['Cappuccino vegetale',2.20],['Latte macchiato',2.00],['Latte bicchiere',1.80],['Marocchino',2.00],['The ed infusi',3.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#f59e0b;" onclick="addToCart('🥛 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🥐 Colazione</div>
-            ${[['Cornetto vuoto',1.80],['Cornetto farcito',2.00],['Treccia / Girella / Saccottino',2.20],['Bombolone',2.20],['Ciambella / Graffa',2.20],['Sfoglia mela',2.20],['Crostata / Frolla',2.50]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#f59e0b;" onclick="addToCart('🥐 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍊 Spremute & Succhi</div>
-            ${[['Spremuta fresca',4.50],['Succo di frutta',3.00],['Centrifuga fresca',5.50],['Estratto detox',6.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#f59e0b;" onclick="addToCart('🍊 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🥤 Bevande</div>
-            ${[['Acqua 0,5',1.50],['Acqua 1 litro',2.50],['Bibite lattina',3.50],['The freddo',3.00],['Energy drink',4.50]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#f59e0b;" onclick="addToCart('🥤 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-    </div>
-    <div style="padding:12px 28px 20px;"><button onclick="closeModals()" style="width:100%;padding:11px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);">Chiudi</button></div>
-</div>
-
-<!-- Menù Pranzo -->
-<div id="modal-menu-pranzo" class="modal menu-modal">
-    <div class="menu-hero" style="background:linear-gradient(135deg,#16a34a,#22c55e);">
-        <div style="font-size:11px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:1.5px;">🌊 La Sirenetta Beach & More</div>
-        <div style="font-size:22px;font-weight:700;margin-top:4px;">🥗 Pranzo Veloce</div>
-        <div style="font-size:12px;opacity:.85;margin-top:3px;">12:00 – 14:30 · Tocca per aggiungere al carrello</div>
-    </div>
-    <div class="menu-body">
-        <div class="menu-section">
-            <div class="menu-section-title">🥗 Piatti Freddi</div>
-            ${[['Poke salmone',12.50],['Poke tonno',12.00],['Insalata verde',6.00],['Insalata pollo croccante',10.00],['Cous cous vegetariano',10.00],['Insalata di riso',6.50],['Piatto Caprese',7.50],['Insalata polpo e patate con pane bruschettato',12.00],['Insalata di mare',10.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#22c55e;" onclick="addToCart('🥗 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🔥 Piatti Caldi</div>
-            ${[['Spaghetti alle vongole',12.00],['Tagliatelle alla marinara/scoglio',14.00],['Penne al pomodoro',9.00],['Frittura calamari e gamberi',14.00],['Spiedini di calamari',16.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#22c55e;" onclick="addToCart('🔥 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🥪 Panini & Piadine</div>
-            ${[['Crudo, squacquerone e rucola',8.00],['Cotto e mozzarella',7.50],['Ciauscolo e pecorino',8.00],['Squacquerone e rucola',6.50],['Stracciatella e alici',8.50],['Tonno e pomodoro',7.50]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#22c55e;" onclick="addToCart('🥪 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍕 Specialità da Forno</div>
-            ${[['Parigina',5.50],['Calzone al forno',5.50],['Cornetto salato farcito',4.50],['Panino napoletano',5.00],['Pizza bianca o rossa',3.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#22c55e;" onclick="addToCart('🍕 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🥤 Bevande</div>
-            ${[['Acqua 0,5',1.50],['Acqua 1 litro',2.50],['Bibite lattina',3.50],['Birra piccola 33cl',3.50],['Birra media',6.00],['Birra media spina',5.00],['Calice vino',5.00],['Spritz',6.50],['The freddo',3.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#22c55e;" onclick="addToCart('🥤 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍽️ Servizio al Tavolo</div>
-            <div class="menu-item"><span class="menu-item-name">Coperto (consumo ai tavoli)</span><span class="menu-item-price">3.00€</span><button class="menu-add-btn" style="background:#22c55e;" onclick="addToCart('🍽️ Coperto',3.00);showToast('✓ Coperto aggiunto','success')">+ Aggiungi</button></div>
-        </div>
-    </div>
-    <div style="padding:12px 28px 20px;"><button onclick="closeModals()" style="width:100%;padding:11px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);">Chiudi</button></div>
-</div>
-
-<!-- Menù Apericena -->
-<div id="modal-menu-apericena" class="modal menu-modal">
-    <div class="menu-hero" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">
-        <div style="font-size:11px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:1.5px;">🌅 Apericena Beach</div>
-        <div style="font-size:22px;font-weight:700;margin-top:4px;">🍹 Relax · Food · Sunset Mood</div>
-        <div style="font-size:12px;opacity:.85;margin-top:3px;">16:30 – 20:30 · Tocca per aggiungere al carrello</div>
-    </div>
-    <div class="menu-body">
-        <div class="menu-section">
-            <div class="menu-section-title">🍕 Pinsa al Taglio (sempre disponibile)</div>
-            ${[['Pinsa rossa o bianca',3.50],['Pinsa margherita',4.50],['Pinsa patate',5.00],['Pinsa zucchine',5.00],['Pinsa wurstel',5.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍕 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍕 Pinsa Rotazione Giornaliera</div>
-            ${[['Pinsa tonno e cipolla',5.50],['Pinsa salsiccia',5.50],['Pinsa verdure grigliate',5.50],['Pinsa mortadella',5.50]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍕 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🔥 Pinsa Intera (su ordinazione, entro le 18:30)</div>
-            ${[['Pinsa margherita intera',10.00],['Pinsa farcita intera',12.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍕 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍉 Merende & Snack (servizio continuo)</div>
-            ${[['Macedonia fresca',5.00],['Yogurt, granola e frutta',6.00],['Anguria fresca',4.50],['Toast classico',5.00],['Granita piccola',2.50],['Granita grande',3.50],['Patatine fritte',4.50],['Frullati freschi',5.50]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍉 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍹 Aperitivo (18:30 – 20:30)</div>
-            ${[['Frittini misti',6.50],['Olive ascolane',5.50],['Nachos con salse',5.00],['Tagliere salumi e crescia (2 pers.)',12.00],['Tagliere mare con pane bruschettato (2 pers.)',14.00]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍹 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍸 Drink</div>
-            ${[['Spritz',6.50],['Americano',6.50],['Gin Tonic',7.50],['Mojito',7.50],['Analcolico',5.50]].map(([n,p])=>`<div class="menu-item"><span class="menu-item-name">${n}</span><span class="menu-item-price">${p.toFixed(2)}€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍸 ${n}',${p});showToast('✓ ${n} aggiunto','success')">+ Aggiungi</button></div>`).join('')}
-        </div>
-        <div class="menu-section">
-            <div class="menu-section-title">🍽️ Servizio al Tavolo Serale</div>
-            <div class="menu-item"><span class="menu-item-name">Coperto (dopo le 19:00 ai tavoli)</span><span class="menu-item-price">3.00€</span><button class="menu-add-btn" style="background:#8b5cf6;" onclick="addToCart('🍽️ Coperto serale',3.00);showToast('✓ Coperto aggiunto','success')">+ Aggiungi</button></div>
-        </div>
-    </div>
-    <div style="padding:12px 28px 20px;"><button onclick="closeModals()" style="width:100%;padding:11px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);">Chiudi</button></div>
-</div>
+<div id="modal-menu-colazione" class="modal menu-modal" style="display:none;"></div>
+<div id="modal-menu-pranzo" class="modal menu-modal" style="display:none;"></div>
+<div id="modal-menu-apericena" class="modal menu-modal" style="display:none;"></div>
 
 <script type="module">
 
@@ -3059,6 +2954,101 @@ window.openMenuModal = tipo => {
     const ids = { colazione:'modal-menu-colazione', pranzo:'modal-menu-pranzo', apericena:'modal-menu-apericena' };
     const id = ids[tipo]; if (!id) return;
     $(id).style.display = 'block';
+    $('overlay').style.display = 'block';
+};
+
+// ── MODAL MENÙ ────────────────────────────────────────────────────────────
+const MENU_DATA = {
+    colazione: {
+        titolo: 'Caffetteria & Breakfast',
+        sottotitolo: '🌊 La Sirenetta Beach & More',
+        colore: 'linear-gradient(135deg,#f59e0b,#fbbf24)',
+        btnColor: '#f59e0b',
+        orari: 'Tocca un prodotto per aggiungerlo al carrello',
+        sezioni: [
+            { nome: '☕ Caffè', items: [['Espresso',1.30],['Decaffeinato',1.40],['Corretto',1.70],['Caffè doppio',2.50],['Americano',1.80],['Shakerato',3.50],['Shakerato corretto',4.50],['Ginseng piccolo',1.80],['Ginseng grande',2.50],['Orzo piccolo',1.60],['Orzo grande',2.20]] },
+            { nome: '🥛 Cappuccini & Latte', items: [['Cappuccino',1.80],['Cappuccino vegetale',2.20],['Latte macchiato',2.00],['Latte bicchiere',1.80],['Marocchino',2.00],['The ed infusi',3.00]] },
+            { nome: '🥐 Colazione', items: [['Cornetto vuoto',1.80],['Cornetto farcito',2.00],['Treccia / Girella / Saccottino',2.20],['Bombolone',2.20],['Ciambella / Graffa',2.20],['Sfoglia mela',2.20],['Crostata / Frolla',2.50]] },
+            { nome: '🍊 Spremute & Succhi', items: [['Spremuta fresca',4.50],['Succo di frutta',3.00],['Centrifuga fresca',5.50],['Estratto detox',6.00]] },
+            { nome: '🥤 Bevande', items: [['Acqua 0,5',1.50],['Acqua 1 litro',2.50],['Bibite lattina',3.50],['The freddo',3.00],['Energy drink',4.50]] },
+        ]
+    },
+    pranzo: {
+        titolo: 'Pranzo Veloce',
+        sottotitolo: '🌊 La Sirenetta Beach & More',
+        colore: 'linear-gradient(135deg,#16a34a,#22c55e)',
+        btnColor: '#22c55e',
+        orari: '12:00 – 14:30 · Tocca per aggiungere al carrello',
+        sezioni: [
+            { nome: '🥗 Piatti Freddi', items: [['Poke salmone',12.50],['Poke tonno',12.00],['Insalata verde',6.00],['Insalata pollo croccante',10.00],['Cous cous vegetariano',10.00],['Insalata di riso',6.50],['Piatto Caprese',7.50],['Insalata polpo e patate con pane bruschettato',12.00],['Insalata di mare',10.00]] },
+            { nome: '🔥 Piatti Caldi', items: [['Spaghetti alle vongole',12.00],['Tagliatelle alla marinara/scoglio',14.00],['Penne al pomodoro',9.00],['Frittura calamari e gamberi',14.00],['Spiedini di calamari',16.00]] },
+            { nome: '🥪 Panini & Piadine', items: [['Crudo, squacquerone e rucola',8.00],['Cotto e mozzarella',7.50],['Ciauscolo e pecorino',8.00],['Squacquerone e rucola',6.50],['Stracciatella e alici',8.50],['Tonno e pomodoro',7.50]] },
+            { nome: '🍕 Specialità da Forno', items: [['Parigina',5.50],['Calzone al forno',5.50],['Cornetto salato farcito',4.50],['Panino napoletano',5.00],['Pizza bianca o rossa',3.00]] },
+            { nome: '🥤 Bevande', items: [['Acqua 0,5',1.50],['Acqua 1 litro',2.50],['Bibite lattina',3.50],['Birra piccola 33cl',3.50],['Birra media',6.00],['Birra media spina',5.00],['Calice vino',5.00],['Spritz',6.50],['The freddo',3.00]] },
+            { nome: '🍽️ Servizio al Tavolo', items: [['Coperto (consumo ai tavoli)',3.00]] },
+        ]
+    },
+    apericena: {
+        titolo: 'Relax · Food · Sunset Mood',
+        sottotitolo: '🌅 Apericena Beach',
+        colore: 'linear-gradient(135deg,#7c3aed,#8b5cf6)',
+        btnColor: '#8b5cf6',
+        orari: '16:30 – 20:30 · Tocca per aggiungere al carrello',
+        sezioni: [
+            { nome: '🍕 Pinsa al Taglio (sempre disponibile)', items: [['Pinsa rossa o bianca',3.50],['Pinsa margherita',4.50],['Pinsa patate',5.00],['Pinsa zucchine',5.00],['Pinsa wurstel',5.00]] },
+            { nome: '🍕 Pinsa Rotazione Giornaliera', items: [['Pinsa tonno e cipolla',5.50],['Pinsa salsiccia',5.50],['Pinsa verdure grigliate',5.50],['Pinsa mortadella',5.50]] },
+            { nome: '🔥 Pinsa Intera (su ordinazione, entro le 18:30)', items: [['Pinsa margherita intera',10.00],['Pinsa farcita intera',12.00]] },
+            { nome: '🍉 Merende & Snack (servizio continuo)', items: [['Macedonia fresca',5.00],['Yogurt, granola e frutta',6.00],['Anguria fresca',4.50],['Toast classico',5.00],['Granita piccola',2.50],['Granita grande',3.50],['Patatine fritte',4.50],['Frullati freschi',5.50]] },
+            { nome: '🍹 Aperitivo (18:30 – 20:30)', items: [['Frittini misti',6.50],['Olive ascolane',5.50],['Nachos con salse',5.00],['Tagliere salumi e crescia (2 pers.)',12.00],['Tagliere mare con pane bruschettato (2 pers.)',14.00]] },
+            { nome: '🍸 Drink', items: [['Spritz',6.50],['Americano',6.50],['Gin Tonic',7.50],['Mojito',7.50],['Analcolico',5.50]] },
+            { nome: '🍽️ Servizio al Tavolo Serale', items: [['Coperto (dopo le 19:00 ai tavoli)',3.00]] },
+        ]
+    }
+};
+
+function buildMenuModal(tipo) {
+    const m = MENU_DATA[tipo];
+    if (!m) return;
+    const el = $('modal-menu-' + tipo);
+    if (!el) return;
+
+    let sezioniHtml = '';
+    m.sezioni.forEach(s => {
+        let itemsHtml = '';
+        s.items.forEach(([nome, prezzo]) => {
+            const nomeEsc = nome.replace(/'/g, "\\'");
+            itemsHtml += `<div class="menu-item">
+                <span class="menu-item-name">${nome}</span>
+                <span class="menu-item-price">${prezzo.toFixed(2)}€</span>
+                <button class="menu-add-btn" style="background:${m.btnColor};"
+                    onclick="addToCart('${nomeEsc}', ${prezzo}); showToast('✓ ${nomeEsc} aggiunto', 'success')">
+                    + Aggiungi
+                </button>
+            </div>`;
+        });
+        sezioniHtml += `<div class="menu-section">
+            <div class="menu-section-title">${s.nome}</div>
+            ${itemsHtml}
+        </div>`;
+    });
+
+    el.innerHTML = `
+        <div class="menu-hero" style="background:${m.colore};">
+            <div style="font-size:11px;font-weight:600;opacity:.8;text-transform:uppercase;letter-spacing:1.5px;">${m.sottotitolo}</div>
+            <div style="font-size:22px;font-weight:700;margin-top:4px;">${m.titolo}</div>
+            <div style="font-size:12px;opacity:.85;margin-top:3px;">${m.orari}</div>
+        </div>
+        <div class="menu-body">${sezioniHtml}</div>
+        <div style="padding:12px 28px 20px;">
+            <button onclick="closeModals()" style="width:100%;padding:11px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);">Chiudi</button>
+        </div>`;
+}
+
+window.openMenuModal = tipo => {
+    buildMenuModal(tipo);
+    const el = $('modal-menu-' + tipo);
+    if (!el) return;
+    el.style.display = 'block';
     $('overlay').style.display = 'block';
 };
 
