@@ -1638,14 +1638,26 @@ function renderSpiaggia() {
     let mD=0, mS=0, booked=0, totalReal=0, barTotal=0, free=0;
     const today = todayIT();
 
+    // Helper: un giornaliero è "scaduto" se la sua dataPartenza è precedente a oggi
+    function isScaduto(d) {
+        if (!d || d.isSeasonal) return false;
+        if (!d.dataPartenza || d.dataPartenza === '-') return false;
+        const [gp,mp,ap] = d.dataPartenza.split('/').map(Number);
+        const [go,mo,ao] = today.split('/').map(Number);
+        const partenza = new Date(ap,mp-1,gp);
+        const todayD   = new Date(ao,mo-1,go);
+        return partenza < todayD;
+    }
+
     for (let i = 1; i <= 200; i++) {
         const d   = beachData[i];
         const div = document.createElement('div');
         const todayGuest   = d?.isSeasonal ? slbmTodayGuest(i) : null;
         const todayIsSublet= d?.isSeasonal && (d.subletDates||[]).includes(today);
+        const scaduto      = isScaduto(d);
 
         let cls = 'spot';
-        if (!d) {
+        if (!d || scaduto) {
             cls += ' free'; free++;
         } else if (todayGuest) {
             cls += ' sublet-guest';
@@ -1654,26 +1666,25 @@ function renderSpiaggia() {
         } else {
             cls += d.isSeasonal ? ' seasonal' : ' booked';
         }
-        if (d?.pagamento) cls += ` status-${d.pagamento}`;
+        if (d?.pagamento && !scaduto) cls += ` status-${d.pagamento}`;
         div.className = cls;
 
-        const barBadge     = d?.barTotal>0 ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+        const barBadge     = d?.barTotal>0 && !scaduto ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
         const weatherBadge = '';
         const subletBadge  = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:rgba(0,0,0,.3);">🔄</div>` : '';
-        // Quando c'è un ospite, mostriamo nome ospite + nome titolare in piccolo
-        const ownerLabel   = todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
+        const ownerLabel   = scaduto ? 'LIBERO' : todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
         const splitBadge   = todayGuest ? `<div class="split-badge">${d.nome.split(' ')[0]}</div>` : '';
 
         div.innerHTML = `${barBadge}${weatherBadge}${subletBadge}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${ownerLabel}</div>${splitBadge}`;
 
-        if (!d)               div.onclick = () => handleOmbrellone(i);
+        if (!d || scaduto) div.onclick = () => handleOmbrellone(i);
         else if (todayGuest)  div.onclick = () => slbmOpenSpotGuest(i);
         else if (todayIsSublet) div.onclick = () => slbmOpenBookingFromSpot(i);
         else                  div.onclick = () => handleOmbrellone(i);
 
         (i <= 100 ? west : east).appendChild(div);
 
-        if (d) {
+        if (d && !scaduto) {
             booked++;
             const p = parseFloat(d.prezzo||0) + parseFloat(d.lettiniCosto||0);
             d.isSeasonal ? mS+=p : mD+=p;
