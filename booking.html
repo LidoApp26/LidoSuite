@@ -340,27 +340,35 @@ function getSpotPrice(id) {
     return 25; // prezzo default — configurabile
 }
 
+function parseDateIT(dateIT) {
+    if (!dateIT || dateIT === '-') return null;
+    const [g,m,a] = dateIT.split('/').map(Number);
+    return new Date(a, m-1, g);
+}
+
 function isOccupied(id, dateIT) {
     const d = beachData[id];
     if (!d) return false;
 
-    // Stagionale: sempre occupato per tutta la stagione
-    // a meno che non abbia quella data nel pool subaffitto
-    if (d.isSeasonal) {
-        const subletDates = d.subletDates || [];
-        // Libero solo se è una data di subaffitto senza ospite registrato
-        if (subletDates.includes(dateIT)) {
-            const hasGuest = (d.subletGuests || []).some(g =>
-                g.active && (g.dates || []).includes(dateIT)
-            );
-            return hasGuest; // occupato se c'è già un ospite
-        }
-        return true; // stagionale senza subaffitto = sempre occupato
+    // Giornaliero scaduto: la data richiesta è successiva alla dataPartenza → libero
+    if (!d.isSeasonal) {
+        if (!d.dataArrivo || d.dataArrivo === '-') return false;
+        const richiesta = parseDateIT(dateIT);
+        const partenza  = parseDateIT(d.dataPartenza || d.dataArrivo);
+        if (richiesta && partenza && richiesta > partenza) return false; // scaduto → libero
+        return d.dataArrivo === dateIT || isDateBetween(dateIT, d.dataArrivo, d.dataPartenza);
     }
 
-    // Giornaliero: occupato solo nella sua data
-    if (!d.dataArrivo || d.dataArrivo === '-') return false;
-    return d.dataArrivo === dateIT || isDateBetween(dateIT, d.dataArrivo, d.dataPartenza);
+    // Stagionale: sempre occupato tranne se nel pool subaffitto senza ospite
+    const subletDates = d.subletDates || [];
+    const subletArr   = Array.isArray(subletDates) ? subletDates : Object.values(subletDates);
+    if (subletArr.includes(dateIT)) {
+        const hasGuest = (d.subletGuests || []).some(g =>
+            g.active && (g.dates || []).includes(dateIT)
+        );
+        return hasGuest;
+    }
+    return true;
 }
 
 function isDateBetween(check, from, to) {
