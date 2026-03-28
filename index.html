@@ -2238,11 +2238,12 @@ window.sdRemoveConsumazione = idx => {
 window.openPaymentModal = id => {
     currentEditingId=id; const d=beachData[id]; if(!d.rate) d.rate=[];
     $('pm-title').innerText=`#${id} · ${d.nome} · Pagamenti`;
-    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
+    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0))+(parseFloat(d.barTotal||0));
     const paid=(d.rate||[]).reduce((s,r)=>s+r.importo,0);
     const pct=total>0?Math.min(100,Math.round((paid/total)*100)):0;
     const ln=parseFloat(d.lettiniCosto||0)>0?' (inc. 🛌'+parseFloat(d.lettiniCosto).toFixed(2)+'€)':'';
-    $('pm-total').innerText=total.toFixed(2)+'€'+ln; $('pm-paid').innerText=paid.toFixed(2)+'€'; $('pm-rem').innerText=(total-paid).toFixed(2)+'€';
+    const lb=parseFloat(d.barTotal||0)>0?' (inc. 🍹'+parseFloat(d.barTotal).toFixed(2)+'€)':'';
+    $('pm-total').innerText=total.toFixed(2)+'€'+ln+lb; $('pm-paid').innerText=paid.toFixed(2)+'€'; $('pm-rem').innerText=(total-paid).toFixed(2)+'€';
     $('pm-progress').style.width=pct+'%'; $('pm-note').value=d.note||'';
     $('pm-history').innerHTML=d.rate.length?d.rate.map(r=>`<div style="padding:4px 0;border-bottom:1px solid var(--eb-bg);">📅 ${r.data} — <b>${r.importo.toFixed(2)}€</b></div>`).join(''):'<div style="color:#aaa;text-align:center;padding:8px;">Nessun versamento</div>';
     $('payment-modal').style.display='block'; $('overlay').style.display='block';
@@ -2250,7 +2251,7 @@ window.openPaymentModal = id => {
 window.saveRata = () => {
     const amt=parseFloat($('pm-new-amount').value); if(isNaN(amt)||amt<=0) return showToast('Importo non valido','warn');
     const d=beachData[currentEditingId]; d.rate.push({importo:amt,data:new Date().toLocaleDateString('it-IT')});
-    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0));
+    const total=parseFloat(d.prezzo)+(parseFloat(d.lettiniCosto||0))+(parseFloat(d.barTotal||0));
     const paid=d.rate.reduce((s,r)=>s+r.importo,0);
     d.pagamento=paid>=total?'saldo':paid>0?'acconto':'nessuno';
     fdb(currentEditingId,d); $('pm-new-amount').value='';
