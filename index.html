@@ -1504,54 +1504,103 @@
 </div>
 
 <!-- ── MODAL MODIFICA CLIENTE (admin only) ── -->
-<div id="edit-client-modal" class="modal" style="width:480px;padding:0;overflow:hidden;text-align:left;max-height:92vh;">
-    <div style="padding:22px 28px 18px;background:linear-gradient(135deg,#0d5c8c,#1a7db8);color:white;">
-        <div style="font-size:11px;font-weight:600;opacity:0.8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">✏️ Modifica Cliente</div>
-        <div style="font-size:20px;font-weight:700;" id="ec-title">Ombrellone #—</div>
+<div id="edit-client-modal" class="modal" style="width:500px;padding:0;overflow:hidden;text-align:left;max-height:94vh;">
+
+    <!-- Hero -->
+    <div style="background:linear-gradient(135deg,#1a2d3d 0%,#0d5c8c 60%,#1a7db8 100%);padding:24px 28px 20px;color:white;position:relative;">
+        <div style="font-size:10px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;">✏️ Modifica Cliente</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:-.3px;" id="ec-title">Ombrellone #—</div>
+        <div style="font-size:12px;opacity:.7;margin-top:4px;">Le modifiche saranno salvate immediatamente su Firebase</div>
     </div>
-    <div style="padding:20px 28px 8px;overflow-y:auto;max-height:65vh;">
-        <div style="margin-bottom:12px;">
-            <label class="form-label">Nome Cliente</label>
-            <input type="text" id="ec-nome" class="field" style="text-transform:uppercase;">
+
+    <!-- Body -->
+    <div style="padding:22px 28px 8px;overflow-y:auto;max-height:62vh;">
+
+        <!-- Sezione: Anagrafica -->
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--eb-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <span style="flex:1;height:1px;background:var(--eb-border);"></span>
+            👤 Anagrafica
+            <span style="flex:1;height:1px;background:var(--eb-border);"></span>
         </div>
-        <div style="margin-bottom:12px;">
-            <label class="form-label">Telefono</label>
-            <input type="tel" id="ec-tel" class="field">
+
+        <div style="margin-bottom:14px;">
+            <label class="form-label">Nome e Cognome</label>
+            <div style="position:relative;">
+                <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:15px;">👤</span>
+                <input type="text" id="ec-nome" class="field" style="text-transform:uppercase;padding-left:38px;" placeholder="ES. MARIO ROSSI">
+            </div>
         </div>
-        <div style="margin-bottom:12px;">
-            <label class="form-label">Email</label>
-            <input type="email" id="ec-email" class="field">
-        </div>
-        <div style="margin-bottom:12px;">
-            <label class="form-label">Prezzo Base (€)</label>
-            <input type="number" id="ec-prezzo" class="field" step="0.50" min="0">
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
             <div>
-                <label class="form-label">Data Arrivo</label>
+                <label class="form-label">Telefono</label>
+                <div style="position:relative;">
+                    <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;">📞</span>
+                    <input type="tel" id="ec-tel" class="field" style="padding-left:38px;" placeholder="333 1234567">
+                </div>
+            </div>
+            <div>
+                <label class="form-label">Tipo</label>
+                <select id="ec-tipo" class="field" style="cursor:pointer;">
+                    <option value="false">🌊 Giornaliero</option>
+                    <option value="true">📅 Stagionale</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+            <label class="form-label">Email</label>
+            <div style="position:relative;">
+                <span style="position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;">✉️</span>
+                <input type="email" id="ec-email" class="field" style="padding-left:38px;" placeholder="mario@email.it">
+            </div>
+        </div>
+
+        <!-- Sezione: Soggiorno -->
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--eb-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <span style="flex:1;height:1px;background:var(--eb-border);"></span>
+            🏖️ Soggiorno
+            <span style="flex:1;height:1px;background:var(--eb-border);"></span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div>
+                <label class="form-label">📅 Data Arrivo</label>
                 <input type="date" id="ec-arrivo" class="field">
             </div>
             <div>
-                <label class="form-label">Data Partenza</label>
+                <label class="form-label">🚪 Data Partenza</label>
                 <input type="date" id="ec-partenza" class="field">
             </div>
         </div>
-        <div style="margin-bottom:12px;">
-            <label class="form-label">Note</label>
-            <input type="text" id="ec-note" class="field" placeholder="Note sul cliente…">
+
+        <div style="margin-bottom:20px;">
+            <label class="form-label">💰 Prezzo Base (€)</label>
+            <div style="position:relative;">
+                <input type="number" id="ec-prezzo" class="field" step="0.50" min="0" style="padding-right:40px;font-size:18px;font-weight:700;" placeholder="0.00">
+                <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:16px;font-weight:700;color:var(--eb-muted);">€</span>
+            </div>
         </div>
-        <div style="margin-bottom:12px;">
-            <label class="form-label">Tipo prenotazione</label>
-            <select id="ec-tipo" class="field">
-                <option value="false">Giornaliero</option>
-                <option value="true">Stagionale</option>
-            </select>
+
+        <!-- Sezione: Note -->
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--eb-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <span style="flex:1;height:1px;background:var(--eb-border);"></span>
+            📝 Note
+            <span style="flex:1;height:1px;background:var(--eb-border);"></span>
         </div>
+
+        <div style="margin-bottom:8px;">
+            <input type="text" id="ec-note" class="field" placeholder="Note sul cliente o sulla prenotazione…">
+        </div>
+
     </div>
-    <div style="padding:14px 28px 22px;display:flex;flex-direction:column;gap:8px;">
-        <button onclick="saveEditClient()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--eb-blue),var(--eb-blue-mid));color:white;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">💾 Salva Modifiche</button>
-        <button onclick="closeModals()" style="width:100%;padding:11px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);">Annulla</button>
+
+    <!-- Footer -->
+    <div style="padding:16px 28px 24px;display:flex;gap:10px;background:var(--eb-bg);border-top:1.5px solid var(--eb-border);">
+        <button onclick="closeModals()" style="flex:1;padding:12px;border:1.5px solid var(--eb-border);border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:white;color:var(--eb-muted);transition:background .2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">Annulla</button>
+        <button onclick="saveEditClient()" style="flex:2;padding:12px;background:linear-gradient(135deg,var(--eb-blue),var(--eb-blue-mid));color:white;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(13,92,140,.3);transition:transform .15s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">💾 Salva Modifiche</button>
     </div>
+
 </div>
 
 <!-- ── MODAL MENÙ (generati via JS) ── -->
