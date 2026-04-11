@@ -1416,7 +1416,7 @@
             </div>
             <table>
                 <thead>
-                    <tr><th>#</th><th>Cliente</th><th>Telefono</th><th>Email</th><th>Tipo</th><th>Spiaggia €</th><th>Bar €</th><th>Pagamento</th><th>Note</th><th>Azioni</th></tr>
+                    <tr><th>#</th><th>Cliente</th><th>Telefono</th><th>Email</th><th>Tipo</th><th>Spiaggia €</th><th>Bar €</th><th>Pagamento</th><th>Note</th><th>Azioni</th><th id="archivio-th-admin" style="display:none;">Modifica</th></tr>
                 </thead>
                 <tbody id="db-body"></tbody>
             </table>
@@ -1812,7 +1812,7 @@ function renderSpiaggia() {
 
         const barBadge     = d?.barTotal>0 && !scaduto ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
         const weatherBadge = '';
-        const subletBadge  = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:rgba(0,0,0,.3);">🔄</div>` : '';
+        const subletBadge  = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:#0891b2;padding:2px 5px;display:flex;align-items:center;gap:2px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12a8 8 0 0 1 13.66-5.66" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M20 12a8 8 0 0 1-13.66 5.66" stroke="white" stroke-width="2.5" stroke-linecap="round"/><polyline points="14,3 20,6 17,12" fill="white"/><polyline points="10,21 4,18 7,12" fill="white"/></svg></div>` : '';
         const ownerLabel   = scaduto ? 'LIBERO' : todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
         const splitBadge   = todayGuest ? `<div class="split-badge">${d.nome.split(' ')[0]}</div>` : '';
 
@@ -2579,14 +2579,23 @@ window.filterArchivio=()=>{
     renderArchivioRows(rows,$('db-body'));
 };
 
+// SVG icona subaffitto (frecce circolari, stile moderno)
+const SUBLET_ICON_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px;"><path d="M4 12a8 8 0 0 1 13.66-5.66" stroke="white" stroke-width="2.2" stroke-linecap="round"/><path d="M20 12a8 8 0 0 1-13.66 5.66" stroke="white" stroke-width="2.2" stroke-linecap="round"/><polyline points="14,3 20,6 17,12" fill="white"/><polyline points="10,21 4,18 7,12" fill="white"/></svg>`;
+const SUBLET_ICON_PURPLE = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:3px;"><path d="M4 12a8 8 0 0 1 13.66-5.66" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round"/><path d="M20 12a8 8 0 0 1-13.66 5.66" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round"/><polyline points="14,3 20,6 17,12" fill="#7c3aed"/><polyline points="10,21 4,18 7,12" fill="#7c3aed"/></svg>`;
+
 function renderArchivioRows(rows,tbody){
     if(!tbody) return;
+    const isAdmin = currentUser?.role==='admin';
+    // Mostra/nasconde colonna admin
+    const thAdmin = $('archivio-th-admin');
+    if(thAdmin) thAdmin.style.display = isAdmin ? '' : 'none';
+
     tbody.innerHTML=rows.map(d=>{
         const isSub = d._rowType==='subaffitto';
         const bCls=d.pagamento==='saldo'?'badge-saldo':d.pagamento==='acconto'?'badge-acconto':'badge-none';
         const rowBg = isSub ? 'background:#f5f3ff;' : '';
         const spotLabel = isSub
-            ? `#${d._spotId}<br><span style="font-size:9px;font-weight:700;background:#8b5cf6;color:white;padding:1px 5px;border-radius:4px;">🔄 SUB</span>`
+            ? `#${d._spotId}<br><span style="font-size:9px;font-weight:700;background:#8b5cf6;color:white;padding:2px 6px;border-radius:4px;display:inline-flex;align-items:center;">${SUBLET_ICON_SVG}SUB</span>`
             : `#${d.id}`;
         const clienteCell = isSub
             ? `<div style="font-weight:600;">${d.nome}</div><div style="font-size:10px;color:#7c3aed;">Ombrellone #${d._spotId} · ${d._titolare}</div>`
@@ -2595,16 +2604,27 @@ function renderArchivioRows(rows,tbody){
             ? `<a href="mailto:${d.email}" style="color:var(--eb-blue);text-decoration:none;font-size:12px;">${d.email}</a>`
             : '-';
         const tipoCell = isSub
-            ? `<span style="font-size:11px;font-weight:700;color:#7c3aed;">🔄 SUB</span>`
+            ? `<span style="font-size:11px;font-weight:700;color:#7c3aed;display:inline-flex;align-items:center;">${SUBLET_ICON_PURPLE}SUB</span>`
             : `<span style="font-size:11px;font-weight:700;color:${d.isSeasonal?'var(--eb-blue)':'var(--booked)'}">${d.isSeasonal?'STAG':'GIORN'}</span>`;
         const prezzoCell = isSub
             ? `<div style="font-weight:600;">${d.prezzo}€</div><div style="font-size:10px;color:var(--eb-muted);">${d.pagamento==='saldo'?'✓ Pagato':'⏳ Da pagare'}</div>`
             : `<div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div>`;
         const azioniCell = isSub
             ? `<button onclick="gdOpenByIndex('${d._spotId}',${d._guestIdx})" style="background:none;color:#7c3aed;border:1px solid #7c3aed;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">📋 Scheda</button>`
-            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`+(currentUser?.role==='admin'?`<button onclick="openEditClient(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">✏️ Modifica</button>`:'');
-        return `<tr style="${rowBg}"><td>${spotLabel}</td><td>${clienteCell}</td><td>${d.telefono||'-'}</td><td style="color:var(--eb-muted);">${emailCell}</td><td>${tipoCell}</td><td>${prezzoCell}</td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td>${azioniCell}</td></tr>`;
-    }).join('')||'<tr><td colspan="10" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>';
+            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`;
+        // Colonna admin: modifica + elimina
+        const adminCell = !isAdmin ? `<td style="display:none;"></td>` : isSub
+            ? `<td style="white-space:nowrap;">
+                <button onclick="openAdminEditSublet('${d._spotId}',${d._guestIdx})" style="background:none;color:#7c3aed;border:1px solid #7c3aed;border-radius:6px;padding:5px 9px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;margin-bottom:4px;display:block;" title="Modifica ospite subaffitto">✏️ Modifica</button>
+                <button onclick="deleteSubletGuest('${d._spotId}',${d._guestIdx},'${(d.nome||'').replace(/'/g,"\\'")}'')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:5px 9px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;display:block;" title="Elimina ospite">🗑️ Elimina</button>
+               </td>`
+            : `<td style="white-space:nowrap;">
+                <button onclick="openEditClient(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:5px 9px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;margin-bottom:4px;display:block;" title="Modifica cliente">✏️ Modifica</button>
+                <button onclick="deleteClient(${d.id},'${(d.nome||'').replace(/'/g,"\\'")}'')" style="background:none;color:var(--expired);border:1px solid var(--expired);border-radius:6px;padding:5px 9px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;display:block;" title="Elimina cliente">🗑️ Elimina</button>
+               </td>`;
+        const colspan = isAdmin ? 11 : 10;
+        return `<tr style="${rowBg}"><td>${spotLabel}</td><td>${clienteCell}</td><td>${d.telefono||'-'}</td><td style="color:var(--eb-muted);">${emailCell}</td><td>${tipoCell}</td><td>${prezzoCell}</td><td style="color:var(--bar);font-weight:600;">${parseFloat(d.barTotal||0).toFixed(2)}€</td><td><span class="badge ${bCls}">${d.pagamento||'DA PAGARE'}</span></td><td style="font-size:11px;color:var(--eb-muted);max-width:120px;word-break:break-word;">${d.note||'-'}</td><td>${azioniCell}</td>${adminCell}</tr>`;
+    }).join('')||`<tr><td colspan="${currentUser?.role==='admin'?11:10}" style="text-align:center;color:var(--eb-muted);padding:24px;">Nessun risultato</td></tr>`;
 }
 
 window.exportCSV=()=>{
@@ -3070,6 +3090,44 @@ window.saveEditClient = () => {
     filterArchivio();
     renderSpiaggia();
     showToast(`✓ #${_editClientId} — ${nome} aggiornato`, 'success');
+};
+
+// ── ELIMINA CLIENTE (admin only) ──────────────────────────────────────────
+window.deleteClient = (id, nome) => {
+    if (currentUser?.role !== 'admin') { showToast('⛔ Solo gli amministratori possono eliminare', 'warn'); return; }
+    const nomePulito = nome.replace(/'$/,''); // rimuove trailing apostrofo da escape
+    if (!confirm(`⚠️ Sei sicuro di voler eliminare il cliente "${nomePulito || id}"?\n\nL'operazione è irreversibile e rimuoverà anche tutti i dati di pagamento.`)) return;
+    import('https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js').then(({ remove }) => {
+        remove(ref(db, 'spiaggia_dati/' + id))
+            .then(() => {
+                delete beachData[id];
+                buildArchivioRows();
+                filterArchivio();
+                renderSpiaggia();
+                showToast(`🗑️ Cliente #${id} eliminato`, 'warn');
+            })
+            .catch(err => showToast('Errore eliminazione: ' + err.message, 'warn'));
+    });
+};
+
+window.deleteSubletGuest = (spotId, guestIdx, nome) => {
+    if (currentUser?.role !== 'admin') { showToast('⛔ Solo gli amministratori possono eliminare', 'warn'); return; }
+    const nomePulito = nome.replace(/'$/,'');
+    if (!confirm(`⚠️ Eliminare l'ospite "${nomePulito || 'N/D'}" dall'ombrellone #${spotId}?\n\nL'operazione è irreversibile.`)) return;
+    const d = beachData[spotId];
+    if (!d?.subletGuests) return;
+    d.subletGuests[guestIdx].active = false; // soft-delete (compatibile con storico)
+    fdb(spotId, d);
+    buildArchivioRows();
+    filterArchivio();
+    renderSpiaggia();
+    showToast(`🗑️ Ospite subaffitto eliminato dall'ombrellone #${spotId}`, 'warn');
+};
+
+// ── APRI MODIFICA SUBLET (alias per admin) ────────────────────────────────
+window.openAdminEditSublet = (spotId, guestIdx) => {
+    // Riusa il drawer ospite esistente (gdOpenByIndex)
+    gdOpenByIndex(spotId, guestIdx);
 };
 
 // ── MODAL MENÙ ────────────────────────────────────────────────────────────
