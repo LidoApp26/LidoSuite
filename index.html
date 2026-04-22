@@ -156,10 +156,10 @@
         .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--eb-muted); }
         .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 
-        .spot { background: #fff; border-radius: 8px; padding: 8px 3px; text-align: center; cursor: pointer; font-size: 10px; min-width: 58px; position: relative; transition: transform 0.15s, box-shadow 0.15s; box-shadow: var(--shadow-sm); border: 1.5px solid var(--eb-border); }
+        .spot { background: #fff; border-radius: 8px; padding: 7px 4px; text-align: center; cursor: pointer; font-size: 10px; width: 56px; flex-shrink: 0; position: relative; transition: transform 0.15s, box-shadow 0.15s; box-shadow: var(--shadow-sm); border: 1.5px solid var(--eb-border); }
         .spot:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-        .spot b { display: block; font-size: 12px; color: var(--eb-text); font-weight: 700; }
-        .spot .owner { font-size: 9px; color: var(--eb-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 54px; margin: 0 auto; margin-top: 2px; }
+        .spot b { display: block; font-size: 11px; color: var(--eb-text); font-weight: 700; }
+        .spot .owner { font-size: 8px; color: var(--eb-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 52px; margin: 0 auto; margin-top: 2px; }
         .spot.booked { border-color: var(--booked); background: #fff8f2; }
         .spot.seasonal { border-color: var(--eb-blue); background: var(--eb-blue-pale); }
         .spot.free { border-color: var(--eb-border); }
@@ -309,13 +309,12 @@
         @media (max-width: 768px) {
             .pos-container { flex-direction: column; }
             .cart-panel { width: 100%; position: static; }
-            .beach-sectors { flex-direction: column; gap: 20px; }
-            .beach-divider { display: none; }
-            .sector { grid-template-columns: repeat(5, 1fr); gap: 5px; }
-            .spot { min-width: 48px; padding: 6px 2px; }
             .topbar { padding: 0 16px; }
             .page-wrap { padding: 18px 14px 0; }
             .today-banner { grid-template-columns: 1fr; }
+            .spot { width: 44px; padding: 5px 2px; }
+            .spot b { font-size: 10px; }
+            .spot .owner { font-size: 7px; max-width: 40px; }
         }
         @media print { .nav-bar, .beach-wrapper, .pos-container, .home-grid, .extra-container { display: none !important; } }
     </style>
@@ -1220,11 +1219,18 @@
             <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--acconto);display:inline-block;"></span>Acconto</div>
             <div class="legend-item"><span style="width:8px;height:8px;border-radius:50%;background:var(--saldo);display:inline-block;"></span>Saldo</div>
         </div>
-        <div class="beach-wrapper">
-            <div class="beach-divider"></div>
-            <div class="beach-sectors">
-                <div><div class="sector-label">Settore A · 1–100</div><div class="sector" id="sector-west"></div></div>
-                <div><div class="sector-label">Settore B · 101–200</div><div class="sector" id="sector-east"></div></div>
+        <div class="beach-wrapper" style="overflow-x:auto;">
+            <!-- Indicatore direzione mare -->
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:11px;font-weight:700;color:var(--eb-blue);letter-spacing:1.5px;text-transform:uppercase;opacity:0.75;">
+                <span>🌊 MARE</span>
+            </div>
+            <!-- Griglia spiaggia fedele alla planimetria -->
+            <div id="beach-map-grid" style="display:inline-flex;flex-direction:column;gap:5px;min-width:100%;"></div>
+            <!-- Zona strutture in basso -->
+            <div style="display:flex;justify-content:flex-end;align-items:center;gap:18px;margin-top:14px;padding-top:10px;border-top:1.5px dashed var(--eb-border);">
+                <div style="font-size:11px;color:var(--eb-muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Bar / Reception</div>
+                <div style="width:70px;height:42px;background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;">🏠</div>
+                <div style="width:50px;height:42px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border:2px solid #22c55e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">🌿</div>
             </div>
         </div>
     </div>
@@ -1773,57 +1779,46 @@ window.updateWarehouseTotal = (key, val) => {
 
 // ── SPIAGGIA ─────────────────────────────────────────────────────────────
 function renderSpiaggia() {
-    const west = $('sector-west'), east = $('sector-east');
-    if (!west) return;
-    west.innerHTML = ''; east.innerHTML = '';
+    const grid = $('beach-map-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
     let mD=0, mS=0, booked=0, totalReal=0, barTotal=0, free=0;
     const today = todayIT();
 
-    // Helper: un giornaliero è "scaduto" se la sua dataPartenza è precedente a oggi
     function isScaduto(d) {
         if (!d || d.isSeasonal) return false;
         if (!d.dataPartenza || d.dataPartenza === '-') return false;
         const [gp,mp,ap] = d.dataPartenza.split('/').map(Number);
         const [go,mo,ao] = today.split('/').map(Number);
-        const partenza = new Date(ap,mp-1,gp);
-        const todayD   = new Date(ao,mo-1,go);
-        return partenza < todayD;
+        return new Date(ap,mp-1,gp) < new Date(ao,mo-1,go);
     }
 
-    for (let i = 1; i <= 200; i++) {
+    function makeSpot(i) {
         const d   = beachData[i];
         const div = document.createElement('div');
-        const todayGuest   = d?.isSeasonal ? slbmTodayGuest(i) : null;
-        const todayIsSublet= d?.isSeasonal && (d.subletDates||[]).includes(today);
-        const scaduto      = isScaduto(d);
+        const todayGuest    = d?.isSeasonal ? slbmTodayGuest(i) : null;
+        const todayIsSublet = d?.isSeasonal && (d.subletDates||[]).includes(today);
+        const scaduto       = isScaduto(d);
 
         let cls = 'spot';
-        if (!d || scaduto) {
-            cls += ' free'; free++;
-        } else if (todayGuest) {
-            cls += ' sublet-guest';
-        } else if (todayIsSublet) {
-            cls += ' sublet';
-        } else {
-            cls += d.isSeasonal ? ' seasonal' : ' booked';
-        }
+        if (!d || scaduto)      { cls += ' free'; free++; }
+        else if (todayGuest)    { cls += ' sublet-guest'; }
+        else if (todayIsSublet) { cls += ' sublet'; }
+        else                    { cls += d.isSeasonal ? ' seasonal' : ' booked'; }
         if (d?.pagamento && !scaduto) cls += ` status-${d.pagamento}`;
         div.className = cls;
 
-        const barBadge     = d?.barTotal>0 && !scaduto ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
-        const weatherBadge = '';
-        const subletBadge  = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:#0891b2;padding:2px 5px;display:flex;align-items:center;gap:2px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12a8 8 0 0 1 13.66-5.66" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M20 12a8 8 0 0 1-13.66 5.66" stroke="white" stroke-width="2.5" stroke-linecap="round"/><polyline points="14,3 20,6 17,12" fill="white"/><polyline points="10,21 4,18 7,12" fill="white"/></svg></div>` : '';
-        const ownerLabel   = scaduto ? 'LIBERO' : todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
-        const splitBadge   = todayGuest ? `<div class="split-badge">${d.nome.split(' ')[0]}</div>` : '';
+        const barBadge    = d?.barTotal>0 && !scaduto ? `<div class="bar-badge">🍹${parseFloat(d.barTotal).toFixed(0)}€</div>` : '';
+        const subletBadge = (todayGuest||todayIsSublet) ? `<div class="bar-badge" style="background:#0891b2;padding:2px 5px;display:flex;align-items:center;gap:2px;"><svg width="9" height="9" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 13.66-5.66" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M20 12a8 8 0 0 1-13.66 5.66" stroke="white" stroke-width="2.5" stroke-linecap="round"/><polyline points="14,3 20,6 17,12" fill="white"/><polyline points="10,21 4,18 7,12" fill="white"/></svg></div>` : '';
+        const ownerLabel  = scaduto ? 'LIBERO' : todayGuest ? todayGuest.nome : (d ? d.nome : 'LIBERO');
+        const splitBadge  = todayGuest ? `<div class="split-badge">${d.nome.split(' ')[0]}</div>` : '';
 
-        div.innerHTML = `${barBadge}${weatherBadge}${subletBadge}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${ownerLabel}</div>${splitBadge}`;
+        div.innerHTML = `${barBadge}${subletBadge}<div class="pay-indicator"></div><b>${i}</b><div class="owner">${ownerLabel}</div>${splitBadge}`;
 
-        if (!d || scaduto) div.onclick = () => handleOmbrellone(i);
-        else if (todayGuest)  div.onclick = () => slbmOpenSpotGuest(i);
+        if (!d || scaduto)      div.onclick = () => handleOmbrellone(i);
+        else if (todayGuest)    div.onclick = () => slbmOpenSpotGuest(i);
         else if (todayIsSublet) div.onclick = () => slbmOpenBookingFromSpot(i);
-        else                  div.onclick = () => handleOmbrellone(i);
-
-        (i <= 100 ? west : east).appendChild(div);
+        else                    div.onclick = () => handleOmbrellone(i);
 
         if (d && !scaduto) {
             booked++;
@@ -1832,7 +1827,100 @@ function renderSpiaggia() {
             totalReal += (d.rate||[]).reduce((a,b)=>a+b.importo, 0);
             barTotal  += parseFloat(d.barTotal||0);
         }
+        return div;
     }
+
+    /*
+     * Layout fedele alla planimetria 2026:
+     * Ogni fila ha 8 ombrelloni lato SINISTRO + corridoio + 9 lato DESTRO = 17/fila
+     * Numerazione a serpentina per fila:
+     *   fila 1: sx 1–8   |  dx 9–17
+     *   fila 2: sx 18–25 |  dx 26–34
+     *   ...
+     * 
+     * Ultime file ridotte (come da planimetria):
+     *   fila 9 (sx): 120,121,122,123  (4 spot) | dx: 128,129,130,131 (4 spot)
+     *   fila 10 (sx): 132,133,134,135,136 (5 spot) | dx: 137,138,139,140 (4 spot)
+     *   fila 11: 141,142,143,144 (zona bassa sinistra)
+     */
+
+    // Definisco le file esattamente come in foto
+    // Ogni fila: { left: [numeri sx], right: [numeri dx], label: 'Fila N' }
+    const rows = [
+        { left:[1,2,3,4,5,6,7,8],         right:[9,10,11,12,13,14,15,16,17] },
+        { left:[18,19,20,21,22,23,24,25],  right:[26,27,28,29,30,31,32,33,34] },
+        { left:[35,36,37,38,39,40,41,42],  right:[43,44,45,46,47,48,49,50,51] },
+        { left:[52,53,54,55,56,57,58,59],  right:[60,61,62,63,64,65,66,67,68] },
+        { left:[69,70,71,72,73,74,75,76],  right:[77,78,79,80,81,82,83,84,85] },
+        { left:[86,87,88,89,90,91,92,93],  right:[94,95,96,97,98,99,100,101,102] },
+        { left:[103,104,105,106,107,108,109,110], right:[111,112,113,114,115,116,117,118,119] },
+        { left:[120,121,122,123],           right:[128,129,130,131] },
+        { left:[132,133,134,135,136],       right:[137,138,139,140] },
+        { left:[141,142,143,144],           right:[] },
+    ];
+
+    // Costruisco le righe rimanenti per arrivare a 200 se esistono spot aggiuntivi
+    // (spot 145-200 distribuiti in file aggiuntive da 8+9)
+    let nextNum = 145;
+    while (nextNum <= 200) {
+        const leftEnd  = Math.min(nextNum + 7, 200);
+        const left     = [];
+        for (let n = nextNum; n <= leftEnd; n++) left.push(n);
+        nextNum = leftEnd + 1;
+        const rightEnd = Math.min(nextNum + 8, 200);
+        const right    = [];
+        for (let n = nextNum; n <= rightEnd; n++) right.push(n);
+        nextNum = rightEnd + 1;
+        rows.push({ left, right });
+    }
+
+    // ── Header colonne ────────────────────────────────────────────────────
+    const headerRow = document.createElement('div');
+    headerRow.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:2px;';
+    headerRow.innerHTML = `
+        <div style="display:flex;flex:0 0 auto;gap:5px;align-items:center;justify-content:flex-end;">
+            <span style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--eb-blue);text-transform:uppercase;opacity:0.7;min-width:52px;text-align:right;">← MARE</span>
+        </div>
+        <div style="width:24px;flex-shrink:0;"></div>
+        <div style="flex:1;display:flex;gap:5px;"></div>`;
+    // Non aggiungiamo intestazioni numeriche — le file sono auto-esplicative
+
+    // ── Riga "NORD" (cabine/pedane in cima, cerchi nella foto) ────────────
+    const northZone = document.createElement('div');
+    northZone.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 0 4px;border-bottom:2px dashed #b8d4e8;margin-bottom:6px;';
+    northZone.innerHTML = `
+        <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--eb-blue);opacity:0.6;">⬆ NORD · CABINE / PEDANE</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
+            ${Array.from({length:12},(_,i)=>`<div style="width:20px;height:20px;border-radius:50%;border:2px solid #93c5fd;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:8px;color:#1d4ed8;font-weight:700;">${i+1}</div>`).join('')}
+        </div>`;
+    grid.appendChild(northZone);
+
+    // ── Render righe ombrelloni ────────────────────────────────────────────
+    rows.forEach((row, ri) => {
+        const rowEl = document.createElement('div');
+        rowEl.style.cssText = 'display:flex;align-items:center;gap:0;';
+
+        // Settore sinistro (ombrelloni in ordine inverso: il più alto # vicino al corridoio)
+        const leftWrap = document.createElement('div');
+        leftWrap.style.cssText = 'display:flex;gap:5px;justify-content:flex-end;flex:1;';
+        [...row.left].reverse().forEach(n => leftWrap.appendChild(makeSpot(n)));
+
+        // Corridoio centrale
+        const corridor = document.createElement('div');
+        corridor.style.cssText = 'width:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center;';
+        corridor.innerHTML = `<div style="height:100%;width:2px;background:linear-gradient(180deg,#93c5fd,#bfdbfe);border-radius:2px;min-height:44px;"></div>`;
+
+        // Settore destro
+        const rightWrap = document.createElement('div');
+        rightWrap.style.cssText = 'display:flex;gap:5px;flex:1;';
+        row.right.forEach(n => rightWrap.appendChild(makeSpot(n)));
+
+        rowEl.appendChild(leftWrap);
+        rowEl.appendChild(corridor);
+        rowEl.appendChild(rightWrap);
+        grid.appendChild(rowEl);
+    });
+
     const els = { 'db-money-daily':mD.toFixed(2)+'€', 'db-money-seasonal':mS.toFixed(2)+'€', 'db-total-money':totalReal.toFixed(2)+'€', 'db-count-booked':booked, 'db-count-free':free, 'db-bar-total':barTotal.toFixed(2)+'€' };
     Object.keys(els).forEach(k => { const e=$(k); if(e) e.innerText=els[k]; });
 }
