@@ -590,7 +590,7 @@
                 <button class="sd-action-btn primary" onclick="smOpenPayments()">
                     <span class="btn-icon">💳</span>Pagamenti
                 </button>
-                <button class="sd-action-btn print-btn" onclick="printConto(_currentSpotId)">
+                <button class="sd-action-btn print-btn" onclick="smPrintConto()">
                     <span class="btn-icon">🖨️</span>Stampa Conto
                 </button>
                 <button class="sd-action-btn teal" onclick="smOpenQr()">
@@ -1994,6 +1994,7 @@ window.closeSpotDrawer = () => {
 window.smOpenPayments = () => { closeSpotDrawer(); openPaymentModal(_currentSpotId); };
 window.smOpenQr       = () => { closeSpotDrawer(); openQrModal(_currentSpotId); };
 window.smAddSublet    = () => { closeSpotDrawer(); slbmOpen(_currentSpotId); };
+window.smPrintConto   = () => { closeSpotDrawer(); setTimeout(()=>printConto(_currentSpotId), 300); };
 window.smResetBar     = () => {
     beachData[_currentSpotId].barTotal      = 0;
     beachData[_currentSpotId].consumazioni  = [];
@@ -3396,11 +3397,18 @@ window.printConto = id => {
     const frame = $('print-conto-frame');
     frame.innerHTML = html;
     document.body.classList.add('printing-conto');
-    window.print();
-    setTimeout(()=>{ 
+
+    const cleanup = () => {
         document.body.classList.remove('printing-conto');
-        frame.innerHTML=''; 
-    }, 1500);
+        frame.innerHTML = '';
+        window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
+    // fallback se afterprint non scatta
+    setTimeout(cleanup, 8000);
+
+    window.print();
 };
 
 
