@@ -590,6 +590,9 @@
                 <button class="sd-action-btn primary" onclick="smOpenPayments()">
                     <span class="btn-icon">💳</span>Pagamenti
                 </button>
+                <button class="sd-action-btn print-btn" onclick="printConto(_currentSpotId)">
+                    <span class="btn-icon">🖨️</span>Stampa Conto
+                </button>
                 <button class="sd-action-btn teal" onclick="smOpenQr()">
                     <span class="btn-icon">📱</span>QR Bar
                 </button>
@@ -1616,10 +1619,21 @@
     .menu-item-price { font-size:13px; font-weight:700; color:var(--eb-blue); white-space:nowrap; }
     .menu-add-btn { padding:4px 12px; border:none; border-radius:20px; font-family:'Poppins',sans-serif; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap; color:white; transition:transform .15s; }
     .menu-add-btn:hover { transform:scale(1.05); }
+
+    /* ── PRINT CONTO ── */
+    #print-conto-frame { display:none; }
+    @media print {
+        body > *:not(#print-conto-frame) { display:block !important; }
+        body > *:not(#print-conto-frame):not(#print-conto-frame *) { display:none !important; }
+        #print-conto-frame { display:block !important; }
+        @page { margin:15mm 12mm; size:A4 portrait; }
+    }
+    .sd-action-btn.print-btn { background: linear-gradient(135deg,#0f766e,#14b8a6); color:white; box-shadow:0 4px 14px rgba(15,118,110,0.28); }
 </style>
 <div id="modal-menu-colazione" class="modal menu-modal" style="display:none;"></div>
 <div id="modal-menu-pranzo" class="modal menu-modal" style="display:none;"></div>
 <div id="modal-menu-apericena" class="modal menu-modal" style="display:none;"></div>
+<div id="print-conto-frame"></div>
 
 <script type="module">
 
@@ -2611,7 +2625,7 @@ function renderArchivioRows(rows,tbody){
             : `<div style="font-weight:600;">${d.prezzo}€</div><div class="pay-progress"><div class="pay-progress-fill" style="width:${d.pct}%"></div></div><div style="font-size:10px;color:var(--eb-muted);">${d.pct}% versato</div>`;
         const azioniCell = isSub
             ? `<button onclick="gdOpenByIndex('${d._spotId}',${d._guestIdx})" style="background:none;color:#7c3aed;border:1px solid #7c3aed;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">📋 Scheda</button>`
-            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`;
+            : `<button onclick="openPaymentModal(${d.id})" style="background:none;color:var(--eb-blue);border:1px solid var(--eb-blue);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;font-weight:600;white-space:nowrap;">💳 Pagam.</button><button onclick="printConto(${d.id})" style="background:none;color:#0f766e;border:1px solid #0f766e;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;display:block;">🖨️ Stampa</button><button onclick="openQrModal(${d.id})" style="background:none;color:var(--eb-muted);border:1px solid var(--eb-border);border-radius:6px;padding:4px 8px;cursor:pointer;font-size:10px;font-family:'Poppins',sans-serif;margin-top:4px;white-space:nowrap;">📱 QR</button>`;
         // Colonna admin: modifica + elimina
         const adminCell = !isAdmin ? `<td style="display:none;"></td>` : isSub
             ? `<td style="white-space:nowrap;">
@@ -3232,6 +3246,158 @@ window.openMenuModal = tipo => {
     el.style.display = 'block';
     $('overlay').style.display = 'block';
 };
+
+// ── STAMPA CONTO OMBRELLONE ──────────────────────────────────────────────
+window.printConto = id => {
+    const d = beachData[id];
+    if (!d || !d.nome) { showToast('Nessun cliente su questo ombrellone','warn'); return; }
+
+    const tipo    = d.isSeasonal ? 'Stagionale' : 'Giornaliero';
+    const prezzoBase = parseFloat(d.prezzo||0);
+    const lettiniCosto = parseFloat(d.lettiniCosto||0);
+    const barTot  = parseFloat(d.barTotal||0);
+    const totale  = prezzoBase + lettiniCosto + barTot;
+    const rate    = d.rate || [];
+    const pagato  = rate.reduce((s,r)=>s+r.importo,0);
+    const resto   = totale - pagato;
+    const pct     = totale>0 ? Math.min(100,Math.round(pagato/totale*100)) : 0;
+    const cons    = d.consumazioni || [];
+    const oggi    = new Date().toLocaleDateString('it-IT');
+
+    // Stato pagamento
+    const statoColor = resto<=0 ? '#16a34a' : pagato>0 ? '#d97706' : '#dc2626';
+    const statoLabel = resto<=0 ? '✅ SALDATO' : pagato>0 ? '⏳ ACCONTO' : '❌ DA PAGARE';
+
+    // Righe storico rate
+    const rateHTML = rate.length ? rate.map(r=>
+        `<tr><td>📅 ${r.data}</td><td style="text-align:right;color:#16a34a;font-weight:700;">+${r.importo.toFixed(2)}€</td></tr>`
+    ).join('') : '<tr><td colspan="2" style="color:#aaa;font-style:italic;">Nessun versamento registrato</td></tr>';
+
+    // Righe consumazioni bar
+    const consHTML = cons.length ? cons.map(c=>
+        `<tr><td>🥤 ${c.nome}</td><td style="color:#888;font-size:11px;">${c.ora||''}</td><td style="text-align:right;color:#ea580c;font-weight:600;">+${parseFloat(c.prezzo).toFixed(2)}€</td></tr>`
+    ).join('') : '<tr><td colspan="3" style="color:#aaa;font-style:italic;">Nessuna consumazione</td></tr>';
+
+    // Ospiti subaffitto
+    const guests = (d.subletGuests||[]).filter(g=>g.active);
+    const guestsHTML = guests.length ? `
+        <div class="pc-section">
+            <div class="pc-section-title">🔄 Ospiti Subaffitto</div>
+            <table class="pc-table">
+                <thead><tr><th>Nome</th><th>Date</th><th style="text-align:right">Importo</th><th style="text-align:right">Stato</th></tr></thead>
+                <tbody>
+                ${guests.map(g=>{
+                    const gTot = parseFloat(g.totalePagato||0)+parseFloat(g.barTotal||0);
+                    return `<tr>
+                        <td><b>${g.nome}</b></td>
+                        <td style="font-size:11px;color:#555;">${(g.dates||[]).join(', ')}</td>
+                        <td style="text-align:right;font-weight:700;">${gTot.toFixed(2)}€</td>
+                        <td style="text-align:right;color:${g.pagato?'#16a34a':'#d97706'};font-weight:700;">${g.pagato?'✓ Pagato':'⏳ Da pagare'}</td>
+                    </tr>`;
+                }).join('')}
+                </tbody>
+            </table>
+        </div>` : '';
+
+    const html = `
+    <style>
+        #print-conto-frame * { font-family: 'Poppins', Arial, sans-serif; box-sizing:border-box; }
+        #print-conto-frame { padding:0; color:#1a2d3d; font-size:13px; }
+        .pc-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; padding-bottom:14px; border-bottom:2px solid #0d5c8c; }
+        .pc-brand { font-size:22px; font-weight:700; color:#0d5c8c; }
+        .pc-brand-sub { font-size:11px; color:#6b8499; margin-top:2px; }
+        .pc-meta { text-align:right; font-size:11px; color:#6b8499; }
+        .pc-meta b { color:#1a2d3d; }
+        .pc-spot { background:linear-gradient(135deg,#0d5c8c,#1a7db8); color:white; border-radius:12px; padding:16px 20px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+        .pc-spot-num { font-size:28px; font-weight:800; letter-spacing:-0.5px; }
+        .pc-spot-info { font-size:12px; opacity:0.85; margin-top:2px; }
+        .pc-spot-tipo { background:rgba(255,255,255,0.22); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+        .pc-section { margin-bottom:16px; }
+        .pc-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#6b8499; margin-bottom:8px; }
+        .pc-table { width:100%; border-collapse:collapse; font-size:12px; }
+        .pc-table th { background:#f0f7fc; color:#1a2d3d; font-weight:700; padding:7px 10px; text-align:left; font-size:11px; }
+        .pc-table td { padding:7px 10px; border-bottom:1px solid #f0f7fc; }
+        .pc-table tr:last-child td { border-bottom:none; }
+        .pc-totale { background:#f0f7fc; border-radius:10px; padding:14px 16px; margin:16px 0; }
+        .pc-tot-row { display:flex; justify-content:space-between; padding:4px 0; font-size:13px; }
+        .pc-tot-row.main { border-top:1.5px solid #d6e8f5; margin-top:8px; padding-top:10px; font-size:16px; font-weight:800; }
+        .pc-stato { display:inline-block; padding:5px 16px; border-radius:20px; font-size:12px; font-weight:700; background:${statoColor}22; color:${statoColor}; border:1.5px solid ${statoColor}; margin-top:4px; }
+        .pc-progress-bar { height:8px; background:#e2e8f0; border-radius:10px; margin:10px 0 4px; overflow:hidden; }
+        .pc-progress-fill { height:100%; background:${pct>=100?'#16a34a':pct>0?'#d97706':'#e2e8f0'}; width:${pct}%; border-radius:10px; transition:width .3s; }
+        .pc-footer { margin-top:24px; padding-top:12px; border-top:1px solid #d6e8f5; text-align:center; font-size:10px; color:#6b8499; }
+        @media print { #print-conto-frame { padding:0; } }
+    </style>
+
+    <div class="pc-header">
+        <div>
+            <div class="pc-brand">🏖️ Lido Suite 2026</div>
+            <div class="pc-brand-sub">Conto Cliente — Stampato il ${oggi}</div>
+        </div>
+        <div class="pc-meta">
+            <div><b>${d.nome}</b></div>
+            ${d.telefono&&d.telefono!=='-'?`<div>📞 ${d.telefono}</div>`:''}
+            ${d.email&&d.email!=='-'?`<div>✉️ ${d.email}</div>`:''}
+        </div>
+    </div>
+
+    <div class="pc-spot">
+        <div>
+            <div class="pc-spot-num">Ombrellone #${id}</div>
+            <div class="pc-spot-info">
+                ${d.dataArrivo&&d.dataArrivo!=='-'?`📅 ${d.dataArrivo}` : ''}
+                ${d.dataPartenza&&d.dataPartenza!=='-'?` → ${d.dataPartenza}` : ''}
+                ${parseInt(d.lettiniExtra||0)>0?` · 🛌 ${d.lettiniExtra} lettino/i`:''}
+            </div>
+        </div>
+        <div class="pc-spot-tipo">${tipo}</div>
+    </div>
+
+    <div class="pc-section">
+        <div class="pc-section-title">💰 Riepilogo Importi</div>
+        <div class="pc-totale">
+            <div class="pc-tot-row"><span>Ombrellone</span><span>${prezzoBase.toFixed(2)}€</span></div>
+            ${lettiniCosto>0?`<div class="pc-tot-row"><span>🛌 Lettini</span><span>${lettiniCosto.toFixed(2)}€</span></div>`:''}
+            ${barTot>0?`<div class="pc-tot-row"><span>🍹 Consumazioni bar</span><span>${barTot.toFixed(2)}€</span></div>`:''}
+            <div class="pc-tot-row main"><span>TOTALE DOVUTO</span><span>${totale.toFixed(2)}€</span></div>
+            <div class="pc-tot-row" style="color:#16a34a;"><span>Versato</span><span>${pagato.toFixed(2)}€</span></div>
+            <div class="pc-tot-row" style="color:${statoColor};font-weight:700;"><span>Rimanente</span><span>${Math.max(0,resto).toFixed(2)}€</span></div>
+            <div class="pc-progress-bar"><div class="pc-progress-fill"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#6b8499;"><span>${pct}% versato</span><span class="pc-stato">${statoLabel}</span></div>
+        </div>
+    </div>
+
+    <div class="pc-section">
+        <div class="pc-section-title">📋 Storico Pagamenti</div>
+        <table class="pc-table">
+            <thead><tr><th>Data</th><th style="text-align:right">Importo</th></tr></thead>
+            <tbody>${rateHTML}</tbody>
+        </table>
+    </div>
+
+    ${cons.length ? `
+    <div class="pc-section">
+        <div class="pc-section-title">🍹 Dettaglio Consumazioni Bar</div>
+        <table class="pc-table">
+            <thead><tr><th>Prodotto</th><th>Ora</th><th style="text-align:right">Prezzo</th></tr></thead>
+            <tbody>${consHTML}</tbody>
+            <tfoot><tr style="font-weight:700;background:#fff7ed;"><td colspan="2">Totale bar</td><td style="text-align:right;color:#ea580c;">${barTot.toFixed(2)}€</td></tr></tfoot>
+        </table>
+    </div>` : ''}
+
+    ${guestsHTML}
+
+    ${d.note ? `<div class="pc-section"><div class="pc-section-title">📝 Note</div><div style="background:#f8fafc;border-radius:8px;padding:10px 14px;font-size:12px;color:#555;border:1px solid #e2e8f0;">${d.note}</div></div>` : ''}
+
+    <div class="pc-footer">
+        Lido Suite 2026 · Documento generato automaticamente il ${oggi} · Ombrellone #${id}
+    </div>`;
+
+    const frame = $('print-conto-frame');
+    frame.innerHTML = html;
+    window.print();
+    setTimeout(()=>{ frame.innerHTML=''; }, 2000);
+};
+
 
 </script>
 </body>
