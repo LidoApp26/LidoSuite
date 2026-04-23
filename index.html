@@ -1622,10 +1622,11 @@
 
     /* ── PRINT CONTO ── */
     #print-conto-frame { display:none; }
+    body.printing-conto > *:not(#print-conto-frame) { display:none !important; }
+    body.printing-conto #print-conto-frame { display:block !important; }
     @media print {
-        body > *:not(#print-conto-frame) { display:block !important; }
-        body > *:not(#print-conto-frame):not(#print-conto-frame *) { display:none !important; }
-        #print-conto-frame { display:block !important; }
+        body.printing-conto > *:not(#print-conto-frame) { display:none !important; }
+        body.printing-conto #print-conto-frame { display:block !important; }
         @page { margin:15mm 12mm; size:A4 portrait; }
     }
     .sd-action-btn.print-btn { background: linear-gradient(135deg,#0f766e,#14b8a6); color:white; box-shadow:0 4px 14px rgba(15,118,110,0.28); }
@@ -3394,8 +3395,12 @@ window.printConto = id => {
 
     const frame = $('print-conto-frame');
     frame.innerHTML = html;
+    document.body.classList.add('printing-conto');
     window.print();
-    setTimeout(()=>{ frame.innerHTML=''; }, 2000);
+    setTimeout(()=>{ 
+        document.body.classList.remove('printing-conto');
+        frame.innerHTML=''; 
+    }, 1500);
 };
 
 
